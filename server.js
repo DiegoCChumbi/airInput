@@ -43,7 +43,6 @@ io.on("connection", socket => {
 
   socket.on("axis", ({ axis, value }) => {
     // Formato: "ID:axis:NOMBRE_EJE:VALOR_FLOAT"
-    // Ejemplo: "xHy7:axis:lx:-0.54"
     const msg = Buffer.from(`${socket.id}:axis:${axis}:${value.toFixed(4)}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
