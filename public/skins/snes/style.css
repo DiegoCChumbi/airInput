@@ -1,0 +1,185 @@
+/* /* ==========================================================================
+   3. GAMEPAD (Estructura General)
+   ========================================================================== */
+
+#gamepad {
+  width: 95%;
+  max-width: 750px;
+  height: 400px;
+  background: #dcdcdc; /* Color base (se sobrescribe en skins) */
+  border-radius: 50px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  transition: background 0.3s, border-radius 0.3s; /* Animación suave al cambiar skin */
+}
+
+/* Área de los botones frontales */
+.face {
+  flex: 1;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 0 30px;
+}
+
+
+/* ==========================================================================
+   4. COMPONENTES COMUNES (Botones, Cruz, Sticks)
+   ========================================================================== */
+
+/* --- Animaciones Generales --- */
+button {
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+button:active, button.active {
+  transform: scale(0.92);
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.5) !important;
+  filter: brightness(0.8);
+}
+
+/* --- Hombros / Gatillos (L/R) --- */
+.shoulders {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 40px;
+  margin-top: -20px;
+}
+
+.btn-shoulder {
+  width: 120px;
+  height: 50px;
+  background: #a0a0a0;
+  border: 2px solid #666;
+  border-radius: 20px 20px 0 0;
+  font-weight: bold;
+  font-size: 20px;
+  color: #333;
+}
+.btn-shoulder:active { 
+  background: #888; 
+  transform: translateY(5px); 
+}
+
+/* --- Cruceta (D-PAD) --- */
+.dpad {
+  --cell-size: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  /* Posición por defecto (SNES) */
+  position: relative; 
+}
+
+.dpad button {
+  background: #333;
+  border: none;
+  width: 100%; height: 100%;
+}
+.dpad button:active { background: #111; }
+
+/* Formas de la cruz */
+.up { border-radius: 30px 30px 0 0; }
+.down { border-radius: 0 0 30px 30px; }
+.left { border-radius: 30px 0 0 30px; }
+.right { border-radius: 0 30px 30px 0; }
+.center { background: #333; pointer-events: none; } 
+.diagonal { background: transparent !important; border: none; }
+
+/* --- Botones Centrales (Select/Start) --- */
+.center-cluster {
+  position: absolute;
+  gap: 15px;
+  /* transform: translateY(40px);  */
+  left: 50%;
+  transform: translateX(-50%);
+}
+.pill-btn {
+  width: 60px; height: 20px;
+  background: #555;
+  border-radius: 10px;
+  border: none;
+  color: #ccc;
+  font-size: 10px;
+  line-height: 20px;
+}
+.pill-btn:active { background: #222; }
+
+/* --- Botones de Acción (ABXY) --- */
+.actions {
+  --btn-size: 65px; 
+  
+  position: relative;
+  
+  width: calc(var(--btn-size) * 3);
+  height: calc(var(--btn-size) * 3);
+}
+
+.round-btn {
+  width: var(--btn-size);
+  height: var(--btn-size);
+  
+  border-radius: 50%;
+  border: none;
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  
+  font-size: calc(var(--btn-size) * 0.35); 
+  
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.round-btn:active, .round-btn.active { 
+  transform: scale(0.85); 
+  box-shadow: none; 
+}
+
+.btn-y { 
+  top: 0; 
+  left: var(--btn-size);
+}
+
+.btn-x { 
+  top: var(--btn-size); 
+  left: 0; 
+}
+
+.btn-b { 
+  top: var(--btn-size);
+  right: 0; 
+}
+
+.btn-a { 
+  bottom: 0; 
+  left: var(--btn-size); 
+}
+/* ==========================================================================
+   5. SKIN: MODO CLÁSICO (SNES)
+   ========================================================================== */
+.layout-snes {
+  background: #dcdcdc;
+  border-radius: 50px;
+}
+
+/* Ocultar elementos modernos */
+.layout-snes .extra-btn {
+  display: none !important; 
+}
+
+/* Colores Clásicos */
+.layout-snes .btn-x { background: #5c7cfa; }
+.layout-snes .btn-x::after { content: "X"; }
+
+.layout-snes .btn-y { background: #40c057; }
+.layout-snes .btn-y::after { content: "Y"; }
+
+.layout-snes .btn-a { background: #fa5252; }
+.layout-snes .btn-a::after { content: "A"; }
+
+.layout-snes .btn-b { background: #fab005; }
+.layout-snes .btn-b::after { content: "B"; }
+

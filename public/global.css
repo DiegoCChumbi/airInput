@@ -1,0 +1,24 @@
+/* public/global.css */
+
+/* 1. RESET & BASE */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+body { background: #202020; display: flex; flex-direction: column; justify-content: center; align-items: center; user-select: none; touch-action: none; font-family: sans-serif; }
+
+/* 2. UI / MENÚS */
+#rotate-message { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 9999; color: white; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+#rotate-message h1 { font-size: 50px; margin: 0; }
+@media (orientation: portrait) { #rotate-message { display: flex; } #gamepad-container { display: none; } }
+
+#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+#btn-fullscreen { padding: 20px 40px; font-size: 24px; background: #5c7cfa; color: white; border: none; border-radius: 10px; cursor: pointer; }
+
+#btn-settings { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); border: 1px solid white; color: white; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; z-index: 2000; }
+
+#settings-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #333; color: white; padding: 20px; border-radius: 10px; z-index: 3000; width: 300px; box-shadow: 0 0 20px black; text-align: center; }
+.layout-selector { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;}
+.sel-btn { padding: 10px; background: #555; color: white; border: none; }
+.sel-btn.active { background: #5c7cfa; }
+
+/* 3. CONTENEDOR PRINCIPAL */
+#gamepad-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
