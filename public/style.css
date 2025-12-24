@@ -1,17 +1,35 @@
-button {
-  transition: transform 0.05s ease, box-shadow 0.05s ease;
+/* ==========================================================================
+   1. RESET & BASE (Configuración de página)
+   ========================================================================== */
+* { 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent; 
 }
 
-button:active, button.active {
-  transform: scale(0.92);
-  box-shadow: inset 0 3px 5px rgba(0,0,0,0.5) !important;
-  filter: brightness(0.8);
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Evita scrolls accidentales */
 }
 
-.round-btn:active, .round-btn.active {
-  transform: scale(0.85);
+body {
+  background: #202020;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  font-family: sans-serif;
 }
 
+/* ==========================================================================
+   2. UI / MENÚS / OVERLAYS (Cosas que flotan encima)
+   ========================================================================== */
+
+/* Pantalla de "Girar dispositivo" */
 #rotate-message {
   display: none; 
   position: fixed;
@@ -24,7 +42,6 @@ button:active, button.active {
   align-items: center;
   text-align: center;
 }
-
 #rotate-message h1 { font-size: 50px; margin: 0; }
 #rotate-message p { font-size: 20px; }
 
@@ -33,6 +50,7 @@ button:active, button.active {
   #gamepad { display: none; }
 }
 
+/* Pantalla de Inicio (Botón Azul) */
 #start-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -54,43 +72,89 @@ button:active, button.active {
   cursor: pointer;
 }
 
-* { 
-  box-sizing: border-box; 
-  -webkit-tap-highlight-color: transparent; 
+/* Botón flotante de Ajustes (Engranaje) */
+#btn-settings {
+  position: fixed;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.5);
+  border: 1px solid white;
+  color: white;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 20px;
+  z-index: 2000;
 }
 
-body {
-  background: #202020;
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  touch-action: none;
-  font-family: sans-serif;
-  overflow: hidden;
+/* Modal/Menú de Configuración */
+#settings-modal {
+  display: none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #333;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 3000;
+  width: 300px;
+  box-shadow: 0 0 20px black;
+  text-align: center;
 }
+
+.layout-selector { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;}
+.sel-btn { padding: 10px; background: #555; color: white; border: none; }
+.sel-btn.active { background: #5c7cfa; }
+
+
+/* ==========================================================================
+   3. GAMEPAD (Estructura General)
+   ========================================================================== */
 
 #gamepad {
   width: 95%;
   max-width: 750px;
   height: 400px;
-  background: #dcdcdc;
+  background: #dcdcdc; /* Color base (se sobrescribe en skins) */
   border-radius: 50px;
   position: relative;
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  transition: background 0.3s, border-radius 0.3s; /* Animación suave al cambiar skin */
 }
 
+/* Área de los botones frontales */
+.face {
+  flex: 1;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  padding: 0 30px;
+}
+
+
+/* ==========================================================================
+   4. COMPONENTES COMUNES (Botones, Cruz, Sticks)
+   ========================================================================== */
+
+/* --- Animaciones Generales --- */
+button {
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+button:active, button.active {
+  transform: scale(0.92);
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.5) !important;
+  filter: brightness(0.8);
+}
+
+/* --- Hombros / Gatillos (L/R) --- */
 .shoulders {
   width: 100%;
   height: 60px;
   display: flex;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 40px 40px;
   margin-top: -20px;
 }
 
@@ -104,97 +168,314 @@ body {
   font-size: 20px;
   color: #333;
 }
-
 .btn-shoulder:active { 
   background: #888; 
   transform: translateY(5px); 
 }
 
-.face {
-  flex: 1;
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  padding: 0 30px;
-}
-
+/* --- Cruceta (D-PAD) --- */
 .dpad {
+  --cell-size: 60px;
   display: grid;
-  grid-template-columns: 85px 85px 85px;
-  grid-template-rows: 85px 85px 85px;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  /* Posición por defecto (SNES) */
+  position: relative; 
 }
 
 .dpad button {
   background: #333;
   border: none;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
 }
-
 .dpad button:active { background: #111; }
 
-.empty { background: transparent !important; pointer-events: none; }
-.up { border-radius: 10px 10px 0 0; }
-.down { border-radius: 0 0 10px 10px; }
-.left { border-radius: 10px 0 0 10px; }
-.right { border-radius: 0 10px 10px 0; }
+/* Formas de la cruz */
+.up { border-radius: 30px 30px 0 0; }
+.down { border-radius: 0 0 30px 30px; }
+.left { border-radius: 30px 0 0 30px; }
+.right { border-radius: 0 30px 30px 0; }
 .center { background: #333; pointer-events: none; } 
+.diagonal { background: transparent !important; border: none; }
 
+/* --- Botones Centrales (Select/Start) --- */
 .center-cluster {
-  display: flex;
+  position: absolute;
   gap: 15px;
-  transform: translateY(40px); 
+  /* transform: translateY(40px);  */
+  left: 50%;
+  transform: translateX(-50%);
 }
-
 .pill-btn {
-  width: 60px;
-  height: 20px;
+  width: 60px; height: 20px;
   background: #555;
   border-radius: 10px;
   border: none;
-  transform: rotate(-25deg);
   color: #ccc;
   font-size: 10px;
   line-height: 20px;
 }
-
 .pill-btn:active { background: #222; }
 
+/* --- Botones de Acción (ABXY) --- */
 .actions {
+  --btn-size: 65px; 
+  
   position: relative;
-  width: 240px;
-  height: 240px;
+  
+  width: calc(var(--btn-size) * 3);
+  height: calc(var(--btn-size) * 3);
 }
 
 .round-btn {
-  width: 80px;
-  height: 80px;
+  width: var(--btn-size);
+  height: var(--btn-size);
+  
   border-radius: 50%;
   border: none;
   position: absolute;
   color: white;
   font-weight: bold;
-  font-size: 24px;
+  
+  font-size: calc(var(--btn-size) * 0.35); 
+  
   box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
-.round-btn:active { 
-  transform: scale(0.90); 
+.round-btn:active, .round-btn.active { 
+  transform: scale(0.85); 
   box-shadow: none; 
 }
 
-.btn-x { top: 0; left: 80px; background: #5c7cfa; }
-.btn-y { top: 80px; left: 0; background: #40c057; }
-.btn-a { top: 80px; right: 0; background: #fa5252; }
-.btn-b { bottom: 0; left: 80px; background: #fab005; }
-
-.diagonal {
-  background: transparent !important;
-  border: none;
-  width: 100%;
-  height: 100%;
+.btn-x { 
+  top: 0; 
+  left: var(--btn-size);
 }
 
-.diagonal:active {
-  background: transparent;
+.btn-y { 
+  top: var(--btn-size); 
+  left: 0; 
+}
+
+.btn-b { 
+  top: var(--btn-size);
+  right: 0; 
+}
+
+.btn-a { 
+  bottom: 0; 
+  left: var(--btn-size); 
+}
+
+/* --- Joysticks (Contenedores Nipple.js) --- */
+.analog-sticks-container {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  padding: 0 50px;
+  height: 120px;
+  pointer-events: none; /* Deja pasar clicks a lo de abajo */
+}
+
+.stick-zone {
+  width: 120px; height: 120px;
+  pointer-events: auto; /* Reactiva clicks para el joystick */
+  position: relative;
+}
+.nipple { z-index: 500; }
+
+
+/* ==========================================================================
+   5. SKIN: MODO CLÁSICO (SNES)
+   ========================================================================== */
+.layout-snes {
+  background: #dcdcdc;
+  border-radius: 50px;
+}
+
+/* Ocultar elementos modernos */
+.layout-snes .extra-btn {
+  display: none !important; 
+}
+
+/* Colores Clásicos */
+.layout-snes .btn-x { background: #5c7cfa; }
+.layout-snes .btn-x::after { content: "X"; }
+
+.layout-snes .btn-y { background: #40c057; }
+.layout-snes .btn-y::after { content: "Y"; }
+
+.layout-snes .btn-a { background: #fa5252; }
+.layout-snes .btn-a::after { content: "A"; }
+
+.layout-snes .btn-b { background: #fab005; }
+.layout-snes .btn-b::after { content: "B"; }
+
+
+/* ==========================================================================
+   6. SKIN: MODO MODERNO (PS4)
+   ========================================================================== */
+.layout-ps4 {
+  background: #1a1a1a;
+  border-radius: 100px 100px 60px 60px; /* Forma ergonómica */
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+
+/* Mostrar Gatillos Traseros */
+.layout-ps4 .shoulder-group {
+  display: flex; 
+}
+
+/* --- AJUSTES DE POSICIÓN PS4 --- */
+/* Subimos todo para dejar espacio a los sticks abajo */
+
+.layout-ps4 .dpad {
+  position: absolute; /* Pasamos a absoluto para moverlo libremente */
+  top: 65px;
+  left: 20px;
+  transform: scale(0.9);
+}
+
+.layout-ps4 .actions {
+  /* No necesitamos cambiar position:absolute porque ya lo tiene .actions base */
+  position: absolute;
+  top:  65px;
+  right: 20px;
+  transform: scale(0.9);
+}
+
+.layout-ps4 .center-cluster {
+  top: 60px;
+}
+
+.layout-ps4 .analog-sticks-container {
+  bottom: 15px;
+  padding: 0 40px;
+  height: 100px;
+}
+
+.layout-ps4 .center-cluster {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+}
+
+.layout-ps4 .analog-sticks-container {
+  bottom: 25px;      /* Distancia desde abajo */
+  padding: 0 150px;   /* Separación de los bordes laterales */
+  height: 120px;
+}
+
+/* =========================================
+   ESTILOS GATILLOS PS4 (L2 / R2)
+   ========================================= */
+
+.layout-ps4 .shoulders {
+  margin-top: 0px; 
+  padding-top: 55px;
+}
+
+/* 1. Contenedor de los grupos (Para pegar L2 con L1) */
+.layout-ps4 .shoulder-group {
+  display: flex;
+  align-items: flex-end; 
+  gap: 8px; 
+}
+
+/* 2. Estilo específico de L2 y R2 */
+.layout-ps4 .btn-trigger {
+  width: 90px;  
+  height: 45px;
+  
+  /* Color oscuro para diferenciar del gris de L1/R1 */
+  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+  color: #888;
+  
+  border: 2px solid #333;
+  border-bottom: none; 
+  border-radius: 12px 12px 0 0; 
+  
+  font-size: 16px;
+  font-weight: bold;
+  
+  /* Efecto de profundidad (parecen estar atrás) */
+  transform: translateY(5px) scale(0.95);
+  z-index: 1; 
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+}
+
+/* Efecto al presionar L2/R2 */
+.layout-ps4 .btn-trigger:active, 
+.layout-ps4 .btn-trigger.active {
+  background: #000;
+  transform: translateY(10px) scale(0.95); /* Se hunden */
+  color: #fff;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,1);
+}
+
+/* 3. Retoque a L1 y R1 para que resalten sobre los gatillos */
+.layout-ps4 .btn-shoulder {
+  z-index: 10; 
+  position: relative;
+  /* top: 35px; */
+  background: linear-gradient(to bottom, #555, #444);
+  color: white;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.5); /* Sombra hacia arriba */
+  border-color: #666;
+}
+
+/* --- ESTÉTICA PS4 --- */
+/* Cuadrado (Rosa) - Izquierda */
+.layout-ps4 .btn-x { background: #ff99cc; color: transparent; border: 2px solid white; }
+.layout-ps4 .btn-x::after { content: "□"; color: white; position:absolute; left:50%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
+
+/* Círculo (Rojo) - Derecha */
+.layout-ps4 .btn-a { background: #ff6666; color: transparent; border: 2px solid white; }
+.layout-ps4 .btn-a::after { content: "○"; color: white; position:absolute; left:50%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
+
+/* Triángulo (Verde) - Arriba */
+.layout-ps4 .btn-y { background: #2ecc71; color: transparent; border: 2px solid white; } 
+.layout-ps4 .btn-y::after { content: "▲"; color: white; position:absolute; left: 50; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
+
+/* Equis (Azul) - Abajo */
+.layout-ps4 .btn-b { background: #3498db; color: transparent; border: 2px solid white; } 
+.layout-ps4 .btn-b::after { content: "✕"; color: white; position:absolute; left:50%; top 50%; transform: translate(-50%, -50%); font-size: 30px; }
+
+/* =========================================
+   ESTILOS VISUALES DE LOS JOYSTICKS
+   ========================================= */
+
+/* 1. LA PARTE QUE SE MUEVE (El Stick) */
+.nipple .front {
+    /* Fondo oscuro con degradado para dar efecto 3D */
+    background: radial-gradient(circle at 30% 30%, #444, #151515) !important;
+    
+    /* Borde negro para definirlo bien */
+    border: 2px solid #000 !important;
+    
+    /* Sombra para que parezca que flota */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
+    
+    /* (Opcional) Un pequeño brillo arriba para textura de goma */
+    position: relative;
+}
+
+/* (Opcional) Textura rugosa en el stick */
+.nipple .front::after {
+    content: "";
+    position: absolute;
+    top: 10%; left: 10%; width: 80%; height: 80%;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.1);
+    opacity: 0.5;
+}
+
+
+/* 2. LA BASE (El fondo estático) */
+.nipple .back {
+    /* Hacemos el fondo un poco más oscuro y sutil */
+    background: rgba(0, 0, 0, 0.4) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
