@@ -2,7 +2,7 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 const dgram = require("dgram");
-const os = require("os"); // Para buscar tu IP automáticamente
+const os = require("os");
 const qrcode = require("qrcode-terminal");
 
 const app = express();
@@ -37,7 +37,6 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     console.log(`Jugador desconectado: ${socket.id}`);
-    // Opcional: Podrías enviar un evento 'destroy' a Python si quisieras limpiar
   });
 });
 
