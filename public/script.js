@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Cambio de Layout
   window.changeLayout = function (type) {
-    gamepad.classList.remove('layout-snes', 'layout-ps4');
+    gamepad.classList.remove('layout-snes', 'layout-xbox');
     gamepad.classList.add(`layout-${type}`);
 
     document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));

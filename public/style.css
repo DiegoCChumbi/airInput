@@ -247,12 +247,12 @@ button:active, button.active {
   box-shadow: none; 
 }
 
-.btn-x { 
+.btn-y { 
   top: 0; 
   left: var(--btn-size);
 }
 
-.btn-y { 
+.btn-x { 
   top: var(--btn-size); 
   left: 0; 
 }
@@ -315,30 +315,30 @@ button:active, button.active {
 
 
 /* ==========================================================================
-   6. SKIN: MODO MODERNO (PS4)
+   6. SKIN: MODO MODERNO (xbox)
    ========================================================================== */
-.layout-ps4 {
+.layout-xbox {
   background: #1a1a1a;
   border-radius: 100px 100px 60px 60px; /* Forma ergonómica */
   box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
 }
 
 /* Mostrar Gatillos Traseros */
-.layout-ps4 .shoulder-group {
+.layout-xbox .shoulder-group {
   display: flex; 
 }
 
-/* --- AJUSTES DE POSICIÓN PS4 --- */
+/* --- AJUSTES DE POSICIÓN xbox --- */
 /* Subimos todo para dejar espacio a los sticks abajo */
 
-.layout-ps4 .dpad {
+.layout-xbox .dpad {
   position: absolute; /* Pasamos a absoluto para moverlo libremente */
   top: 65px;
   left: 20px;
   transform: scale(0.9);
 }
 
-.layout-ps4 .actions {
+.layout-xbox .actions {
   /* No necesitamos cambiar position:absolute porque ya lo tiene .actions base */
   position: absolute;
   top:  65px;
@@ -346,46 +346,46 @@ button:active, button.active {
   transform: scale(0.9);
 }
 
-.layout-ps4 .center-cluster {
+.layout-xbox .center-cluster {
   top: 60px;
 }
 
-.layout-ps4 .analog-sticks-container {
+.layout-xbox .analog-sticks-container {
   bottom: 15px;
   padding: 0 40px;
   height: 100px;
 }
 
-.layout-ps4 .center-cluster {
+.layout-xbox .center-cluster {
   position: absolute;
   top: 70px;
   left: 50%;
 }
 
-.layout-ps4 .analog-sticks-container {
+.layout-xbox .analog-sticks-container {
   bottom: 25px;      /* Distancia desde abajo */
   padding: 0 150px;   /* Separación de los bordes laterales */
   height: 120px;
 }
 
 /* =========================================
-   ESTILOS GATILLOS PS4 (L2 / R2)
+   ESTILOS GATILLOS xbox (L2 / R2)
    ========================================= */
 
-.layout-ps4 .shoulders {
+.layout-xbox .shoulders {
   margin-top: 0px; 
   padding-top: 55px;
 }
 
 /* 1. Contenedor de los grupos (Para pegar L2 con L1) */
-.layout-ps4 .shoulder-group {
+.layout-xbox .shoulder-group {
   display: flex;
   align-items: flex-end; 
   gap: 8px; 
 }
 
 /* 2. Estilo específico de L2 y R2 */
-.layout-ps4 .btn-trigger {
+.layout-xbox .btn-trigger {
   width: 90px;  
   height: 45px;
   
@@ -407,8 +407,8 @@ button:active, button.active {
 }
 
 /* Efecto al presionar L2/R2 */
-.layout-ps4 .btn-trigger:active, 
-.layout-ps4 .btn-trigger.active {
+.layout-xbox .btn-trigger:active, 
+.layout-xbox .btn-trigger.active {
   background: #000;
   transform: translateY(10px) scale(0.95); /* Se hunden */
   color: #fff;
@@ -416,7 +416,7 @@ button:active, button.active {
 }
 
 /* 3. Retoque a L1 y R1 para que resalten sobre los gatillos */
-.layout-ps4 .btn-shoulder {
+.layout-xbox .btn-shoulder {
   z-index: 10; 
   position: relative;
   /* top: 35px; */
@@ -425,23 +425,54 @@ button:active, button.active {
   box-shadow: 0 -2px 5px rgba(0,0,0,0.5); /* Sombra hacia arriba */
   border-color: #666;
 }
+/* --- ESTÉTICA XBOX (COLORES Y LETRAS) --- */
+.layout-xbox .btn-y {
+  background: #f1c40f;
+  color: #333;
+  border: none;
+}
+.layout-xbox .btn-y::after {
+  content: "Y";
+  font-size: 24px
+  position: static
+  transform: none;
+}
 
-/* --- ESTÉTICA PS4 --- */
-/* Cuadrado (Rosa) - Izquierda */
-.layout-ps4 .btn-x { background: #ff99cc; color: transparent; border: 2px solid white; }
-.layout-ps4 .btn-x::after { content: "□"; color: white; position:absolute; left:50%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
+.layout-xbox .btn-b {
+  background: #e74c3c;
+  color: white;
+  border: none;
+}
+.layout-xbox .btn-b::after {
+  content: "B";
+  font-size: 24px;
+  position: static;
+  transform: none;
+}
 
-/* Círculo (Rojo) - Derecha */
-.layout-ps4 .btn-a { background: #ff6666; color: transparent; border: 2px solid white; }
-.layout-ps4 .btn-a::after { content: "○"; color: white; position:absolute; left:50%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
+.layout-xbox .btn-a {
+  background: #2ecc71;
+  color: white;
+  border: none;
+}
+.layout-xbox .btn-a::after {
+  content: "A";
+  font-size: 24px;
+  position: static;
+  transform: none;
+}
 
-/* Triángulo (Verde) - Arriba */
-.layout-ps4 .btn-y { background: #2ecc71; color: transparent; border: 2px solid white; } 
-.layout-ps4 .btn-y::after { content: "▲"; color: white; position:absolute; left: 50; top: 50%; transform: translate(-50%, -50%); font-size: 30px; }
-
-/* Equis (Azul) - Abajo */
-.layout-ps4 .btn-b { background: #3498db; color: transparent; border: 2px solid white; } 
-.layout-ps4 .btn-b::after { content: "✕"; color: white; position:absolute; left:50%; top 50%; transform: translate(-50%, -50%); font-size: 30px; }
+.layout-xbox .btn-x {
+  background: #3498db;
+  color: white;
+  border: none;
+}
+.layout-xbox .btn-x::after {
+  content: "X"; 
+  font-size: 24px;
+  position: static;
+  transform: none;
+}
 
 /* =========================================
    ESTILOS VISUALES DE LOS JOYSTICKS
