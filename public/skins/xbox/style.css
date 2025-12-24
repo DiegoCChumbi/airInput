@@ -1,113 +1,4 @@
 /* ==========================================================================
-   1. RESET & BASE (Configuración de página)
-   ========================================================================== */
-* { 
-  box-sizing: border-box; 
-  -webkit-tap-highlight-color: transparent; 
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* Evita scrolls accidentales */
-}
-
-body {
-  background: #202020;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  touch-action: none;
-  font-family: sans-serif;
-}
-
-/* ==========================================================================
-   2. UI / MENÚS / OVERLAYS (Cosas que flotan encima)
-   ========================================================================== */
-
-/* Pantalla de "Girar dispositivo" */
-#rotate-message {
-  display: none; 
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: #111;
-  z-index: 9999;
-  color: white;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-#rotate-message h1 { font-size: 50px; margin: 0; }
-#rotate-message p { font-size: 20px; }
-
-@media (orientation: portrait) {
-  #rotate-message { display: flex; }
-  #gamepad { display: none; }
-}
-
-/* Pantalla de Inicio (Botón Azul) */
-#start-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
-  z-index: 5000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-#btn-fullscreen {
-  padding: 20px 40px;
-  font-size: 24px;
-  background: #5c7cfa;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* Botón flotante de Ajustes (Engranaje) */
-#btn-settings {
-  position: fixed;
-  top: 10px; left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.5);
-  border: 1px solid white;
-  color: white;
-  border-radius: 50%;
-  width: 40px; height: 40px;
-  font-size: 20px;
-  z-index: 2000;
-}
-
-/* Modal/Menú de Configuración */
-#settings-modal {
-  display: none;
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: #333;
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  z-index: 3000;
-  width: 300px;
-  box-shadow: 0 0 20px black;
-  text-align: center;
-}
-
-.layout-selector { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;}
-.sel-btn { padding: 10px; background: #555; color: white; border: none; }
-.sel-btn.active { background: #5c7cfa; }
-
-
-/* ==========================================================================
    3. GAMEPAD (Estructura General)
    ========================================================================== */
 
@@ -220,9 +111,9 @@ button:active, button.active {
 /* --- Botones de Acción (ABXY) --- */
 .actions {
   --btn-size: 65px; 
-  
+
   position: relative;
-  
+
   width: calc(var(--btn-size) * 3);
   height: calc(var(--btn-size) * 3);
 }
@@ -230,15 +121,15 @@ button:active, button.active {
 .round-btn {
   width: var(--btn-size);
   height: var(--btn-size);
-  
+
   border-radius: 50%;
   border: none;
   position: absolute;
   color: white;
   font-weight: bold;
-  
+
   font-size: calc(var(--btn-size) * 0.35); 
-  
+
   box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
@@ -286,34 +177,6 @@ button:active, button.active {
 }
 .nipple { z-index: 500; }
 
-
-/* ==========================================================================
-   5. SKIN: MODO CLÁSICO (SNES)
-   ========================================================================== */
-.layout-snes {
-  background: #dcdcdc;
-  border-radius: 50px;
-}
-
-/* Ocultar elementos modernos */
-.layout-snes .extra-btn {
-  display: none !important; 
-}
-
-/* Colores Clásicos */
-.layout-snes .btn-x { background: #5c7cfa; }
-.layout-snes .btn-x::after { content: "X"; }
-
-.layout-snes .btn-y { background: #40c057; }
-.layout-snes .btn-y::after { content: "Y"; }
-
-.layout-snes .btn-a { background: #fa5252; }
-.layout-snes .btn-a::after { content: "A"; }
-
-.layout-snes .btn-b { background: #fab005; }
-.layout-snes .btn-b::after { content: "B"; }
-
-
 /* ==========================================================================
    6. SKIN: MODO MODERNO (xbox)
    ========================================================================== */
@@ -333,7 +196,7 @@ button:active, button.active {
 
 .layout-xbox .dpad {
   position: absolute; /* Pasamos a absoluto para moverlo libremente */
-  top: 65px;
+  top: 105px;
   left: 20px;
   transform: scale(0.9);
 }
@@ -341,13 +204,9 @@ button:active, button.active {
 .layout-xbox .actions {
   /* No necesitamos cambiar position:absolute porque ya lo tiene .actions base */
   position: absolute;
-  top:  65px;
+  top:  105px;
   right: 20px;
   transform: scale(0.9);
-}
-
-.layout-xbox .center-cluster {
-  top: 60px;
 }
 
 .layout-xbox .analog-sticks-container {
@@ -358,7 +217,7 @@ button:active, button.active {
 
 .layout-xbox .center-cluster {
   position: absolute;
-  top: 70px;
+  top: 80px;
   left: 50%;
 }
 
@@ -373,7 +232,7 @@ button:active, button.active {
    ========================================= */
 
 .layout-xbox .shoulders {
-  margin-top: 0px; 
+  margin-top: 15px; 
   padding-top: 55px;
 }
 
@@ -386,20 +245,20 @@ button:active, button.active {
 
 /* 2. Estilo específico de L2 y R2 */
 .layout-xbox .btn-trigger {
-  width: 90px;  
+  width: 90px;
   height: 45px;
-  
+
   /* Color oscuro para diferenciar del gris de L1/R1 */
   background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
   color: #888;
-  
+
   border: 2px solid #333;
   border-bottom: none; 
   border-radius: 12px 12px 0 0; 
-  
+
   font-size: 16px;
   font-weight: bold;
-  
+
   /* Efecto de profundidad (parecen estar atrás) */
   transform: translateY(5px) scale(0.95);
   z-index: 1; 
@@ -482,13 +341,13 @@ button:active, button.active {
 .nipple .front {
     /* Fondo oscuro con degradado para dar efecto 3D */
     background: radial-gradient(circle at 30% 30%, #444, #151515) !important;
-    
+
     /* Borde negro para definirlo bien */
     border: 2px solid #000 !important;
-    
+
     /* Sombra para que parezca que flota */
     box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
-    
+
     /* (Opcional) Un pequeño brillo arriba para textura de goma */
     position: relative;
 }
