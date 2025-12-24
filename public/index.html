@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Virtual Pad</title>
   <link rel="stylesheet" href="style.css">
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
 </head>
 
@@ -15,11 +15,11 @@
 
   <div id="settings-modal">
     <h3>Configuración</h3>
-    
+
     <label>Tipo de Mando:</label>
     <div class="layout-selector">
       <button onclick="changeLayout('snes')" class="sel-btn active">Clásico (SNES)</button>
-      <button onclick="changeLayout('ps4')" class="sel-btn">Moderno (PS4)</button>
+      <button onclick="changeLayout('xbox')" class="sel-btn">Moderno (XBOX)</button>
     </div>
 
     <button id="close-settings">Cerrar</button>
@@ -36,15 +36,15 @@
   </div>
 
   <div id="gamepad">
-    
+
     <div class="shoulders">
       <div class="shoulder-group left-group">
         <button class="btn-trigger extra-btn" data-btn="L2">L2</button>
         <button class="btn-shoulder" data-btn="L">L1</button>
       </div>
-      
+
       <div class="shoulder-spacer"></div>
-      
+
       <div class="shoulder-group right-group">
         <button class="btn-shoulder" data-btn="R">R1</button>
         <button class="btn-trigger extra-btn" data-btn="R2">R2</button>
@@ -54,7 +54,7 @@
     <div class="face">
       <div class="dpad">
         <button class="diagonal" data-btns="UP,LEFT"></button>
-        <button class="up" data-btn="UP"></button> 
+        <button class="up" data-btn="UP"></button>
         <button class="diagonal" data-btns="UP,RIGHT"></button>
 
         <button class="left" data-btn="LEFT"></button>
@@ -80,8 +80,8 @@
     </div>
 
     <div class="analog-sticks-container extra-btn">
-       <div id="stick-left-zone" class="stick-zone"></div>
-       <div id="stick-right-zone" class="stick-zone"></div>
+      <div id="stick-left-zone" class="stick-zone"></div>
+      <div id="stick-right-zone" class="stick-zone"></div>
     </div>
 
   </div>
@@ -90,4 +90,5 @@
   <script src="script.js"></script>
 
 </body>
+
 </html>
