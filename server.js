@@ -3,6 +3,7 @@ const http = require("http");
 const socketio = require("socket.io");
 const dgram = require("dgram");
 const os = require("os"); // Para buscar tu IP automáticamente
+const qrcode = require("qrcode-terminal");
 
 const app = express();
 const server = http.createServer(app);
@@ -42,5 +43,9 @@ io.on("connection", socket => {
 
 const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`Server web listo. Conecta los celulares a: http://${getLocalIP()}:${PORT}`);
+  const ip = getLocalIP();
+  const url = `http://${ip}:${PORT}`;
+  console.log(`Escanea el qr y conecta los controlles.`);
+  qrcode.generate(url, { small: true });
+  console.log(`O de conectate a este dirección: ${url}`);
 });
