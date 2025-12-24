@@ -159,7 +159,7 @@ La comunicación UDP usa el puerto 9999. Asegúrate de que este puerto esté dis
 
 ## Licencia
 
-Este proyecto está licenciado bajo la Licencia ISC.
+Este proyecto está licenciado bajo la Licencia MIT.
 
 ## Agradecimientos
 
