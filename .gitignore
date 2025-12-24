@@ -1,14 +1,15 @@
 # Dependencias de Node
 node_modules/
-npm-debug.log
 
-# Archivos compilados/temporales de Python
+# Archivos compilados / Ejecutables
+airInput
+airInput.exe
+*.log
+
+# Python cache
 __pycache__/
 *.py[cod]
 
-# Archivos de sistema
+# Archivos del sistema
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
