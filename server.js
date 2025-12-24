@@ -28,10 +28,23 @@ function getLocalIP() {
 io.on("connection", socket => {
   console.log(`Jugador conectado: ${socket.id}`);
 
+  // socket.on("input", ({ button, state }) => {
+  //   // FORMATO DEL MENSAJE: "ID_SOCKET:BOTON:ESTADO"
+  //   // Ejemplo: "xHy7_zm9:A:1"
+  //   const msg = Buffer.from(`${socket.id}:${button}:${state}`);
+  //   udp.send(msg, 9999, "127.0.0.1");
+  // });
+
   socket.on("input", ({ button, state }) => {
-    // FORMATO DEL MENSAJE: "ID_SOCKET:BOTON:ESTADO"
-    // Ejemplo: "xHy7_zm9:A:1"
-    const msg = Buffer.from(`${socket.id}:${button}:${state}`);
+    // Formato: "ID:btn:NOMBRE:ESTADO"
+    const msg = Buffer.from(`${socket.id}:btn:${button}:${state}`);
+    udp.send(msg, 9999, "127.0.0.1");
+  });
+
+  socket.on("axis", ({ axis, value }) => {
+    // Formato: "ID:axis:NOMBRE_EJE:VALOR_FLOAT"
+    // Ejemplo: "xHy7:axis:lx:-0.54"
+    const msg = Buffer.from(`${socket.id}:axis:${axis}:${value.toFixed(4)}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
 

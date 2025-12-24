@@ -4,11 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SNES Pad</title>
+  <title>Virtual Pad</title>
   <link rel="stylesheet" href="style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
 </head>
 
 <body>
+  <button id="btn-settings">⚙️</button>
+
+  <div id="settings-modal">
+    <h3>Configuración</h3>
+    
+    <label>Tipo de Mando:</label>
+    <div class="layout-selector">
+      <button onclick="changeLayout('snes')" class="sel-btn active">Clásico (SNES)</button>
+      <button onclick="changeLayout('ps4')" class="sel-btn">Moderno (PS4)</button>
+    </div>
+
+    <button id="close-settings">Cerrar</button>
+  </div>
 
   <div id="rotate-message">
     <h1>↻</h1>
@@ -16,28 +31,38 @@
   </div>
 
   <div id="start-overlay">
-    <h2 style="color:white; margin-bottom: 20px;">Control SNES Ready</h2>
+    <h2 style="color:white; margin-bottom: 20px;">Control Ready</h2>
     <button id="btn-fullscreen">TOCAR PARA INICIAR</button>
   </div>
 
   <div id="gamepad">
+    
     <div class="shoulders">
-      <button class="btn-shoulder" data-btn="L">L</button>
-      <button class="btn-shoulder" data-btn="R">R</button>
+      <div class="shoulder-group left-group">
+        <button class="btn-trigger extra-btn" data-btn="L2">L2</button>
+        <button class="btn-shoulder" data-btn="L">L1</button>
+      </div>
+      
+      <div class="shoulder-spacer"></div>
+      
+      <div class="shoulder-group right-group">
+        <button class="btn-trigger extra-btn" data-btn="R2">R2</button>
+        <button class="btn-shoulder" data-btn="R">R1</button>
+      </div>
     </div>
 
     <div class="face">
       <div class="dpad">
         <button class="diagonal" data-btns="UP,LEFT"></button>
-        <button class="up" data-btn="UP">▲</button>
+        <button class="up" data-btn="UP"></button> 
         <button class="diagonal" data-btns="UP,RIGHT"></button>
 
-        <button class="left" data-btn="LEFT">◀</button>
+        <button class="left" data-btn="LEFT"></button>
         <div class="center"></div>
-        <button class="right" data-btn="RIGHT">▶</button>
+        <button class="right" data-btn="RIGHT"></button>
 
         <button class="diagonal" data-btns="DOWN,LEFT"></button>
-        <button class="down" data-btn="DOWN">▼</button>
+        <button class="down" data-btn="DOWN"></button>
         <button class="diagonal" data-btns="DOWN,RIGHT"></button>
       </div>
 
@@ -47,17 +72,22 @@
       </div>
 
       <div class="actions">
-        <button class="round-btn btn-x" data-btn="X">X</button>
-        <button class="round-btn btn-y" data-btn="Y">Y</button>
-        <button class="round-btn btn-b" data-btn="B">B</button>
-        <button class="round-btn btn-a" data-btn="A">A</button>
+        <button class="round-btn btn-x" data-btn="X"></button>
+        <button class="round-btn btn-y" data-btn="Y"></button>
+        <button class="round-btn btn-b" data-btn="B"></button>
+        <button class="round-btn btn-a" data-btn="A"></button>
       </div>
     </div>
+
+    <div class="analog-sticks-container extra-btn">
+       <div id="stick-left-zone" class="stick-zone"></div>
+       <div id="stick-right-zone" class="stick-zone"></div>
+    </div>
+
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 
 </body>
-
 </html>
