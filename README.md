@@ -22,22 +22,22 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
 
 ### Instalación
 
-1. **Clona el repositorio**
+**Clona el repositorio**
 
    ```bash
    git clone https://github.com/DiegoCChumbi/airInput.git
    cd airInput
    ```
 
-2. **Instala las dependencias de Node.js**
+**Instala las dependencias de Node.js**
 
    ```bash
    npm install
    ```
 
-3. **Instala las dependencias de Python**
+**Instala las dependencias de Python**
 
-   Windows:
+   **Windows:**
 
    ```powershell
    pip install vgamepad
@@ -63,6 +63,7 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
        ```bash
        sudo pacman -S base-devel
        ```
+
 1. **Compila el ejecutable de Go**
 
 **Windows:**
