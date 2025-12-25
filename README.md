@@ -47,24 +47,24 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
 
 - **Debian, Ubuntu, Linux Mint, Pop!_OS (`apt`):**
 
-       ```bash
-       sudo apt update
-       sudo apt install python3-dev libudev-dev
-       ```
+  ```bash
+   sudo apt update
+   sudo apt install python3-dev libudev-dev
+    ```
 
 - **Fedora, RHEL, CentOS (`dnf`):**
 
-       ```bash
-       sudo dnf install python3-devel libudev-devel
-       ```
+  ```bash
+    sudo dnf install python3-devel libudev-devel
+    ```
 
 - **Arch Linux, Manjaro (`pacman`):**
 
-       ```bash
-       sudo pacman -S base-devel
-       ```
+   ```bash
+     sudo pacman -S base-devel
+     ```
 
-1. **Compila el ejecutable de Go**
+**Compila el ejecutable de Go**
 
 **Windows:**
 
