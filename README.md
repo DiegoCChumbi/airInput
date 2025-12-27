@@ -22,31 +22,58 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
 
 ### Instalación
 
-1. **Clona el repositorio**
+**Clona el repositorio**
+
    ```bash
    git clone https://github.com/DiegoCChumbi/airInput.git
    cd airInput
    ```
 
-2. **Instala las dependencias de Node.js**
+**Instala las dependencias de Node.js**
+
    ```bash
    npm install
    ```
 
-3. **Instala las dependencias de Python**
-   
-   Windows:
+**Instala las dependencias de Python**
+
+   **Windows:**
+
    ```powershell
    pip install vgamepad
    ```
-   
-   Linux:
+
+   **Linux:**
+
+- **Debian, Ubuntu, Linux Mint, Pop!_OS (`apt`):**
+
+  ```bash
+   sudo apt update
+   sudo apt install python3-dev libudev-dev
+    ```
+
+- **Fedora, RHEL, CentOS (`dnf`):**
+
+  ```bash
+    sudo dnf install python3-devel libudev-devel
+    ```
+
+- **Arch Linux, Manjaro (`pacman`):**
+
    ```bash
-   sudo dnf install python3-devel libudev-devel
-   pip install python-uinput
+     sudo pacman -S base-devel
+     ```
+
+**Compila el ejecutable de Go**
+
+**Windows:**
+
+   ```powershell
+   go build -o airInput.exe airInput.go
    ```
 
-4. **Compila el ejecutable de Go**
+**Linux:**
+
    ```bash
    go build -o airInput airInput.go
    ```
@@ -56,16 +83,21 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
 Simplemente ejecuta el ejecutable compilado:
 
 **Windows:**
+
 ```powershell
 airInput.exe
 ```
 
 **Linux:**
+
 ```bash
-./airInput
+sudo ./airInput
 ```
 
+*En Linux se requiere de sudo para poder crear los gamepads virtuales.*
+
 La aplicación:
+
 1. Iniciará el servidor web en el puerto 3000
 2. Mostrará la URL de conexión y código QR en la terminal
 3. Lanzará el controlador de mando virtual
