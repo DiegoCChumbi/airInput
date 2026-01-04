@@ -21,7 +21,7 @@ BTN_MAP = {
     "RIGHT": vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT,
 }
 
-# Diccionario de jugadores { 'ip_cliente': objeto_gamepad }
+# Player dictionary { 'client_ip': gamepad_object }
 players = {}
 players_axes = {}
 
@@ -29,8 +29,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", 9999))
 sock.settimeout(1.0)
 
-print("Servidor de Gamepads Virtuales iniciado.")
-print("Esperando conexiones desde Node.js...")
+print("Virtual Gamepad Server started.")
+print("Waiting for connections from Node.js...")
 
 while True:
     try:
@@ -43,9 +43,9 @@ while True:
         client_id = parts[0]
         msg_type = parts[1]
 
-        #crear control
+        # Create control
         if client_id not in players:
-            print(f" Nuevo jugador conectado: {client_id}")
+            print(f"New player logged in: {client_id}")
             gamepad = vg.VX360Gamepad()
             players[client_id] = gamepad
             players_axes[client_id] = {'lx': 0, 'ly': 0, 'rx': 0, 'ry': 0}

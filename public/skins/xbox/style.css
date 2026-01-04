@@ -1,21 +1,21 @@
 /* ==========================================================================
-   3. GAMEPAD (Estructura General)
+   3. GAMEPAD (General Structure)
    ========================================================================== */
 
 #gamepad {
   width: 95%;
   max-width: 750px;
   height: 400px;
-  background: #dcdcdc; /* Color base (se sobrescribe en skins) */
+  background: #dcdcdc;
   border-radius: 50px;
   position: relative;
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-  transition: background 0.3s, border-radius 0.3s; /* Animación suave al cambiar skin */
+  transition: background 0.3s, border-radius 0.3s;
 }
 
-/* Área de los botones frontales */
+/* Front button area */
 .face {
   flex: 1;
   display: flex;
@@ -26,10 +26,10 @@
 
 
 /* ==========================================================================
-   4. COMPONENTES COMUNES (Botones, Cruz, Sticks)
+   4. GENERAL COMPONENTS
    ========================================================================== */
 
-/* --- Animaciones Generales --- */
+/* --- GENERAL ANIMATIONS --- */
 button {
   transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
@@ -39,7 +39,7 @@ button:active, button.active {
   filter: brightness(0.8);
 }
 
-/* --- Hombros / Gatillos (L/R) --- */
+/* --- TRIGGERS --- */
 .shoulders {
   width: 100%;
   height: 60px;
@@ -64,13 +64,12 @@ button:active, button.active {
   transform: translateY(5px); 
 }
 
-/* --- Cruceta (D-PAD) --- */
+/* --- CROSS --- */
 .dpad {
   --cell-size: 60px;
   display: grid;
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
-  /* Posición por defecto (SNES) */
   position: relative; 
 }
 
@@ -81,7 +80,6 @@ button:active, button.active {
 }
 .dpad button:active { background: #111; }
 
-/* Formas de la cruz */
 .up { border-radius: 30px 30px 0 0; }
 .down { border-radius: 0 0 30px 30px; }
 .left { border-radius: 30px 0 0 30px; }
@@ -89,11 +87,10 @@ button:active, button.active {
 .center { background: #333; pointer-events: none; } 
 .diagonal { background: transparent !important; border: none; }
 
-/* --- Botones Centrales (Select/Start) --- */
+/* --- (Select/Start) --- */
 .center-cluster {
   position: absolute;
   gap: 15px;
-  /* transform: translateY(40px);  */
   left: 50%;
   transform: translateX(-50%);
 }
@@ -108,7 +105,7 @@ button:active, button.active {
 }
 .pill-btn:active { background: #222; }
 
-/* --- Botones de Acción (ABXY) --- */
+/* ---  (ABXY) --- */
 .actions {
   --btn-size: 65px; 
 
@@ -158,7 +155,7 @@ button:active, button.active {
   left: var(--btn-size); 
 }
 
-/* --- Joysticks (Contenedores Nipple.js) --- */
+/* --- Joysticks (Nipple.js) --- */
 .analog-sticks-container {
   display: flex;
   justify-content: space-between;
@@ -167,42 +164,40 @@ button:active, button.active {
   width: 100%;
   padding: 0 50px;
   height: 120px;
-  pointer-events: none; /* Deja pasar clicks a lo de abajo */
+  pointer-events: none;
 }
 
 .stick-zone {
   width: 120px; height: 120px;
-  pointer-events: auto; /* Reactiva clicks para el joystick */
+  pointer-events: auto;
   position: relative;
 }
 .nipple { z-index: 500; }
 
 /* ==========================================================================
-   6. SKIN: MODO MODERNO (xbox)
+   6. SKIN: MODERN
    ========================================================================== */
 .layout-xbox {
   background: #1a1a1a;
-  border-radius: 100px 100px 60px 60px; /* Forma ergonómica */
+  border-radius: 100px 100px 60px 60px;
   box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
 }
 
-/* Mostrar Gatillos Traseros */
+/* Show Rear Triggers */
 .layout-xbox .shoulder-group {
   display: flex; 
 }
 
-/* --- AJUSTES DE POSICIÓN xbox --- */
-/* Subimos todo para dejar espacio a los sticks abajo */
+/* --- POSITION SETTING --- */
 
 .layout-xbox .dpad {
-  position: absolute; /* Pasamos a absoluto para moverlo libremente */
+  position: absolute;
   top: 105px;
   left: 20px;
   transform: scale(0.9);
 }
 
 .layout-xbox .actions {
-  /* No necesitamos cambiar position:absolute porque ya lo tiene .actions base */
   position: absolute;
   top:  105px;
   right: 20px;
@@ -222,13 +217,13 @@ button:active, button.active {
 }
 
 .layout-xbox .analog-sticks-container {
-  bottom: 25px;      /* Distancia desde abajo */
-  padding: 0 150px;   /* Separación de los bordes laterales */
+  bottom: 25px;
+  padding: 0 150px;
   height: 120px;
 }
 
 /* =========================================
-   ESTILOS GATILLOS xbox (L2 / R2)
+    TRIGGERS STYLE (L2 / R2)
    ========================================= */
 
 .layout-xbox .shoulders {
@@ -236,19 +231,16 @@ button:active, button.active {
   padding-top: 55px;
 }
 
-/* 1. Contenedor de los grupos (Para pegar L2 con L1) */
 .layout-xbox .shoulder-group {
   display: flex;
   align-items: flex-end; 
   gap: 8px; 
 }
 
-/* 2. Estilo específico de L2 y R2 */
 .layout-xbox .btn-trigger {
   width: 90px;
   height: 45px;
 
-  /* Color oscuro para diferenciar del gris de L1/R1 */
   background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
   color: #888;
 
@@ -259,32 +251,28 @@ button:active, button.active {
   font-size: 16px;
   font-weight: bold;
 
-  /* Efecto de profundidad (parecen estar atrás) */
   transform: translateY(5px) scale(0.95);
   z-index: 1; 
   box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
 }
 
-/* Efecto al presionar L2/R2 */
 .layout-xbox .btn-trigger:active, 
 .layout-xbox .btn-trigger.active {
   background: #000;
-  transform: translateY(10px) scale(0.95); /* Se hunden */
+  transform: translateY(10px) scale(0.95);
   color: #fff;
   box-shadow: inset 0 2px 5px rgba(0,0,0,1);
 }
 
-/* 3. Retoque a L1 y R1 para que resalten sobre los gatillos */
 .layout-xbox .btn-shoulder {
   z-index: 10; 
   position: relative;
-  /* top: 35px; */
   background: linear-gradient(to bottom, #555, #444);
   color: white;
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.5); /* Sombra hacia arriba */
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
   border-color: #666;
 }
-/* --- ESTÉTICA XBOX (COLORES Y LETRAS) --- */
+
 .layout-xbox .btn-y {
   background: #f1c40f;
   color: #333;
@@ -334,25 +322,19 @@ button:active, button.active {
 }
 
 /* =========================================
-   ESTILOS VISUALES DE LOS JOYSTICKS
+    VISUAL STYLES OF JOYSTICKS
    ========================================= */
 
-/* 1. LA PARTE QUE SE MUEVE (El Stick) */
 .nipple .front {
-    /* Fondo oscuro con degradado para dar efecto 3D */
     background: radial-gradient(circle at 30% 30%, #444, #151515) !important;
 
-    /* Borde negro para definirlo bien */
     border: 2px solid #000 !important;
 
-    /* Sombra para que parezca que flota */
     box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
 
-    /* (Opcional) Un pequeño brillo arriba para textura de goma */
     position: relative;
 }
 
-/* (Opcional) Textura rugosa en el stick */
 .nipple .front::after {
     content: "";
     position: absolute;
@@ -363,9 +345,7 @@ button:active, button.active {
 }
 
 
-/* 2. LA BASE (El fondo estático) */
 .nipple .back {
-    /* Hacemos el fondo un poco más oscuro y sutil */
     background: rgba(0, 0, 0, 0.4) !important; 
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }

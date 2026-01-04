@@ -4,7 +4,7 @@ let activeButtons = new Set();
 let activeJoysticks = [];
 
 // ==========================================
-// 1. CARGA DINÁMICA DE SKINS 
+// 1. DINAMIC SKIN LOADER
 // ==========================================
 async function loadSkin(skinName) {
   const container = document.getElementById('gamepad-container');
@@ -13,7 +13,7 @@ async function loadSkin(skinName) {
 
   try {
     const response = await fetch(`skins/${skinName}/layout.html`);
-    if (!response.ok) throw new Error("Skin no encontrado");
+    if (!response.ok) throw new Error("Skin not found");
     const html = await response.text();
 
     container.innerHTML = html;
@@ -27,13 +27,13 @@ async function loadSkin(skinName) {
     }, 50);
 
   } catch (e) {
-    console.error("Error cargando skin:", e);
-    container.innerHTML = `<h2 style="color:white; text-align:center;">Error cargando ${skinName}</h2>`;
+    console.error("Error loading skin:", e);
+    container.innerHTML = `<h2 style="color:white; text-align:center;">Error loading skin: ${skinName}</h2>`;
   }
 }
 
 // ==========================================
-// 2. LÓGICA DE BOTONES
+// 2. BUTTON LOGIC
 // ==========================================
 function updateButton(btnName, state) {
   const cleanName = btnName.trim();
@@ -49,7 +49,7 @@ function updateButton(btnName, state) {
 }
 
 // ==========================================
-// 3. MOTOR DE ESCANEO TÁCTIL
+// 3. TOUCH SCANNING MOTOR
 // ==========================================
 function scanGamePad(e) {
   if (e.target.id === 'btn-fullscreen' ||
@@ -97,7 +97,7 @@ function scanGamePad(e) {
 }
 
 // ==========================================
-// 4. LÓGICA DE JOYSTICKS (Nipple.js)
+// 4. JOYSTICK LOGIC (Nipple.js)
 // ==========================================
 function initJoysticks() {
   activeJoysticks.forEach(j => j.destroy());
@@ -144,10 +144,10 @@ function initJoysticks() {
 }
 
 // ==========================================
-// 5. INICIALIZACIÓN
+// 5. INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Script cargado. Iniciando sistema...");
+  console.log("Script loaded. Starting system...");
 
   document.addEventListener("touchstart", scanGamePad, { passive: false });
   document.addEventListener("touchmove", scanGamePad, { passive: false });

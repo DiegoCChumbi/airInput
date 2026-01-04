@@ -4,7 +4,7 @@ import uinput
 MIN_ABS = -32767
 MAX_ABS = 32767
 
-# Definir botones NES
+# Define buttons
 EVENTS = (
     uinput.BTN_A,
     uinput.BTN_B,
@@ -50,14 +50,14 @@ axis_mapping = {
     "ry": uinput.ABS_RY,
 }
 
-# Diccionario para guardar los controles: { 'socket_id': uinput_device }
+# Dictionary to store the controls: { 'socket_id': uinput_device }
 players = {}
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("127.0.0.1", 9999))
 
-print("Servidor de Gamepads Virtuales iniciado.")
-print("Esperando conexiones desde Node.js...")
+print("Virtual Gamepad Server started.")
+print("Waiting for connections from Node.js...")
 
 while True:
     data, addr = sock.recvfrom(1024)
@@ -68,13 +68,13 @@ while True:
         client_id = parts[0]
         msg_type = parts[1]
 
-        # Si es un jugador nuevo, creamos un control nuevo
+        # If it's a new player, we create a new record.
         if client_id not in players:
             player_num = len(players) + 1
             device_name = f"PhoneGamepad {player_num}"
             new_device = uinput.Device(EVENTS, name=device_name)
             players[client_id] = new_device
-            print(f"Nuevo control creado: Jugador {player_num} ({client_id})")
+            print(f"New control created: Player {player_num} ({client_id})")
 
         if msg_type == "btn":
             button = parts[2]
@@ -96,6 +96,6 @@ while True:
                 )
 
     except ValueError:
-        print("Error de formato en mensaje")
+        print("Message formatting error")
     except Exception as e:
         print(f"Error: {e}")

@@ -1,41 +1,41 @@
 # AirInput
 
-Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos  con diseños de mando personalizables directamente desde tu navegador, no requiere instalación de aplicaciones.
+Turn your smartphone into a wireless controller for your PC. Play your games with customizable gamepad layouts directly from your browser, no app installation required.
 
-## Características
+## Features
 
-- **🌐 Basado en Navegador**: No necesitas app móvil - funciona completamente en el navegador de tu teléfono
-- **🎨 Múltiples Diseños**: Elige entre el estilo clásico o moderno
-- **🔌 Mando Virtual**: Crea un control virtual reconocido por los juegos
-- **📱 Soporte Multi-Jugador**: Conecta múltiples dispositivos como controles separados
-- **⚡ Baja Latencia**: Transmisión de entrada en tiempo real vía WebSockets y UDP
-- **🔧 Multiplataforma**: Soporta Windows y Linux
-- **📶 Red Local**: Toda la comunicación permanece en tu red local
+- **🌐 Browser-Based**: No mobile app needed - works entirely in your phone's browser
+- **🎨 Multiple Layouts**: Choose between classic or modern style
+- **🔌 Virtual Gamepad**: Create a virtual controller recognized by games
+- **📱 Multi-Player Support**: Connect multiple devices as separate controllers
+- **⚡ Low Latency**: Real-time input streaming via WebSockets and UDP
+- **🔧 Cross-Platform**: Supports Windows and Linux
+- **📶 Local Network**: All communication stays on your local network
 
-## Inicio Rápido
+## Quick Start
 
-### Requisitos Previos
+### Prerequisites
 
-- **Node.js** (v14 o superior)
-- **Python** (3.7 o superior)
-- **Go** (1.19 o superior)
+- **Node.js** (v14 or higher)
+- **Python** (3.7 or higher)
+- **Go** (1.19 or higher)
 
-### Instalación
+### Installation
 
-**Clona el repositorio**
+**Clone the repository**
 
    ```bash
    git clone https://github.com/DiegoCChumbi/airInput.git
    cd airInput
    ```
 
-**Instala las dependencias de Node.js**
+**Install Node.js dependencies**
 
    ```bash
    npm install
    ```
 
-**Instala las dependencias de Python**
+**Install Python dependencies**
 
    **Windows:**
 
@@ -64,7 +64,7 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
      sudo pacman -S base-devel
      ```
 
-**Compila el ejecutable de Go**
+**Build the Go executable**
 
 **Windows:**
 
@@ -78,9 +78,9 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
    go build -o airInput airInput.go
    ```
 
-### Ejecutar airInput
+### Running airInput
 
-Simplemente ejecuta el ejecutable compilado:
+Simply run the compiled executable:
 
 **Windows:**
 
@@ -94,112 +94,112 @@ airInput.exe
 sudo ./airInput
 ```
 
-*En Linux se requiere de sudo para poder crear los gamepads virtuales.*
+*On Linux, sudo is required to create virtual gamepads.*
 
-La aplicación:
+The application will:
 
-1. Iniciará el servidor web en el puerto 3000
-2. Mostrará la URL de conexión y código QR en la terminal
-3. Lanzará el controlador de mando virtual
+1. Start the web server on port 3000
+2. Display the connection URL and QR code in the terminal
+3. Launch the virtual gamepad controller
 
-### Conectar tu Teléfono
+### Connect Your Phone
 
-1. Asegúrate de que tu teléfono esté en la misma red WiFi que tu PC
-2. Abre el navegador de tu teléfono y navega a la URL mostrada en la terminal (O escanéa el QR que aparecerá)
-3. Toca "TOCAR PARA INICIAR" para activar el control
-4. Elige tu diseño preferido en la configuración (⚙️)
+1. Make sure your phone is on the same WiFi network as your PC
+2. Open your phone's browser and navigate to the URL shown in the terminal (Or scan the QR that will appear)
+3. Tap "TAP TO START" to activate the controller
+4. Choose your preferred layout in settings (⚙️)
 
-## Cómo Funciona
+## How It Works
 
 ```
 ┌─────────────┐         WebSocket           ┌──────────────┐
-│  Navegador  │ ◄─────────────────────────► │   Node.js    │
-│ (Teléfono)  │   (Datos Botones/Ejes)      │   Server     │
+│   Browser   │ ◄─────────────────────────► │   Node.js    │
+│   (Phone)   │  (Button/Axis Data)         │   Server     │
 └─────────────┘                             └──────┬───────┘
                                                    │
-                                                UDP│ (Puerto 9999)
+                                                UDP│ (Port 9999)
                                                    │
                                             ┌──────▼───────┐
                                             │   Python     │
-                                            │ Controlador  │
+                                            │  Controller  │
                                             └──────┬───────┘
                                                    │
                                             Virtual│Gamepad API
                                                    │
                                             ┌──────▼───────┐
-                                            │   Control    │
                                             │  Xbox 360    │
+                                            │  Controller  │
                                             │   Virtual    │
                                             └──────────────┘
 ```
 
-1. **Interfaz Web**: Control táctil basado en HTML5 con NippleJS para joysticks
-2. **Servidor WebSocket**: Node.js con Socket.IO para comunicación en tiempo real
-3. **Puente UDP**: Reenvía los datos de entrada al controlador Python
-4. **Mando Virtual**: Python crea controles virtuales Xbox 360 usando librerías específicas de cada plataforma
-5. **Gestor de Procesos**: Go orquesta los procesos de Node.js y Python
+1. **Web Interface**: HTML5-based touch control with NippleJS for joysticks
+2. **WebSocket Server**: Node.js with Socket.IO for real-time communication
+3. **UDP Bridge**: Forwards input data to Python controller
+4. **Virtual Gamepad**: Python creates virtual Xbox 360 controllers using platform-specific libraries
+5. **Process Manager**: Go orchestrates Node.js and Python processes
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 airInput/
-├── airInput.go              # Gestor de procesos Go
-├── server.js                # Servidor WebSocket Node.js
-├── controller-win.py        # Mando virtual Windows
-├── controller-linux.py      # Mando virtual Linux
-├── package.json             # Dependencias Node.js
-├── go.mod                   # Definición módulo Go
-└── public/                  # Cliente web
-    ├── index.html           # HTML principal
-    ├── script.js            # Lógica del cliente
-    ├── global.css           # Estilos base
-    └── skins/               # Diseños de control
-        ├── snes/            # Diseño clásico
-        └── xbox/            # Diseño moderno
+├── airInput.go              # Go process manager
+├── server.js                # Node.js WebSocket server
+├── controller-win.py        # Windows virtual gamepad
+├── controller-linux.py      # Linux virtual gamepad
+├── package.json             # Node.js dependencies
+├── go.mod                   # Go module definition
+└── public/                  # Web client
+    ├── index.html           # Main HTML
+    ├── script.js            # Client logic
+    ├── global.css           # Base styles
+    └── skins/               # Controller layouts
+        ├── snes/            # Classic layout
+        └── xbox/            # Modern layout
 ```
 
-## Configuración
+## Configuration
 
-El servidor web se ejecuta en el puerto 3000 por defecto. Para cambiarlo, edita [server.js](server.js):
+The web server runs on port 3000 by default. To change it, edit [server.js](server.js):
 
 ```javascript
-const PORT = 3000; // Cambia este valor
+const PORT = 3000; // Change this value
 ```
 
-La comunicación UDP usa el puerto 9999. Asegúrate de que este puerto esté disponible en tu sistema.
+UDP communication uses port 9999. Make sure this port is available on your system.
 
-### Problemas de Conexión
+### Connection Issues
 
-- Verifica que tu teléfono y PC estén en la misma red
-- Revisa que la configuración del firewall permita conexiones en el puerto 3000
-- Desactiva la VPN si está activa
+- Verify that your phone and PC are on the same network
+- Check that firewall settings allow connections on port 3000
+- Disable VPN if active
 
-### Retraso en la Entrada
+### Input Lag
 
-- Reduce la distancia entre el teléfono y el router WiFi
-- Cierra otras aplicaciones que usen ancho de banda de red
-- Usa la banda WiFi de 5GHz si está disponible
+- Reduce the distance between phone and WiFi router
+- Close other applications using network bandwidth
+- Use the 5GHz WiFi band if available
 
-## Contribuir
+## Contributing
 
-¡Las contribuciones son bienvenidas! Siéntete libre de:
+Contributions are welcome! Feel free to:
 
-- Reportar errores abriendo un issue
-- Sugerir nuevas funcionalidades o mejoras
-- Enviar pull requests con mejoras
-- Aportar con nuevos layout personalizados
+- Report bugs by opening an issue
+- Suggest new features or improvements
+- Submit pull requests with enhancements
+- Contribute with new custom layouts
 
-## Licencia
+## License
 
-Este proyecto está licenciado bajo la Licencia MIT.
+This project is licensed under the MIT License.
 
-## Agradecimientos
+## Acknowledgements
 
-- [NippleJS](https://github.com/yoannmoinet/nipplejs) - Librería de joystick virtual
-- [Socket.IO](https://socket.io/) - Comunicación en tiempo real
-- [vgamepad](https://github.com/yagnateos/vgamepad) - Mando virtual para Windows
-- [ViGEmBus](https://github.com/ViGEm/ViGEmBus) - Driver de mando virtual para Windows
+- [NippleJS](https://github.com/yoannmoinet/nipplejs) - Virtual joystick library
+- [Socket.IO](https://socket.io/) - Real-time communication
+- [vgamepad](https://github.com/yagnateos/vgamepad) - Virtual gamepad for Windows
+- [ViGEmBus](https://github.com/ViGEm/ViGEmBus) - Virtual gamepad driver for Windows
 
 ---
 
-**Nota**: Esta es una solución de red local. Tu teléfono y PC deben estar conectados a la misma red WiFi.
+**Note**: This is a local network solution. Your phone and PC must be connected to the same WiFi network.
