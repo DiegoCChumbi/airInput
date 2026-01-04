@@ -1,3 +1,4 @@
+**Español**: Si prefieres leer la guía de contribución en español, haz clic [aquí](CONTRIBUTING.es.md).
 # Contributing to AirInput
 
 Thank you for your interest in contributing to AirInput! This project exists thanks to the open source community and we love receiving help, whether it's fixing bugs, adding new features, or designing amazing skins.

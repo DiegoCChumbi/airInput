@@ -1,3 +1,4 @@
+**English**: Read the contribution guide in English [here](CONTRIBUTING.md).
 # Contribuir a AirInput
 
 ¡Gracias por tu interés en contribuir a AirInput! Este proyecto existe gracias a la comunidad de código abierto y nos encanta recibir ayuda, ya sea corrigiendo errores, agregando nuevas funciones o diseñando skins increíbles.

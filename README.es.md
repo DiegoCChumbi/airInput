@@ -1,3 +1,4 @@
+**English**: Read this document in English [here](README.md).
 # AirInput
 
 Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos  con diseños de mando personalizables directamente desde tu navegador, no requiere instalación de aplicaciones.

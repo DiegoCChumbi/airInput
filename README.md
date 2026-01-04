@@ -1,3 +1,4 @@
+**Español**: Puedes leer este documento en español [aquí](README.es.md).
 # AirInput
 
 Turn your smartphone into a wireless controller for your PC. Play your games with customizable gamepad layouts directly from your browser, no app installation required.
