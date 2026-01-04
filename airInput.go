@@ -24,14 +24,14 @@ func main() {
 		pythonCmdName = "python3"
 		pythonScript = "controller-linux.py"
 	default:
-		log.Fatalf("Sistema operativo no soportado: %s", osType)
+		log.Fatalf("Unsupported operating system: %s", osType)
 	}
 
 	if _, err := os.Stat("server.js"); os.IsNotExist(err) {
-		log.Fatal("server.js no encontrado")
+		log.Fatal("server.js no found")
 	}
 	if _, err := os.Stat(pythonScript); os.IsNotExist(err) {
-		log.Fatalf("%s no encontrado", pythonScript)
+		log.Fatalf("%s no found", pythonScript)
 	}
 
 	nodeCmd := exec.Command("node", "server.js")
@@ -39,7 +39,7 @@ func main() {
 	nodeCmd.Stderr = os.Stderr
 
 	if err := nodeCmd.Start(); err != nil {
-		log.Fatalf("Error iniciando node: %v", err)
+		log.Fatalf("Error starting node: %v", err)
 	}
 
 	time.Sleep(1 * time.Second)
@@ -50,7 +50,7 @@ func main() {
 
 	if err := pyCmd.Start(); err != nil {
 		nodeCmd.Process.Kill()
-		log.Fatalf("Error iniciando Python: %v", err)
+		log.Fatalf("Error starting Python: %v", err)
 	}
 
 	sigs := make(chan os.Signal, 1)

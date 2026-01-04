@@ -26,7 +26,7 @@ function getLocalIP() {
 }
 
 io.on("connection", socket => {
-  console.log(`Jugador conectado: ${socket.id}`);
+  console.log(`Player connected: ${socket.id}`);
 
   // socket.on("input", ({ button, state }) => {
   //   // FORMATO DEL MENSAJE: "ID_SOCKET:BOTON:ESTADO"
@@ -36,19 +36,19 @@ io.on("connection", socket => {
   // });
 
   socket.on("input", ({ button, state }) => {
-    // Formato: "ID:btn:NOMBRE:ESTADO"
+    // Format: "ID:btn:NAME:STATUS"
     const msg = Buffer.from(`${socket.id}:btn:${button}:${state}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
 
   socket.on("axis", ({ axis, value }) => {
-    // Formato: "ID:axis:NOMBRE_EJE:VALOR_FLOAT"
+    // Format: "ID:axis:AXIS_NAME:VALUE_FLOAT"
     const msg = Buffer.from(`${socket.id}:axis:${axis}:${value.toFixed(4)}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
 
   socket.on("disconnect", () => {
-    console.log(`Jugador desconectado: ${socket.id}`);
+    console.log(`Player disconnected: ${socket.id}`);
   });
 });
 
@@ -71,7 +71,7 @@ server.listen(PORT, () => {
   const boxWidth = 50;
   const pad = (textLength) => " ".repeat(Math.max(0, boxWidth - textLength));
 
-  const statusText = "🟢 Online - Listo para jugar";
+  const statusText = "🟢 Online - Ready to connect!";
   const urlLabel = "  URL:    ";
 
   console.clear();
@@ -81,8 +81,8 @@ server.listen(PORT, () => {
   console.log(c.cyan + "╠" + "═".repeat(boxWidth) + "╣" + c.reset);
   console.log(c.cyan + "║" + " ".repeat(boxWidth) + "║" + c.reset);
 
-  const line1Base = "  Estado: " + statusText;
-  console.log(c.cyan + "║" + c.reset + "  Estado: " + c.green + statusText + c.reset + pad(line1Base.length) + c.cyan + "║" + c.reset);
+  const line1Base = "  Status: " + statusText;
+  console.log(c.cyan + "║" + c.reset + "  Status: " + c.green + statusText + c.reset + pad(line1Base.length) + c.cyan + "║" + c.reset);
 
   const line2Base = urlLabel + url;
   console.log(c.cyan + "║" + c.reset + c.yellow + urlLabel + c.reset + c.bold + url + c.reset + pad(line2Base.length) + c.cyan + "║" + c.reset);
@@ -90,7 +90,7 @@ server.listen(PORT, () => {
   console.log(c.cyan + "║" + " ".repeat(boxWidth) + "║" + c.reset);
   console.log(c.cyan + "╠" + "═".repeat(boxWidth) + "╣" + c.reset);
 
-  const footerText = " Conecta vía URL o escanea el QR ";
+  const footerText = " Connect via URL or scan the QR code ";
   const footerPad = Math.floor((boxWidth - footerText.length) / 2);
   const footerPadStr = " ".repeat(footerPad);
   const footerPadRight = " ".repeat(boxWidth - footerText.length - footerPad);
@@ -106,5 +106,5 @@ server.listen(PORT, () => {
     });
   });
 
-  console.log("\n" + c.dim + "  [ CTRL+C para detener ]" + c.reset + "\n");
+  console.log("\n" + c.dim + "  [ CTRL+C to stop ]" + c.reset + "\n");
 });
