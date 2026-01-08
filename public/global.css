@@ -1,57 +1,32 @@
 /* public/global.css */
 
 /* 1. RESET & BASE */
-*{ 
+* { 
   box-sizing: border-box; 
   -webkit-tap-highlight-color: transparent;
+  user-select: none; /* Prevenir selección de texto global */
 }
 
 html, body { 
   margin: 0;
   padding: 0;
   width: 100%; 
-  height: 100%;
-  overflow: hidden;
+  height: 100%; /* Usar 100% o 100vh según preferencia, 100% es más seguro para scroll */
+  overflow: hidden; /* Evita rebotes en iOS */
+  background: #202020;
 }
 
 body { 
-  background: #202020;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  user-select: none;
-  touch-action: none;
   font-family: sans-serif;
 }
 
-/* 2. UI / MENUS */
-#rotate-message { 
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #111;
-  z-index: 9999;
-  color: white;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
- }
+/* 2. UI / MENUS (Estilos por defecto - Horizontal/Landscape) */
 
-#rotate-message h1 { 
-  font-size: 50px;
-  margin: 0;
-}
-
-@media (orientation: portrait) { 
-  #rotate-message { display: flex; }
-  #gamepad-container { display: none; } 
-}
-
+/* Pantalla de "Touch to Start" */
 #start-overlay { 
   position: fixed;
   top: 0;
@@ -63,7 +38,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+}
+
+.overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #btn-fullscreen { 
@@ -76,10 +56,11 @@ body {
   cursor: pointer;
 }
 
+/* Botón de Engranaje */
 #btn-settings { 
   position: fixed;
-  top: 10px;
-  left: 50%;
+  top: 10px;        /* Arriba */
+  left: 50%;        /* Centro */
   transform: translateX(-50%);
   background: rgba(0,0,0,0.5);
   border: 1px solid white;
@@ -89,8 +70,10 @@ body {
   height: 40px;
   font-size: 20px;
   z-index: 2000;
+  cursor: pointer;
 }
 
+/* Modal de Configuración */
 #settings-modal { 
   display: none;
   position: fixed;
@@ -112,6 +95,7 @@ body {
   gap: 10px;
   justify-content: center;
   margin-bottom: 20px;
+  flex-wrap: wrap; /* Por si hay muchos botones */
 }
 
 .sel-btn { 
@@ -119,17 +103,73 @@ body {
   background: #555;
   color: white;
   border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-.sel-btn.active { 
+.sel-btn:active { 
   background: #5c7cfa;
 }
 
-/* 3. MAIN COINTAINER */
+/* 3. MAIN CONTAINER (Donde se cargan los skins) */
 #gamepad-container { 
   width: 100%;
   height: 100%;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+/* =========================================
+   4. MAGIA DE ROTACIÓN (MODO VERTICAL)
+   ========================================= */
+@media screen and (orientation: portrait) {
+
+  /* A. Rotar el Contenedor del Juego 90 grados */
+  #gamepad-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* Intercambiamos dimensiones: Ancho=AltoPantalla, Alto=AnchoPantalla */
+    width: 100vh;
+    height: 100vw;
+    transform: translate(-50%, -50%) rotate(90deg);
+    z-index: 1;
+  }
+
+  /* B. Rotar y Reposicionar el Botón de Ajustes */
+  #btn-settings {
+    transform: rotate(90deg); /* Icono rotado */
+    
+    /* Lo movemos a la "Derecha Física" del celular (Arriba Visual del mando) */
+    left: auto; 
+    right: 15px;      /* Pegado al borde derecho */
+    
+    top: 50%;         /* Centrado verticalmente */
+    margin-top: -20px; /* Ajuste fino */
+  }
+
+  /* C. Rotar el Modal de Configuración */
+  #settings-modal {
+    /* Forzamos posición central rotada */
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    
+    /* Ajustamos dimensiones para pantalla estrecha */
+    width: 80vh;      /* Basado en el largo del celular */
+    max-height: 90vw; /* Basado en el ancho del celular */
+  }
+
+  /* D. Rotar el texto de "Touch to Start" para que se lea bien */
+  .overlay-content {
+    transform: rotate(90deg);
+  }
+
+  .stick-zone {
+        transform: rotate(-90deg) !important; 
+        /* Ajuste fino: A veces al rotar se desplaza un poco, 
+           aseguramos que el origen sea el centro */
+        transform-origin: center center; 
+    }
 }
