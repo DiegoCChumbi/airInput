@@ -1,0 +1,199 @@
+.n64-skin {
+    width: 100%;
+    height: 100%;
+    background-color: #d3d3d3;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px 30px 20px;
+    box-sizing: border-box;
+    touch-action: none;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.top-triggers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+    z-index: 10;
+}
+
+.trigger-btn, .z-btn {
+    background: #a9a9a9;
+    border: 2px solid #808080;
+    color: #333;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #696969;
+}
+
+.trigger-btn {
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    width: 80px;
+    height: 50px;
+}
+
+.main-layout {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-top: 50px;
+}
+
+.side-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.right-handle {
+    justify-content: flex-start;
+    padding-top: 0px;
+    gap: 0;
+}
+
+.center-column {
+    flex: 0 0 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.z-btn {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.start-btn {
+    background: #cc0000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-weight: bold;
+    font-size: 11px;
+    box-shadow: 0 3px 0 #8b0000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dpad-container {
+    display: grid;
+    grid-template-columns: 45px 45px 45px;
+    grid-template-rows: 45px 45px 45px;
+    margin-bottom: 10px;
+    transform: scale(0.95);
+}
+
+.dpad-btn, .dpad-center {
+    background: #555;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dpad-diag { background: transparent; border: none; outline: none; pointer-events: auto; }
+.d-nw { grid-column: 1; grid-row: 1; }
+.d-up { grid-column: 2; grid-row: 1; border-radius: 5px 5px 0 0; }
+.d-ne { grid-column: 3; grid-row: 1; }
+.d-left { grid-column: 1; grid-row: 2; border-radius: 5px 0 0 5px; }
+.dpad-center { grid-column: 2; grid-row: 2; background: #555; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+.d-right { grid-column: 3; grid-row: 2; border-radius: 0 5px 5px 0; }
+.d-sw { grid-column: 1; grid-row: 3; }
+.d-down { grid-column: 2; grid-row: 3; border-radius: 0 0 5px 5px; }
+.d-se { grid-column: 3; grid-row: 3; }
+
+.analog-zone {
+    width: 120px;
+    height: 120px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 50%;
+    border: 2px solid #bbb;
+    position: relative;
+}
+
+.c-grid {
+    display: grid;
+    grid-template-columns: 42px 42px 42px;
+    grid-template-rows: 42px 42px 42px;
+    gap: 4px;
+    margin-left: 30px;
+}
+
+.c-btn {
+    background: #ffcc00;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    color: #664400;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 3px 0 #e6b800;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.c-up    { grid-column: 2; grid-row: 1; }
+.c-left  { grid-column: 1; grid-row: 2; }
+.c-right { grid-column: 3; grid-row: 2; }
+.c-down  { grid-column: 2; grid-row: 3; }
+.c-spacer { pointer-events: none; }
+
+
+.ab-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 15px;
+    margin-right: 40px;
+}
+
+.ab-btn {
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    display: flex; justify-content: center; align-items: center;
+}
+
+.a-btn { 
+    background: #0000cc; 
+    margin-top: 25px; 
+}
+
+.b-btn { 
+    background: #009900; 
+    margin-top: 0; 
+}
+
+.trigger-btn.active, .z-btn.active { transform: translateY(4px); box-shadow: none; filter: brightness(0.8); border-bottom: none; }
+.dpad-btn.active { background: #777; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+.dpad-diag.active { background: rgba(0,0,0,0.05); border-radius: 50%; }
+.start-btn.active { transform: scale(0.95); box-shadow: none; filter: brightness(0.9); }
+.c-btn.active, .ab-btn.active { transform: scale(0.95); box-shadow: none; filter: brightness(0.9); }
