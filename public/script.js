@@ -95,9 +95,8 @@ function scanGamePad(e) {
 
   activeButtons = buttonsBeingTouched;
 }
-
 // ==========================================
-// 4. JOYSTICK LOGIC (Nipple.js)
+// 4. JOYSTICK LOGIC 
 // ==========================================
 function initJoysticks() {
   activeJoysticks.forEach(j => j.destroy());
@@ -107,38 +106,91 @@ function initJoysticks() {
     mode: 'static',
     position: { left: '50%', top: '50%' },
     color: 'white',
-    size: 90
+    size: 100
+  };
+
+  const fixVisuals = (joystick, data) => {
+    if (window.innerHeight <= window.innerWidth) return;
+
+    if (!joystick.ui || !joystick.ui.front || !joystick.ui.back) return;
+
+    const rect = joystick.ui.back.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+
+    const touchX = data.position.x;
+    const touchY = data.position.y;
+
+    let deltaX = touchX - centerX;
+    let deltaY = touchY - centerY;
+
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const maxDist = options.size / 2;
+
+    if (distance > maxDist) {
+      const ratio = maxDist / distance;
+      deltaX *= ratio;
+      deltaY *= ratio;
+    }
+
+    const cssX = deltaY;
+    const cssY = -deltaX;
+
+    joystick.ui.front.style.transform = `translate(${cssX}px, ${cssY}px)`;
+  };
+
+  const processJoystickData = (data) => {
+    if (!data.vector) return { x: 0, y: 0 };
+    let x = data.vector.x;
+    let y = -data.vector.y;
+
+    if (window.innerHeight > window.innerWidth) {
+      const tempX = x;
+      x = y;
+      y = -tempX;
+    }
+    return { x, y };
   };
 
   const zoneLeft = document.getElementById('stick-left-zone');
   if (zoneLeft) {
     const joyLeft = nipplejs.create({ zone: zoneLeft, ...options });
+
     joyLeft.on('move', (evt, data) => {
-      if (data.vector) {
-        socket.emit("axis", { axis: 'lx', value: data.vector.x });
-        socket.emit("axis", { axis: 'ly', value: -data.vector.y });
-      }
+      const { x, y } = processJoystickData(data);
+      socket.emit("axis", { axis: 'lx', value: x });
+      socket.emit("axis", { axis: 'ly', value: y });
+
+      requestAnimationFrame(() => fixVisuals(joyLeft, data));
     });
+
     joyLeft.on('end', () => {
       socket.emit("axis", { axis: 'lx', value: 0 });
       socket.emit("axis", { axis: 'ly', value: 0 });
+      if (joyLeft.ui && joyLeft.ui.front) joyLeft.ui.front.style.transform = `translate(0px, 0px)`;
     });
+
     activeJoysticks.push(joyLeft);
   }
 
   const zoneRight = document.getElementById('stick-right-zone');
   if (zoneRight) {
     const joyRight = nipplejs.create({ zone: zoneRight, ...options });
+
     joyRight.on('move', (evt, data) => {
-      if (data.vector) {
-        socket.emit("axis", { axis: 'rx', value: data.vector.x });
-        socket.emit("axis", { axis: 'ry', value: -data.vector.y });
-      }
+      const { x, y } = processJoystickData(data);
+      socket.emit("axis", { axis: 'rx', value: x });
+      socket.emit("axis", { axis: 'ry', value: y });
+
+      requestAnimationFrame(() => fixVisuals(joyRight, data));
     });
+
     joyRight.on('end', () => {
       socket.emit("axis", { axis: 'rx', value: 0 });
       socket.emit("axis", { axis: 'ry', value: 0 });
+      if (joyRight.ui && joyRight.ui.front) joyRight.ui.front.style.transform = `translate(0px, 0px)`;
     });
+
     activeJoysticks.push(joyRight);
   }
 }
