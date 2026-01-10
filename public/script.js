@@ -96,7 +96,7 @@ function scanGamePad(e) {
   activeButtons = buttonsBeingTouched;
 }
 // ==========================================
-// 4. JOYSTICK LOGIC (FIX FINAL - COORDENADAS ABSOLUTAS)
+// 4. JOYSTICK LOGIC 
 // ==========================================
 function initJoysticks() {
   activeJoysticks.forEach(j => j.destroy());
@@ -109,28 +109,21 @@ function initJoysticks() {
     size: 100
   };
 
-  // Corrección Visual: Fuerza a la bolita a seguir al dedo usando coordenadas de pantalla
   const fixVisuals = (joystick, data) => {
-    // Solo aplicamos esto si estamos en modo vertical (rotado)
     if (window.innerHeight <= window.innerWidth) return;
 
-    // Verificamos que existan los elementos visuales
     if (!joystick.ui || !joystick.ui.front || !joystick.ui.back) return;
 
-    // 1. Obtenemos el centro real del joystick en la pantalla
     const rect = joystick.ui.back.getBoundingClientRect();
     const centerX = rect.left + (rect.width / 2);
     const centerY = rect.top + (rect.height / 2);
 
-    // 2. Obtenemos la posición del dedo (Touch)
     const touchX = data.position.x;
     const touchY = data.position.y;
 
-    // 3. Calculamos la distancia (Delta)
     let deltaX = touchX - centerX;
     let deltaY = touchY - centerY;
 
-    // 4. Limitamos el movimiento al radio del joystick (para que no se salga)
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     const maxDist = options.size / 2;
 
@@ -140,29 +133,18 @@ function initJoysticks() {
       deltaY *= ratio;
     }
 
-    // 5. APLICAMOS LA MAGIA: 
-    // Como el contenedor está rotado 90 grados (X es Y, Y es -X), 
-    // tenemos que intercambiar los valores para el "translate" CSS interno.
-
-    // En un contenedor rotado 90deg:
-    // - Moverse visualmente en X (Horizontal) requiere mover en Y el contenedor CSS.
-    // - Moverse visualmente en Y (Vertical) requiere mover en -X el contenedor CSS.
-
     const cssX = deltaY;
     const cssY = -deltaX;
 
-    // Forzamos la posición
     joystick.ui.front.style.transform = `translate(${cssX}px, ${cssY}px)`;
   };
 
-  // Corrección de Datos: Para que el juego entienda la dirección
   const processJoystickData = (data) => {
     if (!data.vector) return { x: 0, y: 0 };
     let x = data.vector.x;
     let y = -data.vector.y;
 
     if (window.innerHeight > window.innerWidth) {
-      // Intercambio de ejes para el servidor
       const tempX = x;
       x = y;
       y = -tempX;
@@ -170,18 +152,15 @@ function initJoysticks() {
     return { x, y };
   };
 
-  // --- JOYSTICK IZQUIERDO ---
   const zoneLeft = document.getElementById('stick-left-zone');
   if (zoneLeft) {
     const joyLeft = nipplejs.create({ zone: zoneLeft, ...options });
 
     joyLeft.on('move', (evt, data) => {
-      // Enviar datos
       const { x, y } = processJoystickData(data);
       socket.emit("axis", { axis: 'lx', value: x });
       socket.emit("axis", { axis: 'ly', value: y });
 
-      // Corregir visual
       requestAnimationFrame(() => fixVisuals(joyLeft, data));
     });
 
@@ -194,7 +173,6 @@ function initJoysticks() {
     activeJoysticks.push(joyLeft);
   }
 
-  // --- JOYSTICK DERECHO ---
   const zoneRight = document.getElementById('stick-right-zone');
   if (zoneRight) {
     const joyRight = nipplejs.create({ zone: zoneRight, ...options });

@@ -4,15 +4,15 @@
 * { 
   box-sizing: border-box; 
   -webkit-tap-highlight-color: transparent;
-  user-select: none; /* Prevenir selección de texto global */
+  user-select: none;
 }
 
 html, body { 
   margin: 0;
   padding: 0;
   width: 100%; 
-  height: 100%; /* Usar 100% o 100vh según preferencia, 100% es más seguro para scroll */
-  overflow: hidden; /* Evita rebotes en iOS */
+  height: 100%;
+  overflow: hidden;
   background: #202020;
 }
 
@@ -24,9 +24,6 @@ body {
   font-family: sans-serif;
 }
 
-/* 2. UI / MENUS (Estilos por defecto - Horizontal/Landscape) */
-
-/* Pantalla de "Touch to Start" */
 #start-overlay { 
   position: fixed;
   top: 0;
@@ -56,11 +53,10 @@ body {
   cursor: pointer;
 }
 
-/* Botón de Engranaje */
 #btn-settings { 
   position: fixed;
-  top: 10px;        /* Arriba */
-  left: 50%;        /* Centro */
+  top: 10px;
+  left: 50%;
   transform: translateX(-50%);
   background: rgba(0,0,0,0.5);
   border: 1px solid white;
@@ -73,7 +69,6 @@ body {
   cursor: pointer;
 }
 
-/* Modal de Configuración */
 #settings-modal { 
   display: none;
   position: fixed;
@@ -95,7 +90,7 @@ body {
   gap: 10px;
   justify-content: center;
   margin-bottom: 20px;
-  flex-wrap: wrap; /* Por si hay muchos botones */
+  flex-wrap: wrap;
 }
 
 .sel-btn { 
@@ -111,7 +106,6 @@ body {
   background: #5c7cfa;
 }
 
-/* 3. MAIN CONTAINER (Donde se cargan los skins) */
 #gamepad-container { 
   width: 100%;
   height: 100%;
@@ -123,53 +117,40 @@ body {
 
 
 /* =========================================
-   4. MAGIA DE ROTACIÓN (MODO VERTICAL)
+   4.ROTATION FOR PORTRAIT MODE 
    ========================================= */
 @media screen and (orientation: portrait) {
 
-  /* A. Rotar el Contenedor del Juego 90 grados */
   #gamepad-container {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* Intercambiamos dimensiones: Ancho=AltoPantalla, Alto=AnchoPantalla */
     width: 100vh;
     height: 100vw;
     transform: translate(-50%, -50%) rotate(90deg);
     z-index: 1;
   }
 
-  /* B. Rotar y Reposicionar el Botón de Ajustes */
   #btn-settings {
-    transform: rotate(90deg); /* Icono rotado */
-    
-    /* Lo movemos a la "Derecha Física" del celular (Arriba Visual del mando) */
+    transform: rotate(90deg);
     left: auto; 
-    right: 15px;      /* Pegado al borde derecho */
-    
-    top: 50%;         /* Centrado verticalmente */
-    margin-top: -20px; /* Ajuste fino */
+    right: 15px;
+    top: 50%;
+    margin-top: -20px;
   }
 
-  /* C. Rotar el Modal de Configuración */
   #settings-modal {
-    /* Forzamos posición central rotada */
     transform: translate(-50%, -50%) rotate(90deg) !important;
-    
-    /* Ajustamos dimensiones para pantalla estrecha */
-    width: 80vh;      /* Basado en el largo del celular */
-    max-height: 90vw; /* Basado en el ancho del celular */
+    width: 80vh;
+    max-height: 90vw;
   }
 
-  /* D. Rotar el texto de "Touch to Start" para que se lea bien */
   .overlay-content {
     transform: rotate(90deg);
   }
 
   .stick-zone {
         transform: rotate(-90deg) !important; 
-        /* Ajuste fino: A veces al rotar se desplaza un poco, 
-           aseguramos que el origen sea el centro */
         transform-origin: center center; 
     }
 }
