@@ -1,4 +1,5 @@
 **Español**: Puedes leer este documento en español [aquí](README.es.md).
+
 # AirInput
 
 Turn your smartphone into a wireless controller for your PC. Play your games with customizable gamepad layouts directly from your browser, no app installation required.
@@ -200,6 +201,11 @@ This project is licensed under the MIT License.
 - [Socket.IO](https://socket.io/) - Real-time communication
 - [vgamepad](https://github.com/yagnateos/vgamepad) - Virtual gamepad for Windows
 - [ViGEmBus](https://github.com/ViGEm/ViGEmBus) - Virtual gamepad driver for Windows
+
+## TODO
+
+- [ ] Allow phone user to input a name to identify each controller
+- [ ] Allow to link phones with controller numbers
 
 ---
 
