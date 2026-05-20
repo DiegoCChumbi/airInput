@@ -24,6 +24,8 @@ BTN_MAP = {
 # Player dictionaries: { 'username': gamepad_object }
 players = {}
 players_axes = {}
+player_numbers = {} # {username: controller_number}
+global_controller_counter = 0
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("127.0.0.1", 9999))
@@ -46,15 +48,20 @@ while True:
         # Handle disconnection
         if msg_type == "disconnect":
             if username in players:
-                # The vgamepad library handles destruction on object deletion
+                controller_num = player_numbers.get(username, 'N/A')
                 del players[username]
                 del players_axes[username]
-                print(f"Control for player '{username}' removed.")
+                del player_numbers[username]
+                print(f"Control for player '{username}' (Controller{controller_num}) removed.")
             continue
 
         # Create control for new player
         if username not in players:
-            print(f"New player registered: '{username}'")
+            global_controller_counter += 1
+            controller_number = global_controller_counter
+            player_numbers[username] = controller_number
+            
+            print(f"New player registered: '{username}' as 'airInput-Controller{controller_number}'")
             gamepad = vg.VX360Gamepad()
             players[username] = gamepad
             players_axes[username] = {'lx': 0, 'ly': 0, 'rx': 0, 'ry': 0, 'lt': 0, 'rt': 0}
@@ -70,16 +77,16 @@ while True:
 
             if btn_name == "L2":
                 gamepad.left_trigger(255 if state else 0)
-                print(f"[{username}] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
             elif btn_name == "R2":
                 gamepad.right_trigger(255 if state else 0)
-                print(f"[{username}] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
             elif btn_name in BTN_MAP:
                 if state:
                     gamepad.press_button(BTN_MAP[btn_name])
                 else:
                     gamepad.release_button(BTN_MAP[btn_name])
-                print(f"[{username}] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
             
             gamepad.update()
 
@@ -98,7 +105,7 @@ while True:
 
             gamepad.left_joystick(x_value=lx_val, y_value=ly_val)
             gamepad.right_joystick(x_value=rx_val, y_value=ry_val)
-            print(f"[{username}] Axis: {axis} -> {val:.2f}")
+            print(f"[{username} (C{player_numbers[username]})] Axis: {axis} -> {val:.2f}")
             gamepad.update()
 
     except socket.timeout:

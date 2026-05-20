@@ -28,6 +28,8 @@ axis_mapping = {
 
 # Dictionary to store controls: { 'username': uinput_device }
 players = {}
+player_numbers = {} # {username: controller_number}
+global_controller_counter = 0
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("127.0.0.1", 9999))
@@ -47,16 +49,22 @@ while True:
         # Handle disconnection
         if msg_type == "disconnect":
             if username in players:
+                controller_num = player_numbers.get(username, 'N/A')
                 del players[username]
-                print(f"Control for player '{username}' removed.")
+                del player_numbers[username]
+                print(f"Control for player '{username}' (Controller{controller_num}) removed.")
             continue
 
         # If it's a new player, create a new virtual device
         if username not in players:
-            device_name = f"AirInput - {username}"
+            global_controller_counter += 1
+            controller_number = global_controller_counter
+            player_numbers[username] = controller_number
+
+            device_name = f"airInput-Controller{controller_number}"
             new_device = uinput.Device(EVENTS, name=device_name)
             players[username] = new_device
-            print(f"New control created for player: '{username}'")
+            print(f"New control created for player: '{username}' as '{device_name}'")
 
         # Handle button presses
         if msg_type == "btn":
@@ -64,7 +72,7 @@ while True:
             state = int(parts[3])
             if button in mapping:
                 players[username].emit(mapping[button], state)
-                print(f"[{username}] Button: {button} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {button} -> {'Pressed' if state else 'Released'}")
 
         # Handle axis movement
         elif msg_type == "axis":
@@ -73,7 +81,7 @@ while True:
             if axis_name in axis_mapping:
                 scaled_value = int(value * MAX_ABS)
                 players[username].emit(axis_mapping[axis_name], scaled_value)
-                print(f"[{username}] Axis: {axis_name} -> {scaled_value}")
+                print(f"[{username} (C{player_numbers[username]})] Axis: {axis_name} -> {scaled_value}")
 
     except (ValueError, IndexError) as e:
         print(f"Error processing message: '{msg}'. Malformed message. Details: {e}")
