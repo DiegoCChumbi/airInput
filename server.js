@@ -25,32 +25,55 @@ function getLocalIP() {
   return 'localhost';
 }
 
-io.on("connection", socket => {
-  console.log(`Player connected: ${socket.id}`);
+const players = new Map(); // Almacenará { socket.id -> username }
+const activeUsernames = new Set(); // Para evitar nombres de usuario duplicados
 
-  // socket.on("input", ({ button, state }) => {
-  //   // FORMATO DEL MENSAJE: "ID_SOCKET:BOTON:ESTADO"
-  //   // Ejemplo: "xHy7_zm9:A:1"
-  //   const msg = Buffer.from(`${socket.id}:${button}:${state}`);
-  //   udp.send(msg, 9999, "127.0.0.1");
-  // });
+io.on("connection", socket => {
+  console.log(`Client connected: ${socket.id}`);
+
+  socket.on("register_player", ({ username }) => {
+    if (activeUsernames.has(username)) {
+      socket.emit('registration_failed', `El nombre "${username}" ya está en uso.`);
+      return;
+    }
+
+    console.log(`Player registered: ${username} (${socket.id})`);
+    players.set(socket.id, username);
+    activeUsernames.add(username);
+    socket.emit('registration_success');
+  });
 
   socket.on("input", ({ button, state }) => {
-    // Format: "ID:btn:NAME:STATUS"
-    const msg = Buffer.from(`${socket.id}:btn:${button}:${state}`);
+    if (!players.has(socket.id)) return; // Ignorar si no está registrado
+    const username = players.get(socket.id);
+    const msg = Buffer.from(`${username}:btn:${button}:${state}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
 
   socket.on("axis", ({ axis, value }) => {
-    // Format: "ID:axis:AXIS_NAME:VALUE_FLOAT"
-    const msg = Buffer.from(`${socket.id}:axis:${axis}:${value.toFixed(4)}`);
+    if (!players.has(socket.id)) return;
+    const username = players.get(socket.id);
+    const msg = Buffer.from(`${username}:axis:${axis}:${value.toFixed(4)}`);
     udp.send(msg, 9999, "127.0.0.1");
   });
 
   socket.on("disconnect", () => {
-    console.log(`Player disconnected: ${socket.id}`);
+    if (players.has(socket.id)) {
+      const username = players.get(socket.id);
+      console.log(`Player disconnected: ${username}`);
+
+      // Notificar a Python para que elimine el mando virtual
+      const msg = Buffer.from(`${username}:disconnect`);
+      udp.send(msg, 9999, "127.0.0.1");
+
+      players.delete(socket.id);
+      activeUsernames.delete(username);
+    } else {
+      console.log(`Client disconnected: ${socket.id}`);
+    }
   });
 });
+
 
 const PORT = 3000;
 server.listen(PORT, () => {

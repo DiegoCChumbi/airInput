@@ -15,7 +15,13 @@
 
 <body>
 
-  <button id="btn-settings">⚙️</button>
+  <div id="join-screen">
+    <h1>AirInput</h1>
+    <input type="text" id="username-input" placeholder="Ingresa tu nombre" autocomplete="off" />
+    <button id="join-btn">Unirse</button>
+  </div>
+
+  <button id="btn-settings" style="display: none;">⚙️</button>
 
   <div id="settings-modal">
     <h3>Configuración</h3>
@@ -28,17 +34,7 @@
     <button id="close-settings">Close</button>
   </div>
 
-  <!-- <div id="rotate-message"> -->
-  <!--   <h1>↻</h1> -->
-  <!--   <p>Rotate your input</p> -->
-  <!-- </div> -->
-
-  <div id="start-overlay">
-    <h2 style="color:white; margin-bottom: 20px;">Control Ready</h2>
-    <button id="btn-fullscreen">TOUCH TO START</button>
-  </div>
-
-  <div id="gamepad-container"></div>
+  <div id="gamepad-container" style="display: none;"></div>
 
   <script src="script.js"></script>
 </body>
