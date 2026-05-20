@@ -204,8 +204,9 @@ This project is licensed under the MIT License.
 
 ## TODO
 
-- [ ] Allow phone user to input a name to identify each controller
-- [ ] Allow to link phones with controller numbers
+- [x] Allow phone user to input a name to identify each controller
+- [x] Allow to link phones with controller numbers
+- [ ] Create your own network to work without wifi.
 
 ---
 
