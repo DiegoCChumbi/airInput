@@ -46,6 +46,20 @@ while True:
         username = parts[0]
         msg_type = parts[1]
 
+        # Handle system commands from Go TUI
+        if username == "system":
+            command = parts[1]
+            if command == "swap":
+                user_a, user_b = parts[2], parts[3]
+                if user_a in players and user_b in players:
+                    # Swap the actual device objects
+                    players[user_a], players[user_b] = players[user_b], players[user_a]
+                    
+                    # Swap numbers for consistent logging
+                    player_numbers[user_a], player_numbers[user_b] = player_numbers[user_b], player_numbers[user_a]
+                    print(f"[SYSTEM] Swapped controller devices for '{user_a}' and '{user_b}'")
+            continue
+
         # Handle disconnection
         if msg_type == "disconnect":
             if username in players:
@@ -54,17 +68,27 @@ while True:
                 del player_numbers[username]
                 print(f"Control for player '{username}' (Controller{controller_num}) removed.")
             continue
+        
+        # When Node.js asks for a new controller ID
+        if msg_type == "get_id":
+            if username not in players:
+                global_controller_counter += 1
+                controller_number = global_controller_counter
+                player_numbers[username] = controller_number
 
-        # If it's a new player, create a new virtual device
+                device_name = f"airInput-Controller{controller_number}"
+                new_device = uinput.Device(EVENTS, name=device_name)
+                players[username] = new_device
+                print(f"New control created for player: '{username}' as '{device_name}'")
+            
+            # Respond to Node.js with the controller ID
+            response_msg = f"{username}:controller_id:{player_numbers[username]}".encode()
+            sock.sendto(response_msg, addr)
+            continue
+
+        # If a player is not registered, ignore their input
         if username not in players:
-            global_controller_counter += 1
-            controller_number = global_controller_counter
-            player_numbers[username] = controller_number
-
-            device_name = f"airInput-Controller{controller_number}"
-            new_device = uinput.Device(EVENTS, name=device_name)
-            players[username] = new_device
-            print(f"New control created for player: '{username}' as '{device_name}'")
+            continue
 
         # Handle button presses
         if msg_type == "btn":
