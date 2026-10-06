@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -91,25 +92,58 @@ func startHotspotLinux(iface string) error {
 	if err != nil {
 		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(out)))
 	}
+
+	// Tell NetworkManager to treat this connection as trusted so firewalld allows all traffic on it
+	exec.Command("nmcli", "connection", "modify", hotspotConName, "connection.zone", "trusted").Run()
+	exec.Command("nmcli", "device", "reapply", iface).Run()
+
 	return nil
 }
 
-// openFirewallPort adds the hotspot interface to the trusted zone permanently
-// so the rule survives any firewalld reload that NM might trigger.
+// openFirewallPort allows port 3000 (TCP) through firewalld, ufw, or iptables.
 func openFirewallPort(iface string) {
-	// Permanent rule (survives firewalld --reload)
-	exec.Command("firewall-cmd", "--permanent", "--zone=trusted", "--add-interface="+iface).Run()
-	// Reload to activate the permanent rule immediately
-	exec.Command("firewall-cmd", "--reload").Run()
+	if runtime.GOOS == "windows" {
+		exec.Command("netsh", "advfirewall", "firewall", "add", "rule", "name=AirInput", "dir=in", "action=allow", "protocol=TCP", "localport=3000").Run()
+		return
+	}
+
+	// 1. firewalld: allow port 3000 on nm-shared and default zones
+	exec.Command("firewall-cmd", "--zone=nm-shared", "--add-port=3000/tcp").Run()
+	exec.Command("firewall-cmd", "--zone=trusted", "--add-port=3000/tcp").Run()
+	exec.Command("firewall-cmd", "--add-port=3000/tcp").Run()
+
+	// 2. ufw: if installed and active
+	if _, err := exec.LookPath("ufw"); err == nil {
+		exec.Command("ufw", "allow", "3000/tcp").Run()
+	}
+
+	// 3. iptables: ensure port 3000 is accepted
+	if _, err := exec.LookPath("iptables"); err == nil {
+		if exec.Command("iptables", "-C", "INPUT", "-p", "tcp", "--dport", "3000", "-j", "ACCEPT").Run() != nil {
+			exec.Command("iptables", "-I", "INPUT", "-p", "tcp", "--dport", "3000", "-j", "ACCEPT").Run()
+		}
+	}
 }
 
-// closeFirewallPort removes the permanent rule and restores the interface
-// to the default zone when the hotspot is stopped.
+// closeFirewallPort removes the firewall rules added by openFirewallPort.
 func closeFirewallPort(iface string) {
-	exec.Command("firewall-cmd", "--permanent", "--zone=trusted", "--remove-interface="+iface).Run()
-	exec.Command("firewall-cmd", "--reload").Run()
-}
+	if runtime.GOOS == "windows" {
+		exec.Command("netsh", "advfirewall", "firewall", "delete", "rule", "name=AirInput").Run()
+		return
+	}
 
+	exec.Command("firewall-cmd", "--zone=nm-shared", "--remove-port=3000/tcp").Run()
+	exec.Command("firewall-cmd", "--zone=trusted", "--remove-port=3000/tcp").Run()
+	exec.Command("firewall-cmd", "--remove-port=3000/tcp").Run()
+
+	if _, err := exec.LookPath("ufw"); err == nil {
+		exec.Command("ufw", "delete", "allow", "3000/tcp").Run()
+	}
+
+	if _, err := exec.LookPath("iptables"); err == nil {
+		exec.Command("iptables", "-D", "INPUT", "-p", "tcp", "--dport", "3000", "-j", "ACCEPT").Run()
+	}
+}
 
 func startHotspotWindows() error {
 	steps := [][]string{
@@ -127,9 +161,9 @@ func startHotspotWindows() error {
 }
 
 // waitForHotspotIP polls until the hotspot interface has an IP or times out (~20s).
-func waitForHotspotIP() (string, error) {
+func waitForHotspotIP(iface string) (string, error) {
 	for i := 0; i < 20; i++ {
-		ip, err := getHotspotIP()
+		ip, err := getHotspotIP(iface)
 		if err == nil && ip != "" {
 			return ip, nil
 		}
@@ -138,24 +172,50 @@ func waitForHotspotIP() (string, error) {
 	return "", fmt.Errorf("timed out waiting for hotspot IP address")
 }
 
-func getHotspotIP() (string, error) {
+func getHotspotIP(iface string) (string, error) {
 	if runtime.GOOS == "windows" {
 		return getHotspotIPWindows()
 	}
-	return getHotspotIPLinux()
+	return getHotspotIPLinux(iface)
 }
 
-func getHotspotIPLinux() (string, error) {
+func getHotspotIPLinux(iface string) (string, error) {
+	// First check via net.InterfaceByName
+	if iface != "" {
+		if ifi, err := net.InterfaceByName(iface); err == nil {
+			if addrs, err := ifi.Addrs(); err == nil {
+				for _, addr := range addrs {
+					if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+						if ip4 := ipNet.IP.To4(); ip4 != nil {
+							return ip4.String(), nil
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Fallback to nmcli connection show
 	out, err := exec.Command("nmcli", "-g", "IP4.ADDRESS", "connection", "show", hotspotConName).Output()
-	if err != nil {
-		return "", err
+	if err == nil {
+		raw := strings.TrimSpace(string(out))
+		if raw != "" {
+			return strings.Split(raw, "/")[0], nil
+		}
 	}
-	raw := strings.TrimSpace(string(out))
-	if raw == "" {
-		return "", fmt.Errorf("no IP assigned yet")
+
+	// Fallback to nmcli device show
+	if iface != "" {
+		out, err = exec.Command("nmcli", "-g", "IP4.ADDRESS", "device", "show", iface).Output()
+		if err == nil {
+			raw := strings.TrimSpace(string(out))
+			if raw != "" {
+				return strings.Split(raw, "/")[0], nil
+			}
+		}
 	}
-	// Format returned: "10.42.0.1/24" — strip the prefix length
-	return strings.Split(raw, "/")[0], nil
+
+	return "", fmt.Errorf("no IP assigned yet")
 }
 
 func getHotspotIPWindows() (string, error) {
@@ -185,15 +245,11 @@ func getHotspotIPWindows() (string, error) {
 // stopHotspot shuts down the hotspot cleanly.
 func stopHotspot() {
 	if runtime.GOOS == "windows" {
+		closeFirewallPort("")
 		exec.Command("netsh", "wlan", "stop", "hostednetwork").Run()
 		return
 	}
-	// Get iface before bringing the connection down
-	out, _ := exec.Command("nmcli", "-g", "GENERAL.DEVICES", "connection", "show", hotspotConName).Output()
-	iface := strings.TrimSpace(string(out))
-	if iface != "" {
-		closeFirewallPort(iface)
-	}
+	closeFirewallPort("")
 	exec.Command("nmcli", "connection", "down", hotspotConName).Run()
 	exec.Command("nmcli", "connection", "delete", hotspotConName).Run()
 }

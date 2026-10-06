@@ -88,7 +88,7 @@ func (m *model) doStartHotspot() tea.Cmd {
 		if err := startHotspot(m.wifi.iface); err != nil {
 			return hotspotErrMsg{err}
 		}
-		ip, err := waitForHotspotIP()
+		ip, err := waitForHotspotIP(m.wifi.iface)
 		if err != nil {
 			return hotspotErrMsg{err}
 		}
@@ -348,7 +348,8 @@ func (m *model) View() string {
 	} else if m.hotspotActive {
 		b.WriteString(hotspotActiveStyle.Render(
 			fmt.Sprintf("📡 [ACTIVO]  Red: %s   Contraseña: %s", hotspotSSID, hotspotPass),
-		) + "\n\n")
+		) + "\n")
+		b.WriteString(helpStyle.Render("   💡 Si no carga en el móvil: apaga sus Datos Móviles o acepta 'Mantener Wi-Fi'") + "\n\n")
 	} else if m.hotspotErr != "" {
 		b.WriteString(warningStyle.Render("❌ Error hotspot: "+m.hotspotErr) + "\n\n")
 	} else if m.wifi.available {
