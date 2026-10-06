@@ -34,8 +34,8 @@ global_controller_counter = 0
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("127.0.0.1", 9999))
 
-print("Virtual Gamepad Server started (Linux).")
-print("Waiting for players to connect...")
+print("Virtual Gamepad Server started (Linux).", flush=True)
+print("Waiting for players to connect...", flush=True)
 
 while True:
     try:
@@ -57,7 +57,7 @@ while True:
                     
                     # Swap numbers for consistent logging
                     player_numbers[user_a], player_numbers[user_b] = player_numbers[user_b], player_numbers[user_a]
-                    print(f"[SYSTEM] Swapped controller devices for '{user_a}' and '{user_b}'")
+                    print(f"[SYSTEM] Swapped controller devices for '{user_a}' and '{user_b}'", flush=True)
             continue
 
         # Handle disconnection
@@ -66,7 +66,7 @@ while True:
                 controller_num = player_numbers.get(username, 'N/A')
                 del players[username]
                 del player_numbers[username]
-                print(f"Control for player '{username}' (Controller{controller_num}) removed.")
+                print(f"Control for player '{username}' (Controller{controller_num}) removed.", flush=True)
             continue
         
         # When Node.js asks for a new controller ID
@@ -79,7 +79,7 @@ while True:
                 device_name = f"airInput-Controller{controller_number}"
                 new_device = uinput.Device(EVENTS, name=device_name)
                 players[username] = new_device
-                print(f"New control created for player: '{username}' as '{device_name}'")
+                print(f"New control created for player: '{username}' as '{device_name}'", flush=True)
             
             # Respond to Node.js with the controller ID
             response_msg = f"{username}:controller_id:{player_numbers[username]}".encode()
@@ -96,7 +96,7 @@ while True:
             state = int(parts[3])
             if button in mapping:
                 players[username].emit(mapping[button], state)
-                print(f"[{username} (C{player_numbers[username]})] Button: {button} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {button} -> {'Pressed' if state else 'Released'}", flush=True)
 
         # Handle axis movement
         elif msg_type == "axis":
@@ -105,9 +105,9 @@ while True:
             if axis_name in axis_mapping:
                 scaled_value = int(value * MAX_ABS)
                 players[username].emit(axis_mapping[axis_name], scaled_value)
-                print(f"[{username} (C{player_numbers[username]})] Axis: {axis_name} -> {scaled_value}")
+                print(f"[{username} (C{player_numbers[username]})] Axis: {axis_name} -> {scaled_value}", flush=True)
 
     except (ValueError, IndexError) as e:
-        print(f"Error processing message: '{msg}'. Malformed message. Details: {e}")
+        print(f"Error processing message: '{msg}'. Malformed message. Details: {e}", flush=True)
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred: {e}", flush=True)

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -25,6 +26,14 @@ var (
 	playerStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#E0E0E0"))
 	cursorStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#00FF00")) // Bright green for cursor
 	selectedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFF00")) // Yellow for selected
+
+	hotspotActiveStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00FF88"))
+	hotspotInactiveStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#A9A9A9"))
+	warningStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FF8C00"))
+
+	logBoxStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("#555555")).Padding(0, 1).MarginTop(1)
+	logTitleStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00E5FF"))
+	logLineStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("#E0E0E0"))
 )
 
 // --- Model ---
@@ -36,6 +45,7 @@ type Player struct {
 type model struct {
 	qrCode      string
 	url         string
+	originalURL string // URL before hotspot was activated
 	players     []Player
 	cursor      int
 	selected    int // -1 means nothing is selected
@@ -44,23 +54,84 @@ type model struct {
 	udpConn     *net.UDPConn
 	err         error
 	nodeScanner *bufio.Scanner
+	nodeStdin   *bufio.Writer
+	// Hotspot state
+	wifi            wifiInfo
+	hotspotActive   bool
+	hotspotStarting bool
+	hotspotWarning  bool // waiting for user confirmation
+	hotspotErr      string
+	// Logs state
+	showLogs      bool
+	logs          []string
+	maxLogs       int
+	logFile       *os.File
+	pythonScanner *bufio.Scanner
 }
 
-type qrCodeMsg string
+type qrCodeMsg struct{ qr, url string }
 type playerConnectMsg Player
 type playerDisconnectMsg string
 type errorMsg struct{ err error }
+type wifiStatusMsg wifiInfo
+type hotspotStartedMsg struct{ ip string }
+type hotspotStoppedMsg struct{}
+type hotspotErrMsg struct{ err error }
+type pythonLogMsg string
 
-func initialModel() model {
+func initialModel(showLogs bool) model {
+	f, _ := os.OpenFile("airinput.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	return model{
 		players:  []Player{},
 		selected: -1,
+		showLogs: showLogs,
+		logs:     []string{},
+		maxLogs:  8,
+		logFile:  f,
 	}
 }
 
 // --- Commands & Logic ---
 func (m *model) Init() tea.Cmd {
-	return tea.Batch(m.startSubprocesses(), m.waitForNodeActivity())
+	return tea.Batch(m.startSubprocesses(), m.waitForNodeActivity(), m.waitForPythonLogs(), m.detectWifi())
+}
+
+func (m *model) detectWifi() tea.Cmd {
+	return func() tea.Msg { return wifiStatusMsg(getWifiInfo()) }
+}
+
+func (m *model) doStartHotspot() tea.Cmd {
+	return func() tea.Msg {
+		if err := startHotspot(m.wifi.iface); err != nil {
+			return hotspotErrMsg{err}
+		}
+		ip, err := waitForHotspotIP(m.wifi.iface)
+		if err != nil {
+			return hotspotErrMsg{err}
+		}
+		// Open firewall AFTER IP is assigned — ensures the interface
+		// is fully registered with firewalld and zone detection works.
+		openFirewallPort(m.wifi.iface)
+		return hotspotStartedMsg{ip: ip}
+	}
+}
+
+func (m *model) doStopHotspot() tea.Cmd {
+	return func() tea.Msg {
+		stopHotspot()
+		return hotspotStoppedMsg{}
+	}
+}
+
+// sendNodeCmd sends a JSON command to server.js via its stdin.
+func (m *model) sendNodeCmd(v interface{}) {
+	if m.nodeStdin == nil {
+		return
+	}
+	b, _ := json.Marshal(v)
+	m.nodeStdin.Write(b)
+	m.nodeStdin.WriteByte('\n')
+	m.nodeStdin.Flush()
 }
 
 func (m *model) startSubprocesses() tea.Cmd {
@@ -72,8 +143,18 @@ func (m *model) startSubprocesses() tea.Cmd {
 	} else {
 		pythonCmdName, pythonScript = "python3", "controller-linux.py"
 	}
-	m.pythonCmd = exec.Command(pythonCmdName, pythonScript)
-	m.pythonCmd.Stderr = os.Stderr
+	m.pythonCmd = exec.Command(pythonCmdName, "-u", pythonScript)
+	m.pythonCmd.Env = append(os.Environ(), "PYTHONUNBUFFERED=1")
+	pythonPipe, err := m.pythonCmd.StdoutPipe()
+	if err != nil {
+		return func() tea.Msg { return errorMsg{err} }
+	}
+	m.pythonScanner = bufio.NewScanner(pythonPipe)
+	if m.logFile != nil {
+		m.pythonCmd.Stderr = m.logFile
+	} else {
+		m.pythonCmd.Stderr = os.Stderr
+	}
 	m.pythonCmd.Stdin = nil // Disconnect stdin
 	if err := m.pythonCmd.Start(); err != nil {
 		return func() tea.Msg { return errorMsg{err} }
@@ -82,8 +163,16 @@ func (m *model) startSubprocesses() tea.Cmd {
 	// Start Node.js
 	m.nodeCmd = exec.Command("node", "server.js")
 	nodePipe, _ := m.nodeCmd.StdoutPipe()
-	m.nodeCmd.Stderr = os.Stderr
-	m.nodeCmd.Stdin = nil // Disconnect stdin
+	nodeInPipe, err := m.nodeCmd.StdinPipe()
+	if err != nil {
+		return func() tea.Msg { return errorMsg{err} }
+	}
+	m.nodeStdin = bufio.NewWriter(nodeInPipe)
+	if m.logFile != nil {
+		m.nodeCmd.Stderr = m.logFile
+	} else {
+		m.nodeCmd.Stderr = os.Stderr
+	}
 	m.nodeScanner = bufio.NewScanner(nodePipe)
 	if err := m.nodeCmd.Start(); err != nil {
 		return func() tea.Msg { return errorMsg{err} }
@@ -98,6 +187,18 @@ func (m *model) startSubprocesses() tea.Cmd {
 	m.udpConn = conn
 
 	return nil
+}
+
+func (m *model) waitForPythonLogs() tea.Cmd {
+	return func() tea.Msg {
+		if m.pythonScanner == nil {
+			return nil
+		}
+		if m.pythonScanner.Scan() {
+			return pythonLogMsg(m.pythonScanner.Text())
+		}
+		return nil
+	}
 }
 
 // waitForNodeActivity listens for JSON messages from server.js
@@ -121,8 +222,10 @@ func (m *model) waitForNodeActivity() tea.Cmd {
 
 		switch msgData["event"] {
 		case "server_ready":
-			m.url = msgData["url"].(string)
-			return qrCodeMsg(msgData["qr"].(string))
+			return qrCodeMsg{
+				qr:  msgData["qr"].(string),
+				url: msgData["url"].(string),
+			}
 		case "player_connect":
 			return playerConnectMsg{Username: msgData["username"].(string), ControllerID: int(msgData["controllerId"].(float64))}
 		case "player_disconnect":
@@ -144,8 +247,43 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
-			m.cleanup() // Clean up BEFORE quitting
+			m.cleanup()
 			return m, tea.Quit
+
+		case "l":
+			m.showLogs = !m.showLogs
+
+		case "h":
+			m.hotspotErr = ""
+			if m.hotspotActive {
+				// Stop the hotspot
+				return m, m.doStopHotspot()
+			}
+			if !m.wifi.available || m.hotspotStarting {
+				break
+			}
+			if m.wifi.connected {
+				// Warn user before cutting their WiFi
+				m.hotspotWarning = true
+			} else {
+				m.hotspotStarting = true
+				return m, m.doStartHotspot()
+			}
+
+		case "y":
+			if m.hotspotWarning {
+				m.hotspotWarning = false
+				m.hotspotStarting = true
+				return m, m.doStartHotspot()
+			}
+
+		case "n", "esc":
+			if m.hotspotWarning {
+				m.hotspotWarning = false
+				break
+			}
+			m.selected = -1
+
 		case "up", "k":
 			if m.cursor > 0 {
 				m.cursor--
@@ -158,29 +296,49 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor >= len(m.players) {
 				break
 			}
-			if m.selected == -1 { // Nothing selected, select current
+			if m.selected == -1 {
 				m.selected = m.cursor
-			} else { // One is already selected, perform the SWAP
-				if m.selected == m.cursor { // Deselect
+			} else {
+				if m.selected == m.cursor {
 					m.selected = -1
 				} else {
 					playerA := m.players[m.selected]
 					playerB := m.players[m.cursor]
-
-					// Send command to Python
 					m.sendSwapCommand(playerA.Username, playerB.Username)
-
-					// Update local state
 					m.players[m.selected].ControllerID, m.players[m.cursor].ControllerID = m.players[m.cursor].ControllerID, m.players[m.selected].ControllerID
-					m.selected = -1 // Reset selection
+					m.selected = -1
 				}
 			}
-		case "esc":
-			m.selected = -1 // Cancel selection
 		}
 	case qrCodeMsg:
-		m.qrCode = string(msg)
+		m.qrCode = msg.qr
+		m.url = msg.url
+		if m.originalURL == "" {
+			m.originalURL = msg.url
+		}
 		return m, m.waitForNodeActivity()
+
+	case wifiStatusMsg:
+		m.wifi = wifiInfo(msg)
+
+	case hotspotStartedMsg:
+		m.hotspotStarting = false
+		m.hotspotActive = true
+		newURL := fmt.Sprintf("http://%s:3000", msg.ip)
+		m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": newURL})
+
+	case hotspotStoppedMsg:
+		m.hotspotActive = false
+		m.hotspotStarting = false
+		// Restore original QR/URL
+		if m.originalURL != "" {
+			m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": m.originalURL})
+		}
+
+	case hotspotErrMsg:
+		m.hotspotStarting = false
+		m.hotspotActive = false
+		m.hotspotErr = msg.err.Error()
 	case playerConnectMsg:
 		m.players = append(m.players, Player(msg))
 		return m, m.waitForNodeActivity()
@@ -200,6 +358,18 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.selected = -1
 		return m, m.waitForNodeActivity()
+	case pythonLogMsg:
+		line := string(msg)
+		if line != "" {
+			if m.logFile != nil {
+				m.logFile.WriteString(line + "\n")
+			}
+			m.logs = append(m.logs, line)
+			if len(m.logs) > m.maxLogs {
+				m.logs = m.logs[len(m.logs)-m.maxLogs:]
+			}
+		}
+		return m, m.waitForPythonLogs()
 	case errorMsg:
 		m.err = msg.err
 		return m, tea.Quit
@@ -227,6 +397,23 @@ func (m *model) View() string {
 		b.WriteString("Generating QR code...\n\n")
 	}
 
+	// --- Hotspot section ---
+	if m.hotspotWarning {
+		b.WriteString(warningStyle.Render("⚠️  Activar el hotspot desconectará tu WiFi actual.") + "\n")
+		b.WriteString(helpStyle.Render("   Presiona 'y' para continuar o 'n' para cancelar.") + "\n\n")
+	} else if m.hotspotStarting {
+		b.WriteString(hotspotInactiveStyle.Render("📡 Iniciando hotspot...") + "\n\n")
+	} else if m.hotspotActive {
+		b.WriteString(hotspotActiveStyle.Render(
+			fmt.Sprintf("📡 [ACTIVO]  Red: %s   Contraseña: %s", hotspotSSID, hotspotPass),
+		) + "\n")
+		b.WriteString(helpStyle.Render("   💡 Si no carga en el móvil: apaga sus Datos Móviles o acepta 'Mantener Wi-Fi'") + "\n\n")
+	} else if m.hotspotErr != "" {
+		b.WriteString(warningStyle.Render("❌ Error hotspot: "+m.hotspotErr) + "\n\n")
+	} else if m.wifi.available {
+		b.WriteString(hotspotInactiveStyle.Render("📡 Hotspot inactivo") + "\n\n")
+	}
+
 	b.WriteString(playerListTitleStyle.Render("🎮 Connected Players") + "\n")
 	if len(m.players) == 0 {
 		b.WriteString("No players connected yet.\n")
@@ -247,9 +434,35 @@ func (m *model) View() string {
 		}
 	}
 
-	help := "Use ↑/↓ to navigate. Enter to select. Esc to cancel. 'q' to quit."
-	if m.selected != -1 {
-		help = fmt.Sprintf("Swapping player '%s'. Select another player to swap or Esc to cancel.", m.players[m.selected].Username)
+	if m.showLogs {
+		var logContent strings.Builder
+		logTitle := logTitleStyle.Render("📋 Logs en Vivo (presiona 'l' para ocultar)")
+		logContent.WriteString(logTitle + "\n")
+		if len(m.logs) == 0 {
+			logContent.WriteString(helpStyle.Render("  Esperando eventos de mandos / jugadores...") + "\n")
+		} else {
+			for _, line := range m.logs {
+				logContent.WriteString(logLineStyle.Render("  "+line) + "\n")
+			}
+		}
+		b.WriteString("\n" + logBoxStyle.Render(logContent.String()) + "\n")
+	}
+
+	logsHelp := "'l' logs [OFF]"
+	if m.showLogs {
+		logsHelp = "'l' logs [ON]"
+	}
+
+	var help string
+	switch {
+	case m.hotspotWarning:
+		help = "'y' confirmar  'n' cancelar"
+	case m.selected != -1:
+		help = fmt.Sprintf("Swapping '%s'. Select another to swap or Esc to cancel.", m.players[m.selected].Username)
+	case m.hotspotActive:
+		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' apagar hotspot  %s  'q' salir", logsHelp)
+	default:
+		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' hotspot  %s  'q' salir", logsHelp)
 	}
 	b.WriteString("\n" + helpStyle.Render(help) + "\n")
 
@@ -257,8 +470,14 @@ func (m *model) View() string {
 }
 
 func (m *model) cleanup() {
+	if m.hotspotActive {
+		stopHotspot()
+	}
 	if m.udpConn != nil {
 		m.udpConn.Close()
+	}
+	if m.logFile != nil {
+		m.logFile.Close()
 	}
 	if m.nodeCmd != nil && m.nodeCmd.Process != nil {
 		m.nodeCmd.Process.Signal(syscall.SIGTERM)
@@ -269,7 +488,11 @@ func (m *model) cleanup() {
 }
 
 func main() {
-	m := initialModel()
+	logsFlag := flag.Bool("logs", false, "Habilitar visualización de logs de entrada")
+	flag.BoolVar(logsFlag, "l", false, "Habilitar visualización de logs de entrada (shorthand)")
+	flag.Parse()
+
+	m := initialModel(*logsFlag)
 	p := tea.NewProgram(&m)
 
 	// Use an `if` block instead of `log.Fatalf` for a cleaner shutdown

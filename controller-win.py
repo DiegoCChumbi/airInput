@@ -31,8 +31,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("127.0.0.1", 9999))
 sock.settimeout(1.0)
 
-print("Virtual Gamepad Server started (Windows).")
-print("Waiting for players to connect...")
+print("Virtual Gamepad Server started (Windows).", flush=True)
+print("Waiting for players to connect...", flush=True)
 
 while True:
     try:
@@ -57,7 +57,7 @@ while True:
                     
                     # Swap numbers for consistent logging
                     player_numbers[user_a], player_numbers[user_b] = player_numbers[user_b], player_numbers[user_a]
-                    print(f"[SYSTEM] Swapped controller devices for '{user_a}' and '{user_b}'")
+                    print(f"[SYSTEM] Swapped controller devices for '{user_a}' and '{user_b}'", flush=True)
             continue
 
         # Handle disconnection
@@ -67,7 +67,7 @@ while True:
                 del players[username]
                 del players_axes[username]
                 del player_numbers[username]
-                print(f"Control for player '{username}' (Controller{controller_num}) removed.")
+                print(f"Control for player '{username}' (Controller{controller_num}) removed.", flush=True)
             continue
 
         # When Node.js asks for a new controller ID
@@ -77,7 +77,7 @@ while True:
                 controller_number = global_controller_counter
                 player_numbers[username] = controller_number
 
-                print(f"New player registered: '{username}' as 'airInput-Controller{controller_number}'")
+                print(f"New player registered: '{username}' as 'airInput-Controller{controller_number}'", flush=True)
                 gamepad = vg.VX360Gamepad()
                 players[username] = gamepad
                 players_axes[username] = {'lx': 0, 'ly': 0, 'rx': 0, 'ry': 0, 'lt': 0, 'rt': 0}
@@ -102,16 +102,16 @@ while True:
 
             if btn_name == "L2":
                 gamepad.left_trigger(255 if state else 0)
-                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}", flush=True)
             elif btn_name == "R2":
                 gamepad.right_trigger(255 if state else 0)
-                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}", flush=True)
             elif btn_name in BTN_MAP:
                 if state:
                     gamepad.press_button(BTN_MAP[btn_name])
                 else:
                     gamepad.release_button(BTN_MAP[btn_name])
-                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}")
+                print(f"[{username} (C{player_numbers[username]})] Button: {btn_name} -> {'Pressed' if state else 'Released'}", flush=True)
             
             gamepad.update()
 
@@ -130,13 +130,13 @@ while True:
 
             gamepad.left_joystick(x_value=lx_val, y_value=ly_val)
             gamepad.right_joystick(x_value=rx_val, y_value=ry_val)
-            print(f"[{username} (C{player_numbers[username]})] Axis: {axis} -> {val:.2f}")
+            print(f"[{username} (C{player_numbers[username]})] Axis: {axis} -> {val:.2f}", flush=True)
             gamepad.update()
 
     except socket.timeout:
         continue
     except (ValueError, IndexError) as e:
-        print(f"Error processing message: '{msg}'. Malformed message. Details: {e}")
+        print(f"Error processing message: '{msg}'. Malformed message. Details: {e}", flush=True)
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred: {e}", flush=True)
 
