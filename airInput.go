@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -29,6 +30,10 @@ var (
 	hotspotActiveStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00FF88"))
 	hotspotInactiveStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#A9A9A9"))
 	warningStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FF8C00"))
+
+	logBoxStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("#555555")).Padding(0, 1).MarginTop(1)
+	logTitleStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00E5FF"))
+	logLineStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("#E0E0E0"))
 )
 
 // --- Model ---
@@ -56,6 +61,12 @@ type model struct {
 	hotspotStarting bool
 	hotspotWarning  bool // waiting for user confirmation
 	hotspotErr      string
+	// Logs state
+	showLogs      bool
+	logs          []string
+	maxLogs       int
+	logFile       *os.File
+	pythonScanner *bufio.Scanner
 }
 
 type qrCodeMsg struct{ qr, url string }
@@ -66,17 +77,23 @@ type wifiStatusMsg wifiInfo
 type hotspotStartedMsg struct{ ip string }
 type hotspotStoppedMsg struct{}
 type hotspotErrMsg struct{ err error }
+type pythonLogMsg string
 
-func initialModel() model {
+func initialModel(showLogs bool) model {
+	f, _ := os.OpenFile("airinput.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	return model{
 		players:  []Player{},
 		selected: -1,
+		showLogs: showLogs,
+		logs:     []string{},
+		maxLogs:  8,
+		logFile:  f,
 	}
 }
 
 // --- Commands & Logic ---
 func (m *model) Init() tea.Cmd {
-	return tea.Batch(m.startSubprocesses(), m.waitForNodeActivity(), m.detectWifi())
+	return tea.Batch(m.startSubprocesses(), m.waitForNodeActivity(), m.waitForPythonLogs(), m.detectWifi())
 }
 
 func (m *model) detectWifi() tea.Cmd {
@@ -126,8 +143,18 @@ func (m *model) startSubprocesses() tea.Cmd {
 	} else {
 		pythonCmdName, pythonScript = "python3", "controller-linux.py"
 	}
-	m.pythonCmd = exec.Command(pythonCmdName, pythonScript)
-	m.pythonCmd.Stderr = os.Stderr
+	m.pythonCmd = exec.Command(pythonCmdName, "-u", pythonScript)
+	m.pythonCmd.Env = append(os.Environ(), "PYTHONUNBUFFERED=1")
+	pythonPipe, err := m.pythonCmd.StdoutPipe()
+	if err != nil {
+		return func() tea.Msg { return errorMsg{err} }
+	}
+	m.pythonScanner = bufio.NewScanner(pythonPipe)
+	if m.logFile != nil {
+		m.pythonCmd.Stderr = m.logFile
+	} else {
+		m.pythonCmd.Stderr = os.Stderr
+	}
 	m.pythonCmd.Stdin = nil // Disconnect stdin
 	if err := m.pythonCmd.Start(); err != nil {
 		return func() tea.Msg { return errorMsg{err} }
@@ -141,7 +168,11 @@ func (m *model) startSubprocesses() tea.Cmd {
 		return func() tea.Msg { return errorMsg{err} }
 	}
 	m.nodeStdin = bufio.NewWriter(nodeInPipe)
-	m.nodeCmd.Stderr = os.Stderr
+	if m.logFile != nil {
+		m.nodeCmd.Stderr = m.logFile
+	} else {
+		m.nodeCmd.Stderr = os.Stderr
+	}
 	m.nodeScanner = bufio.NewScanner(nodePipe)
 	if err := m.nodeCmd.Start(); err != nil {
 		return func() tea.Msg { return errorMsg{err} }
@@ -156,6 +187,18 @@ func (m *model) startSubprocesses() tea.Cmd {
 	m.udpConn = conn
 
 	return nil
+}
+
+func (m *model) waitForPythonLogs() tea.Cmd {
+	return func() tea.Msg {
+		if m.pythonScanner == nil {
+			return nil
+		}
+		if m.pythonScanner.Scan() {
+			return pythonLogMsg(m.pythonScanner.Text())
+		}
+		return nil
+	}
 }
 
 // waitForNodeActivity listens for JSON messages from server.js
@@ -206,6 +249,9 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			m.cleanup()
 			return m, tea.Quit
+
+		case "l":
+			m.showLogs = !m.showLogs
 
 		case "h":
 			m.hotspotErr = ""
@@ -312,6 +358,18 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.selected = -1
 		return m, m.waitForNodeActivity()
+	case pythonLogMsg:
+		line := string(msg)
+		if line != "" {
+			if m.logFile != nil {
+				m.logFile.WriteString(line + "\n")
+			}
+			m.logs = append(m.logs, line)
+			if len(m.logs) > m.maxLogs {
+				m.logs = m.logs[len(m.logs)-m.maxLogs:]
+			}
+		}
+		return m, m.waitForPythonLogs()
 	case errorMsg:
 		m.err = msg.err
 		return m, tea.Quit
@@ -376,6 +434,25 @@ func (m *model) View() string {
 		}
 	}
 
+	if m.showLogs {
+		var logContent strings.Builder
+		logTitle := logTitleStyle.Render("📋 Logs en Vivo (presiona 'l' para ocultar)")
+		logContent.WriteString(logTitle + "\n")
+		if len(m.logs) == 0 {
+			logContent.WriteString(helpStyle.Render("  Esperando eventos de mandos / jugadores...") + "\n")
+		} else {
+			for _, line := range m.logs {
+				logContent.WriteString(logLineStyle.Render("  "+line) + "\n")
+			}
+		}
+		b.WriteString("\n" + logBoxStyle.Render(logContent.String()) + "\n")
+	}
+
+	logsHelp := "'l' logs [OFF]"
+	if m.showLogs {
+		logsHelp = "'l' logs [ON]"
+	}
+
 	var help string
 	switch {
 	case m.hotspotWarning:
@@ -383,9 +460,9 @@ func (m *model) View() string {
 	case m.selected != -1:
 		help = fmt.Sprintf("Swapping '%s'. Select another to swap or Esc to cancel.", m.players[m.selected].Username)
 	case m.hotspotActive:
-		help = "↑/↓ navegar  Enter seleccionar  'h' apagar hotspot  'q' salir"
+		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' apagar hotspot  %s  'q' salir", logsHelp)
 	default:
-		help = "↑/↓ navegar  Enter seleccionar  'h' hotspot  'q' salir"
+		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' hotspot  %s  'q' salir", logsHelp)
 	}
 	b.WriteString("\n" + helpStyle.Render(help) + "\n")
 
@@ -399,6 +476,9 @@ func (m *model) cleanup() {
 	if m.udpConn != nil {
 		m.udpConn.Close()
 	}
+	if m.logFile != nil {
+		m.logFile.Close()
+	}
 	if m.nodeCmd != nil && m.nodeCmd.Process != nil {
 		m.nodeCmd.Process.Signal(syscall.SIGTERM)
 	}
@@ -408,7 +488,11 @@ func (m *model) cleanup() {
 }
 
 func main() {
-	m := initialModel()
+	logsFlag := flag.Bool("logs", false, "Habilitar visualización de logs de entrada")
+	flag.BoolVar(logsFlag, "l", false, "Habilitar visualización de logs de entrada (shorthand)")
+	flag.Parse()
+
+	m := initialModel(*logsFlag)
 	p := tea.NewProgram(&m)
 
 	// Use an `if` block instead of `log.Fatalf` for a cleaner shutdown
