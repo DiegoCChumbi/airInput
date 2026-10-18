@@ -137,8 +137,11 @@ EVENTS = (
     uinput.ABS_RX + (MIN_ABS, MAX_ABS, 0, 0), uinput.ABS_RY + (MIN_ABS, MAX_ABS, 0, 0),
 )
 
+# Note: In the Linux kernel (input-event-codes.h), 0x133 is BTN_NORTH (aliased as BTN_X)
+# and 0x134 is BTN_WEST (aliased as BTN_Y). Modern browsers (W3C Gamepad API) and SDL2 map
+# BTN_WEST (0x134) to X (Left, buttons[2]) and BTN_NORTH (0x133) to Y (Top, buttons[3]).
 mapping = {
-    "A": uinput.BTN_A, "B": uinput.BTN_B, "X": uinput.BTN_X, "Y": uinput.BTN_Y,
+    "A": uinput.BTN_A, "B": uinput.BTN_B, "X": uinput.BTN_Y, "Y": uinput.BTN_X,
     "R": uinput.BTN_TR, "L": uinput.BTN_TL, "R2": uinput.BTN_TR2, "L2": uinput.BTN_TL2,
     "L3": uinput.BTN_THUMBL, "R3": uinput.BTN_THUMBR,
     "START": uinput.BTN_START, "SELECT": uinput.BTN_SELECT,
