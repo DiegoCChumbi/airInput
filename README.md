@@ -37,10 +37,10 @@ Before joining, players choose an identifier and initial shell. During gameplay,
 
 | Layout | Preview |
 | :--- | :---: |
-| **16-Bit (`snes`)** | ![16-Bit Layout](docs/screenshots/skin-snes.png) |
-| **64-Bit (`n64`)** | ![64-Bit Layout](docs/screenshots/skin-n64.png) |
-| **Symmetric (`xbox`)** | ![Symmetric Layout](docs/screenshots/skin-xbox.png) |
-| **Asymmetric (`asymmetric`)** | ![Asymmetric Layout](docs/screenshots/skin-asymmetric.png) |
+| **16-Bit** | ![16-Bit Layout](docs/screenshots/skin-snes.png) |
+| **64-Bit** | ![64-Bit Layout](docs/screenshots/skin-n64.png) |
+| **Symmetric** | ![Symmetric Layout](docs/screenshots/skin-xbox.png) |
+| **Asymmetric** | ![Asymmetric Layout](docs/screenshots/skin-asymmetric.png) |
 
 ---
 
