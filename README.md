@@ -27,7 +27,7 @@ Turn any smartphone into a low-latency wireless controller for your PC. AirInput
 
 Before joining, players choose an identifier and initial shell. During gameplay, the top HUD bar displays live latency (`ms`) and opens the calibration modal to switch layouts, invert screen rotation or Y-axis, test haptics, and adjust stick deadzones.
 
-| Connection Screen (`PORT 01`) | In-Game Calibration Menu |
+| Connection Screen | In-Game Calibration Menu |
 | :---: | :---: |
 | ![Join Screen](docs/screenshots/join-screen.png) | ![Settings Menu](docs/screenshots/settings-menu.png) |
 
@@ -35,12 +35,12 @@ Before joining, players choose an identifier and initial shell. During gameplay,
 
 ### Classic & Standard Layouts
 
-| Layout | Preview | Ergonomics & Best For |
-| :--- | :---: | :--- |
-| **16-Bit (`snes`)** | ![16-Bit Layout](docs/screenshots/skin-snes.png) | Cross D-Pad with invisible diagonal hit-zones, slanted `SELECT`/`START`, and 4-button diamond cluster (`X`, `Y`, `A`, `B`) with diagonal rockers. Ideal for 2D platformers and retro RPGs. |
-| **64-Bit (`n64`)** | ![64-Bit Layout](docs/screenshots/skin-n64.png) | Octagonal analog stick, D-Pad, center `Z` trigger (`SELECT`), crimson `START`, offset `A`/`B` buttons, and yellow 4-button `C` cluster. |
-| **Symmetric (`xbox`)** | ![Symmetric Layout](docs/screenshots/skin-xbox.png) | Dual aligned bottom analog sticks, top-left D-Pad, top-right `XYAB` cluster, `L1`/`L2` & `R1`/`R2` bumpers, and `L3`/`R3` thumbstick buttons. |
-| **Asymmetric (`asymmetric`)** | ![Asymmetric Layout](docs/screenshots/skin-asymmetric.png) | Offset analog sticks (primary Left Stick at top-left, D-Pad at bottom-left, `XYAB` at top-right, Right Stick at bottom-right). Ideal for 3D action and twin-stick shooters. |
+| Layout | Preview |
+| :--- | :---: |
+| **16-Bit (`snes`)** | ![16-Bit Layout](docs/screenshots/skin-snes.png) |
+| **64-Bit (`n64`)** | ![64-Bit Layout](docs/screenshots/skin-n64.png) |
+| **Symmetric (`xbox`)** | ![Symmetric Layout](docs/screenshots/skin-xbox.png) |
+| **Asymmetric (`asymmetric`)** | ![Asymmetric Layout](docs/screenshots/skin-asymmetric.png) |
 
 ---
 
@@ -48,11 +48,11 @@ Before joining, players choose an identifier and initial shell. During gameplay,
 
 Designed from the ground up for glass touchscreens so you never have to perform awkward multi-finger claw grips on a phone:
 
-| Layout | Preview | Touch-First Design Details |
-| :--- | :---: | :--- |
-| **Brawler (`brawler`)** | ![Brawler Layout](docs/screenshots/skin-brawler.png) | **Platform Fighter Pad**: Oversized central `A` (Attack) button surrounded by curved `Y` and `X` (Jump) buttons for seamless slide-to-aerial inputs, `B` (Special) to the left, and a yellow `C-Stick` positioned directly underneath `A` for instant directional Smash attacks. |
-| **Kart / Racing (`kart`)** | ![Kart Layout](docs/screenshots/skin-kart.png) | **Arcade Racer Rig**: Precision steering wheel stick on the left with a dedicated `OBJETO (L)` bar to use or drag items behind you without letting go of steering, plus a rear-view mirror button (`X`). On the right, a vertical pedalboard features `FRENO (B)`, `ACELERAR (A)`, and a **1-Thumb `DERRAPE (A+R)` combo pedal** that holds gas and triggers drift simultaneously. |
-| **Arcade 6-Button (`arcade`)** | ![Arcade Layout](docs/screenshots/skin-arcade.png) | **2D Fighter Deck**: Large 8-way D-Pad with explicit diagonal zones (`↖`, `↗`, `↙`, `↘`) for quarter-circle and dragon-punch motions + auxiliary `LEVER` stick on the left, paired with a curved *Vewlix* 2×3 6-button layout (`X`, `Y`, `R1` punches on top; `A`, `B`, `R2` kicks on bottom) and top `AGARRE (A+X)` / `SKILL (B+Y)` macro bumpers. |
+| Layout | Preview |
+| :--- | :---: |
+| **Brawler (`brawler`)** | ![Brawler Layout](docs/screenshots/skin-brawler.png) |
+| **Kart / Racing (`kart`)** | ![Kart Layout](docs/screenshots/skin-kart.png) |
+| **Arcade 6-Button (`arcade`)** | ![Arcade Layout](docs/screenshots/skin-arcade.png) |
 
 ---
 
