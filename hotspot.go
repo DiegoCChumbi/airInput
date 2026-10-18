@@ -81,16 +81,19 @@ func getDeviceStateCodeLinux(iface string) int {
 	return 0
 }
 
-// waitUntilWifiDeviceReady unblocks and powers on the WiFi adapter and waits up to 10s
-// for NetworkManager to transition the device out of "unavailable" (20) / "unmanaged" (10).
+// waitUntilWifiDeviceReady ensures the WiFi adapter is unblocked, enabled, and in state >= 30
+// (disconnected or connected) before attempting to start a hotspot.
 func waitUntilWifiDeviceReady(iface string) error {
-	// Unblock soft rfkill (check both PATH and /usr/sbin for sudo environments)
+	// Fast path: if the device is already in state >= 30 (disconnected or connected), do not touch
+	// wpa_supplicant or interface link state so we don't disrupt a working driver/backend (e.g. iwd).
+	if getDeviceStateCodeLinux(iface) >= 30 {
+		return nil
+	}
+
+	// Device is currently unavailable (20) or unmanaged (10): unblock and enable WiFi radio
 	exec.Command("rfkill", "unblock", "wifi").Run()
 	exec.Command("rfkill", "unblock", "all").Run()
 	exec.Command("/usr/sbin/rfkill", "unblock", "all").Run()
-
-	// Ensure wpa_supplicant is running and WiFi radio is enabled in NetworkManager
-	exec.Command("systemctl", "start", "wpa_supplicant").Run()
 	exec.Command("nmcli", "radio", "wifi", "on").Run()
 
 	if iface != "" {
@@ -100,15 +103,11 @@ func waitUntilWifiDeviceReady(iface string) error {
 
 	// Poll up to 10 seconds (25 * 400ms) until device state >= 30 (disconnected or connected)
 	for i := 0; i < 25; i++ {
-		code := getDeviceStateCodeLinux(iface)
-		if code >= 30 {
-			if i > 0 {
-				// Give wpa_supplicant a brief moment to settle after leaving unavailable state
-				time.Sleep(400 * time.Millisecond)
-			}
+		if getDeviceStateCodeLinux(iface) >= 30 {
+			// Give the WiFi backend a moment to finish initializing after leaving unavailable state
+			time.Sleep(600 * time.Millisecond)
 			return nil
 		}
-		// Re-nudge radio/device halfway through if still unavailable
 		if i == 8 {
 			exec.Command("nmcli", "radio", "wifi", "on").Run()
 			if iface != "" {
@@ -116,19 +115,23 @@ func waitUntilWifiDeviceReady(iface string) error {
 				exec.Command("ip", "link", "set", iface, "up").Run()
 			}
 		}
+		if i == 15 {
+			// Last resort if NetworkManager is stuck holding the device in unavailable state
+			exec.Command("systemctl", "restart", "NetworkManager").Run()
+		}
 		time.Sleep(400 * time.Millisecond)
 	}
 
-	// If still < 30 (unavailable/unmanaged), check if hardware switch (WIFI-HW) is disabled
-	cmd := exec.Command("nmcli", "-t", "-f", "WIFI-HW,WIFI", "radio", "all")
-	cmd.Env = append(os.Environ(), "LC_ALL=C")
-	if out, err := cmd.Output(); err == nil {
-		radioInfo := strings.TrimSpace(string(out))
-		if strings.HasPrefix(strings.ToLower(radioInfo), "disabled") {
-			return fmt.Errorf("hardware Wi-Fi switch (airplane mode key) is disabled on %s (%s)", iface, radioInfo)
-		}
-	}
 	return nil
+}
+
+// getWifiDiagLinux returns a short diagnostic summary of the device state and radio flags.
+func getWifiDiagLinux(iface string) string {
+	stateOut, _ := exec.Command("nmcli", "-g", "GENERAL.STATE", "device", "show", iface).Output()
+	radioOut, _ := exec.Command("nmcli", "-t", "-f", "WIFI-HW,WIFI", "radio", "all").Output()
+	return fmt.Sprintf("[state=%s radio=%s]",
+		strings.TrimSpace(string(stateOut)),
+		strings.TrimSpace(string(radioOut)))
 }
 
 func getWifiInfoWindows() wifiInfo {
@@ -195,32 +198,7 @@ func startHotspotLinux(iface string) error {
 	// 2. Remove any leftover hotspot profile from a previous session
 	exec.Command("nmcli", "connection", "delete", hotspotConName).Run()
 
-	// 3. Primary method: Create and activate the AP profile explicitly with static 10.42.0.1/24 IP and shared DHCP.
-	//    Using `connection add` + `connection up` avoids scan-list failures when starting from a cold/offline WiFi adapter.
-	addArgs := []string{
-		"connection", "add",
-		"type", "wifi",
-		"ifname", iface,
-		"con-name", hotspotConName,
-		"autoconnect", "no",
-		"ssid", hotspotSSID,
-		"802-11-wireless.mode", "ap",
-		"802-11-wireless.band", "bg",
-		"ipv4.method", "shared",
-		"ipv4.addresses", hotspotDefaultIP + "/24",
-		"wifi-sec.key-mgmt", "wpa-psk",
-		"wifi-sec.psk", hotspotPass,
-		"connection.zone", "trusted",
-	}
-	if _, err := exec.Command("nmcli", addArgs...).CombinedOutput(); err == nil {
-		if _, upErr := exec.Command("nmcli", "connection", "up", hotspotConName, "ifname", iface).CombinedOutput(); upErr == nil {
-			return nil
-		}
-		// Clean up before trying fallback
-		exec.Command("nmcli", "connection", "delete", hotspotConName).Run()
-	}
-
-	// 4. Fallback method: `nmcli device wifi hotspot`
+	// 3. Create the standalone hotspot with NetworkManager (same proven method as main)
 	out, err := exec.Command("nmcli", "device", "wifi", "hotspot",
 		"con-name", hotspotConName,
 		"ifname", iface,
@@ -229,10 +207,10 @@ func startHotspotLinux(iface string) error {
 		"band", "bg",
 	).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(out)))
+		return fmt.Errorf("%w: %s %s", err, strings.TrimSpace(string(out)), getWifiDiagLinux(iface))
 	}
 
-	// 5. Ensure explicit static IPv4 (10.42.0.1/24), shared DHCP method, and trusted firewall zone
+	// 4. Ensure explicit static IPv4 (10.42.0.1/24), shared DHCP method, and trusted firewall zone
 	exec.Command("nmcli", "connection", "modify", hotspotConName,
 		"ipv4.method", "shared",
 		"ipv4.addresses", hotspotDefaultIP+"/24",
