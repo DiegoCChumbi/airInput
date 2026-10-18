@@ -496,18 +496,31 @@ func (m *model) View() string {
 func (m *model) cleanup() {
 	if m.hotspotActive {
 		stopHotspot()
+		m.hotspotActive = false
 	}
 	if m.udpConn != nil {
 		m.udpConn.Close()
+		m.udpConn = nil
 	}
 	if m.logFile != nil {
 		m.logFile.Close()
+		m.logFile = nil
 	}
 	if m.nodeCmd != nil && m.nodeCmd.Process != nil {
-		m.nodeCmd.Process.Signal(syscall.SIGTERM)
+		if runtime.GOOS == "windows" {
+			_ = m.nodeCmd.Process.Kill()
+		} else {
+			_ = m.nodeCmd.Process.Signal(syscall.SIGTERM)
+		}
+		m.nodeCmd = nil
 	}
 	if m.pythonCmd != nil && m.pythonCmd.Process != nil {
-		m.pythonCmd.Process.Signal(syscall.SIGTERM)
+		if runtime.GOOS == "windows" {
+			_ = m.pythonCmd.Process.Kill()
+		} else {
+			_ = m.pythonCmd.Process.Signal(syscall.SIGTERM)
+		}
+		m.pythonCmd = nil
 	}
 }
 
@@ -517,15 +530,19 @@ func main() {
 	flag.Parse()
 
 	m := initialModel(*logsFlag)
+	defer m.cleanup()
+
 	p := tea.NewProgram(&m)
 
-	// Use an `if` block instead of `log.Fatalf` for a cleaner shutdown
-	if _, err := p.Run(); err != nil {
+	finalModel, err := p.Run()
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error running program: %v\n", err)
-		m.cleanup() // Try to clean up even on error
 		os.Exit(1)
 	}
 
-	// Cleanup for a normal exit was already done in Update, so here we just print.
+	if fm, ok := finalModel.(*model); ok && fm.err != nil {
+		os.Exit(1)
+	}
+
 	fmt.Println("Bye!")
 }

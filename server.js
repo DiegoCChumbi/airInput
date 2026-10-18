@@ -162,7 +162,17 @@ io.on("connection", socket => {
     });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+        console.error(`\n[ERROR] El puerto ${PORT} ya está en uso. Cierra cualquier proceso que lo esté ocupando o ejecuta: Stop-Process -Name node -Force\n`);
+    } else {
+        console.error("Error en el servidor:", err);
+    }
+    process.exit(1);
+});
+
 server.listen(PORT, () => {
     const ip = getLocalIP();
     const url = `http://${ip}:${PORT}`;
@@ -175,3 +185,4 @@ server.listen(PORT, () => {
         });
     });
 });
+

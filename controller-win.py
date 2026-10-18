@@ -2,6 +2,16 @@ import socket
 import vgamepad as vg
 import time
 
+import builtins
+
+_orig_print = builtins.print
+def safe_print(*args, **kwargs):
+    try:
+        _orig_print(*args, **kwargs)
+    except OSError:
+        pass
+builtins.print = safe_print
+
 MAX_ABS_VAL = 32767
 
 BTN_MAP = {
@@ -29,6 +39,10 @@ last_axis_log = {}  # {(username, axis): timestamp}
 global_controller_counter = 0
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try:
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+except Exception:
+    pass
 sock.bind(("127.0.0.1", 9999))
 sock.settimeout(1.0)
 
