@@ -63,24 +63,28 @@
     </div>
   </div>
 
-  <!-- Top Telemetry & Hardware Config Bar -->
-  <div id="hud-bar" style="display: none;">
-    <div id="status-badge">
-      <span class="led-dot"></span>
-      <span id="status-text">0ms</span>
+  <div id="gamepad-container" style="display: none;">
+    <!-- Top Telemetry & Menu Pill (centered between L and R triggers) -->
+    <div id="hud-bar">
+      <div id="status-badge">
+        <span class="led-dot"></span>
+        <span id="status-text">0ms</span>
+      </div>
+      <button id="btn-settings" type="button" aria-label="Menú del mando">
+        <span class="gear-bars" aria-hidden="true"></span>
+        <span class="btn-settings-label">Menú</span>
+      </button>
     </div>
-    <button id="btn-settings" type="button" aria-label="Ajustes del mando">
-      <span class="gear-bars" aria-hidden="true"></span>
-      <span class="btn-settings-label">CFG</span>
-    </button>
+
+    <div id="skin-stage"></div>
   </div>
 
   <!-- Hardware DIP-Switch & Shell Configuration Modal -->
   <div id="settings-modal" role="dialog" aria-label="Ajustes de hardware">
     <div class="modal-header">
       <div class="deck-brand">
-        <span class="brand-mark">CONFIGURACIÓN DE HARDWARE</span>
-        <span class="brand-sub">SHELL &amp; CALIBRACIÓN TÁCTIL</span>
+        <span class="brand-mark">MENÚ DEL MANDO</span>
+        <span class="brand-sub">CARCASA &amp; CALIBRACIÓN TÁCTIL</span>
       </div>
       <button id="btn-toggle-fullscreen" type="button" class="hw-mini-btn">Pantalla completa ⛶</button>
     </div>
@@ -146,9 +150,7 @@
     <button id="close-settings" type="button">Volver al juego</button>
   </div>
 
-  <div id="gamepad-container" style="display: none;"></div>
-
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 
 </html>

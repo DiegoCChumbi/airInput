@@ -10,6 +10,7 @@ const joinFeedback = document.getElementById('join-feedback');
 const joinLed = document.getElementById('join-led');
 
 const gamepadContainer = document.getElementById('gamepad-container');
+const skinStage = document.getElementById('skin-stage');
 const hudBar = document.getElementById('hud-bar');
 const btnSettings = document.getElementById('btn-settings');
 const statusBadge = document.getElementById('status-badge');
@@ -86,7 +87,8 @@ async function loadSkin(skinName) {
     if (!response.ok) throw new Error("Skin not found");
 
     const html = await response.text();
-    gamepadContainer.innerHTML = html;
+    const mountTarget = skinStage || gamepadContainer;
+    mountTarget.innerHTML = html;
 
     let styleLink = document.getElementById('skin-style');
     if (!styleLink) {
@@ -120,7 +122,8 @@ async function loadSkin(skinName) {
 
   } catch (e) {
     console.error("Error loading skin:", e);
-    gamepadContainer.innerHTML = `<h2 style="color:white; text-align:center;">Error al cargar carcasa: ${skinName}</h2>`;
+    const mountTarget = skinStage || gamepadContainer;
+    mountTarget.innerHTML = `<h2 style="color:white; text-align:center;">Error al cargar carcasa: ${skinName}</h2>`;
   }
 }
 

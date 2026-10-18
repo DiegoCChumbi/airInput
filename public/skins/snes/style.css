@@ -4,17 +4,19 @@
 
 #gamepad.layout-snes {
   width: 96%;
-  max-width: 780px;
-  height: min(410px, 90vh);
+  max-width: 760px;
+  height: calc(100% - 34px);
+  max-height: 365px;
+  margin-top: 28px;
   background: linear-gradient(180deg, #DEDAD2 0%, #CFCBC2 60%, #BFB9AE 100%);
-  border-radius: 195px;
+  border-radius: 185px;
   border: 2px solid #EAE7E0;
   position: relative;
   display: flex;
   flex-direction: column;
   box-shadow:
-    0 10px 0 #8C877D,
-    0 22px 44px rgba(0, 0, 0, 0.7),
+    0 8px 0 #8C877D,
+    0 20px 40px rgba(0, 0, 0, 0.7),
     inset 0 3px 2px rgba(255, 255, 255, 0.8),
     inset 0 -6px 12px rgba(0, 0, 0, 0.18);
 }
@@ -22,13 +24,13 @@
 /* --- TOP CONTOURED SHOULDER BUMPERS (L / R) --- */
 .layout-snes .shoulders {
   position: absolute;
-  top: -16px;
+  top: -26px;
   left: 0;
   width: 100%;
-  height: 54px;
+  height: 44px;
   display: flex;
   justify-content: space-between;
-  padding: 0 74px;
+  padding: 0 64px;
   z-index: 1;
   pointer-events: none;
 }
@@ -38,14 +40,14 @@
 }
 
 .layout-snes .btn-shoulder {
-  width: 148px;
-  height: 46px;
+  width: 144px;
+  height: 42px;
   background: linear-gradient(180deg, #C7C3B9 0%, #A6A196 100%);
   border: 2px solid #7C776E;
   color: #46433D;
   font-family: var(--font-hardware, sans-serif);
   font-weight: 900;
-  font-size: 19px;
+  font-size: 18px;
   letter-spacing: 0.08em;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
   box-shadow:
@@ -55,16 +57,16 @@
 }
 
 .layout-snes .l-shoulder {
-  border-radius: 42px 18px 0 0;
+  border-radius: 38px 16px 0 0;
 }
 
 .layout-snes .r-shoulder {
-  border-radius: 18px 42px 0 0;
+  border-radius: 16px 38px 0 0;
 }
 
 .layout-snes .btn-shoulder:active,
 .layout-snes .btn-shoulder.active {
-  transform: translateY(6px);
+  transform: translateY(5px);
   background: linear-gradient(180deg, #B0ACA2 0%, #948F84 100%);
   box-shadow:
     0 1px 0 #6B665E,
@@ -77,7 +79,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 28px;
+  padding: 0 24px;
   position: relative;
   z-index: 2;
 }

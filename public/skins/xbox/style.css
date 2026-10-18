@@ -5,17 +5,18 @@
 #gamepad.layout-xbox {
   width: 96%;
   max-width: 780px;
-  height: min(415px, 92vh);
+  height: calc(100% - 10px);
+  max-height: 395px;
   background:
     radial-gradient(circle at 50% 22%, #2E3038 0%, #1F2026 62%, #15161A 100%);
-  border-radius: 110px 110px 68px 68px;
+  border-radius: 95px 95px 62px 62px;
   border: 2px solid #3C3F4A;
   position: relative;
   display: flex;
   flex-direction: column;
   box-shadow:
-    0 10px 0 #0D0E11,
-    0 24px 48px rgba(0, 0, 0, 0.8),
+    0 8px 0 #0D0E11,
+    0 22px 44px rgba(0, 0, 0, 0.8),
     inset 0 2px 1px rgba(255, 255, 255, 0.16),
     inset 0 -10px 24px rgba(0, 0, 0, 0.75);
 }
@@ -31,31 +32,32 @@
 /* --- TOP SHOULDER & ANALOG TRIGGER BUMPERS (L1/L2 & R1/R2) --- */
 .layout-xbox .shoulders {
   width: 100%;
-  height: 60px;
+  height: 54px;
   display: flex;
   justify-content: space-between;
-  padding: 36px 38px 0 38px;
-  margin-top: -12px;
+  align-items: flex-start;
+  padding: 8px 36px 0 36px;
+  margin-top: 0;
 }
 
 .layout-xbox .shoulder-group {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
 }
 
 .layout-xbox .btn-shoulder {
-  width: 118px;
-  height: 48px;
+  width: 112px;
+  height: 44px;
   position: relative;
   z-index: 10;
   background: linear-gradient(180deg, #525560 0%, #373942 100%);
   border: 2px solid #23252B;
-  border-radius: 22px 22px 6px 6px;
+  border-radius: 20px 20px 8px 8px;
   color: #F0F2F7;
   font-family: var(--font-hardware, sans-serif);
   font-weight: 900;
-  font-size: 18px;
+  font-size: 17px;
   letter-spacing: 0.05em;
   box-shadow:
     0 4px 0 #18191E,
@@ -71,17 +73,17 @@
 }
 
 .layout-xbox .btn-trigger {
-  width: 92px;
-  height: 46px;
+  width: 88px;
+  height: 44px;
   background: linear-gradient(180deg, #32343D 0%, #1C1D22 100%);
   color: #B4B8C4;
   border: 2px solid #262830;
-  border-radius: 16px 16px 6px 6px;
+  border-radius: 16px 16px 8px 8px;
   font-family: var(--font-hardware, sans-serif);
   font-size: 16px;
   font-weight: 900;
   letter-spacing: 0.05em;
-  transform: translateY(3px);
+  transform: none;
   z-index: 1;
   box-shadow:
     0 4px 0 #111216,
@@ -92,22 +94,22 @@
 .layout-xbox .btn-trigger:active,
 .layout-xbox .btn-trigger.active {
   background: #141519;
-  transform: translateY(8px);
+  transform: translateY(4px);
   color: #FFFFFF;
   box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
 }
 
 /* --- FACETED MATTE D-PAD --- */
 .layout-xbox .dpad {
-  --cell-size: 58px;
+  --cell-size: 56px;
   display: grid;
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
   position: absolute;
-  top: 98px;
-  left: 24px;
-  transform: scale(0.92);
-  padding: 10px;
+  top: 72px;
+  left: 22px;
+  transform: scale(0.9);
+  padding: 8px;
   border-radius: 50%;
   background: radial-gradient(circle, #141519 0%, #22242B 100%);
   box-shadow:
@@ -167,18 +169,18 @@
 /* --- CENTER CLUSTER: GUIDE JEWEL, SELECT/START, L3/R3 --- */
 .layout-xbox .center-cluster {
   position: absolute;
-  top: 66px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .layout-xbox .guide-jewel {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #484C59 0%, #1E2026 75%);
   border: 2px solid #121317;
@@ -191,8 +193,8 @@
 }
 
 .layout-xbox .guide-ring {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   border: 2px solid rgba(44, 230, 122, 0.75);
   box-shadow: 0 0 8px rgba(44, 230, 122, 0.45);
@@ -236,11 +238,11 @@
 
 /* --- LIQUID-RESIN JEWEL ABXY CLUSTER --- */
 .layout-xbox .actions {
-  --btn-size: 64px;
+  --btn-size: 62px;
   position: absolute;
-  top: 102px;
-  right: 26px;
-  transform: scale(0.92);
+  top: 72px;
+  right: 22px;
+  transform: scale(0.9);
   width: calc(var(--btn-size) * 3);
   height: calc(var(--btn-size) * 3);
 }
@@ -324,16 +326,16 @@
   display: flex;
   justify-content: space-between;
   position: absolute;
-  bottom: 22px;
+  bottom: 16px;
   width: 100%;
   padding: 0 clamp(60px, 18%, 145px);
-  height: 124px;
+  height: 118px;
   pointer-events: none;
 }
 
 .layout-xbox .stick-zone {
-  width: 124px;
-  height: 124px;
+  width: 118px;
+  height: 118px;
   pointer-events: auto;
   position: relative;
   border-radius: 50%;

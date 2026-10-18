@@ -343,24 +343,24 @@ body {
 }
 
 /* =========================================================
-   3. TOP HARDWARE TELEMETRY & CFG PILL (#hud-bar)
+   3. TOP HARDWARE TELEMETRY & MENU PILL (#hud-bar)
    ========================================================= */
 #hud-bar {
-  position: fixed;
-  top: 8px;
+  position: absolute;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 6px 4px 10px;
-  background: rgba(24, 23, 28, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  gap: 8px;
+  padding: 4px 6px 4px 12px;
+  background: rgba(20, 19, 24, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 4px 10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 #status-badge {
@@ -373,7 +373,6 @@ body {
   font-variant-numeric: tabular-nums;
   color: #D8D4CC;
   pointer-events: none;
-  padding-right: 4px;
 }
 
 #status-badge.disconnected {
@@ -383,17 +382,17 @@ body {
 #btn-settings {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   height: 26px;
-  padding: 0 10px;
+  padding: 0 11px;
   background: linear-gradient(180deg, #4A4850 0%, #323037 100%);
   color: #F2EFE9;
   border: 1px solid #1E1D22;
   border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--font-hardware);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
   cursor: pointer;
   box-shadow:
     0 2px 0 #18171C,
@@ -633,7 +632,15 @@ body {
   justify-content: center;
   align-items: center;
   touch-action: none;
-  padding: 6px;
+  padding: 8px 10px 10px 10px;
+}
+
+#skin-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .stick-zone {
@@ -706,20 +713,6 @@ body {
 
   body.portrait-ccw #gamepad-container {
     transform: translate(-50%, -50%) rotate(-90deg);
-  }
-
-  #hud-bar {
-    top: 50%;
-    left: auto;
-    right: 6px;
-    transform: translateY(-50%) rotate(90deg);
-    transform-origin: center center;
-  }
-
-  body.portrait-ccw #hud-bar {
-    right: auto;
-    left: 6px;
-    transform: translateY(-50%) rotate(-90deg);
   }
 
   #settings-modal {
