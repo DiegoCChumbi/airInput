@@ -17,10 +17,14 @@ const statusBadge = document.getElementById('status-badge');
 const statusText = document.getElementById('status-text');
 const settingsModal = document.getElementById('settings-modal');
 const btnCloseSettings = document.getElementById('close-settings');
+const btnCloseModalTop = document.getElementById('btn-close-modal-top');
 
 const togglePortraitFlip = document.getElementById('toggle-portrait-flip');
 const toggleInvertY = document.getElementById('toggle-invert-y');
 const toggleHaptics = document.getElementById('toggle-haptics');
+const hapticsStatusDesc = document.getElementById('haptics-status-desc');
+const btnTestHaptics = document.getElementById('btn-test-haptics');
+const iosHapticLabel = document.getElementById('ios-haptic-label');
 const rangeDeadzone = document.getElementById('range-deadzone');
 const deadzoneVal = document.getElementById('deadzone-val');
 const btnToggleFullscreen = document.getElementById('btn-toggle-fullscreen');
@@ -31,6 +35,8 @@ const activeJoystickTouchIds = new Set();
 let isGamepadInitialized = false;
 let currentUsername = '';
 let pingInterval = null;
+let hapticAudioCtx = null;
+let lastHapticTime = 0;
 
 // User Preferences (persisted in localStorage)
 const userSettings = {
@@ -39,6 +45,120 @@ const userSettings = {
   haptics: localStorage.getItem('airinput_haptics') !== 'false',
   deadzone: parseInt(localStorage.getItem('airinput_deadzone') ?? '8', 10)
 };
+
+// ==========================================
+// 1B. MULTI-ENGINE HAPTIC FEEDBACK SYSTEM
+// ==========================================
+function hasNativeVibrate() {
+  return typeof navigator !== 'undefined' && typeof (navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate) === 'function';
+}
+
+function isIOSDevice() {
+  if (typeof navigator === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+/**
+ * Generates a short 18ms sub-bass (65Hz -> 28Hz) mechanical membrane thump
+ * via Web Audio API so devices that block navigator.vibrate (or have OS battery saver)
+ * still produce a physical tactile pulse in the user's hands.
+ */
+function playTactileSubBass(strength = 1) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!hapticAudioCtx) {
+      hapticAudioCtx = new AudioCtx();
+    }
+    if (hapticAudioCtx.state === 'suspended') {
+      hapticAudioCtx.resume().catch(() => {});
+    }
+
+    const now = hapticAudioCtx.currentTime;
+    const osc = hapticAudioCtx.createOscillator();
+    const gain = hapticAudioCtx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(72 * strength, now);
+    osc.frequency.exponentialRampToValueAtTime(26, now + 0.022);
+
+    const peakGain = Math.min(0.45, 0.28 * strength);
+    gain.gain.setValueAtTime(peakGain, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+
+    osc.connect(gain);
+    gain.connect(hapticAudioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.024);
+  } catch (_) {
+    // Ignore audio context restrictions
+  }
+}
+
+/**
+ * Triggers physical haptic feedback across Android (Vibration API),
+ * iOS 17.4+/18+ (Taptic Engine switch), and tactile sub-bass reinforcement.
+ * Must be called BEFORE e.preventDefault() inside touch/click handlers.
+ *
+ * @param {'light'|'tap'|'confirm'} mode
+ */
+function triggerHaptic(mode = 'tap') {
+  if (!userSettings.haptics) return false;
+
+  const now = performance.now();
+  if (mode !== 'confirm' && now - lastHapticTime < 22) {
+    return false;
+  }
+  lastHapticTime = now;
+
+  let vibratedNatively = false;
+
+  // 1. Standard W3C Vibration API (Android Chrome / Firefox / Samsung Internet)
+  // Note: Many Android ERM motors need >= 40-50ms on the web notification channel to physically spin up.
+  if (hasNativeVibrate()) {
+    try {
+      const pattern = mode === 'confirm'
+        ? [60, 45, 85]
+        : (mode === 'light' ? 32 : 48);
+      vibratedNatively = navigator.vibrate(pattern);
+    } catch (_) {
+      vibratedNatively = false;
+    }
+  }
+
+  // 2. iOS 17.4+ / 18+ Safari Taptic Engine via hidden <input type="checkbox" switch>
+  if (!vibratedNatively && iosHapticLabel && isIOSDevice()) {
+    try {
+      iosHapticLabel.click();
+      vibratedNatively = true;
+    } catch (_) {
+      // Fallback below
+    }
+  }
+
+  // 3. Tactile sub-bass membrane thump (always fires as mechanical click reinforcement
+  // or fallback when OS Battery Saver / Silent mode suppresses the vibration motor)
+  playTactileSubBass(mode === 'confirm' ? 1.35 : (mode === 'light' ? 0.75 : 1.0));
+
+  return vibratedNatively;
+}
+
+function updateHapticsStatusUI() {
+  if (!hapticsStatusDesc) return;
+  if (!userSettings.haptics) {
+    hapticsStatusDesc.textContent = 'Desactivada';
+    return;
+  }
+  if (hasNativeVibrate()) {
+    hapticsStatusDesc.textContent = 'Activa (Si no vibra, desactiva Silencio/Ahorro de batería)';
+  } else if (isIOSDevice()) {
+    hapticsStatusDesc.textContent = 'Activa (Taptic Engine iOS + Pulso táctil)';
+  } else {
+    hapticsStatusDesc.textContent = 'Modo pulso táctil (Navegador sin API Vibrate)';
+  }
+}
 
 function syncSkinButtonsUI(skinName) {
   document.querySelectorAll('.layout-selector .sel-btn').forEach(btn => {
@@ -49,9 +169,7 @@ function syncSkinButtonsUI(skinName) {
 function selectInitialSkin(skinName) {
   localStorage.setItem('gamepad_skin', skinName);
   syncSkinButtonsUI(skinName);
-  if (userSettings.haptics && navigator.vibrate) {
-    navigator.vibrate(15);
-  }
+  triggerHaptic('light');
 }
 
 function showJoinFeedback(msg) {
@@ -72,6 +190,7 @@ function applyUserSettingsUI() {
   if (toggleHaptics) toggleHaptics.checked = userSettings.haptics;
   if (rangeDeadzone) rangeDeadzone.value = String(userSettings.deadzone);
   if (deadzoneVal) deadzoneVal.textContent = `${userSettings.deadzone}%`;
+  updateHapticsStatusUI();
   const savedSkin = localStorage.getItem('gamepad_skin') || 'snes';
   syncSkinButtonsUI(savedSkin);
 }
@@ -81,6 +200,7 @@ function applyUserSettingsUI() {
 // ==========================================
 async function loadSkin(skinName) {
   try {
+    triggerHaptic('light');
     releaseAllInputs();
 
     const cacheBuster = Date.now();
@@ -148,10 +268,6 @@ function updateButton(btnName, state) {
     if (state === 1) el.classList.add("active");
     else el.classList.remove("active");
   });
-
-  if (state === 1 && userSettings.haptics && navigator.vibrate) {
-    navigator.vibrate(25);
-  }
 }
 
 function releaseAllInputs() {
@@ -161,14 +277,32 @@ function releaseAllInputs() {
   activeJoysticks.forEach(j => j.reset());
 }
 
+function isSettingsModalOpen() {
+  return Boolean(settingsModal && settingsModal.style.display === 'block');
+}
+
+function closeSettingsModal() {
+  if (!settingsModal) return;
+  triggerHaptic('light');
+  settingsModal.style.display = 'none';
+}
+
 function scanGamePad(e) {
-  // Ignore interactions inside the settings modal or HUD bar
+  // Ignore interactions inside the HUD bar or settings modal itself
   if (e.target && (e.target.closest('#hud-bar') || e.target.closest('#btn-settings') || e.target.closest('#settings-modal'))) {
     return;
   }
 
-  if (e.cancelable && e.type !== 'click' && !e.type.startsWith('mouse')) {
-    e.preventDefault();
+  // If the settings modal is open, touching/clicking anywhere outside closes it
+  // without triggering controller buttons underneath
+  if (isSettingsModalOpen()) {
+    if (e.type === 'touchstart' || e.type === 'mousedown') {
+      closeSettingsModal();
+    }
+    if (e.cancelable && e.type !== 'click' && !e.type.startsWith('mouse')) {
+      e.preventDefault();
+    }
+    return;
   }
 
   const buttonsBeingTouched = new Set();
@@ -203,6 +337,19 @@ function scanGamePad(e) {
     collectFromPoint(e.clientX, e.clientY);
   }
 
+  let hasNewlyPressedButton = false;
+  buttonsBeingTouched.forEach(btnName => {
+    if (!activeButtons.has(btnName)) {
+      hasNewlyPressedButton = true;
+    }
+  });
+
+  // Trigger haptic feedback BEFORE calling e.preventDefault() so the browser
+  // preserves transient user-gesture activation for navigator.vibrate()
+  if (hasNewlyPressedButton) {
+    triggerHaptic('tap');
+  }
+
   activeButtons.forEach(btnName => {
     if (!buttonsBeingTouched.has(btnName)) {
       updateButton(btnName, 0);
@@ -217,6 +364,10 @@ function scanGamePad(e) {
 
   activeButtons = buttonsBeingTouched;
   syncComboButtonsVisuals();
+
+  if (e.cancelable && e.type !== 'click' && !e.type.startsWith('mouse')) {
+    e.preventDefault();
+  }
 }
 
 /**
@@ -383,15 +534,18 @@ class VirtualJoystick {
   }
 
   onTouchStart(e) {
-    if (e.cancelable) e.preventDefault();
+    if (isSettingsModalOpen()) return;
     if (this.touchId !== null) return;
 
     const touch = e.changedTouches[0];
     if (!touch) return;
 
+    triggerHaptic('light');
+
     this.touchId = touch.identifier;
     activeJoystickTouchIds.add(this.touchId);
     this.updateFromClientPoint(touch.clientX, touch.clientY);
+    if (e.cancelable) e.preventDefault();
   }
 
   onTouchMove(e) {
@@ -418,6 +572,7 @@ class VirtualJoystick {
   }
 
   onMouseDown(e) {
+    if (isSettingsModalOpen()) return;
     e.preventDefault();
     this.mouseActive = true;
     this.updateFromClientPoint(e.clientX, e.clientY);
@@ -517,12 +672,34 @@ function initializeGamepad() {
 
     btnSettings.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (isSettingsModalOpen()) {
+        closeSettingsModal();
+        return;
+      }
+      triggerHaptic('light');
       releaseAllInputs();
+      updateHapticsStatusUI();
       settingsModal.style.display = 'block';
     });
 
-    btnCloseSettings.addEventListener('click', () => {
-      settingsModal.style.display = 'none';
+    if (btnCloseSettings) {
+      btnCloseSettings.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeSettingsModal();
+      });
+    }
+
+    if (btnCloseModalTop) {
+      btnCloseModalTop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeSettingsModal();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isSettingsModalOpen()) {
+        closeSettingsModal();
+      }
     });
 
     if (togglePortraitFlip) {
@@ -530,6 +707,7 @@ function initializeGamepad() {
         userSettings.portraitFlip = e.target.checked;
         localStorage.setItem('airinput_portrait_flip', String(userSettings.portraitFlip));
         applyUserSettingsUI();
+        triggerHaptic('light');
       });
     }
 
@@ -537,6 +715,7 @@ function initializeGamepad() {
       toggleInvertY.addEventListener('change', (e) => {
         userSettings.invertY = e.target.checked;
         localStorage.setItem('airinput_invert_y', String(userSettings.invertY));
+        triggerHaptic('light');
       });
     }
 
@@ -544,6 +723,24 @@ function initializeGamepad() {
       toggleHaptics.addEventListener('change', (e) => {
         userSettings.haptics = e.target.checked;
         localStorage.setItem('airinput_haptics', String(userSettings.haptics));
+        updateHapticsStatusUI();
+        if (userSettings.haptics) {
+          triggerHaptic('confirm');
+        }
+      });
+    }
+
+    if (btnTestHaptics) {
+      btnTestHaptics.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!userSettings.haptics) {
+          userSettings.haptics = true;
+          localStorage.setItem('airinput_haptics', 'true');
+          if (toggleHaptics) toggleHaptics.checked = true;
+        }
+        updateHapticsStatusUI();
+        triggerHaptic('confirm');
       });
     }
 
@@ -560,15 +757,6 @@ function initializeGamepad() {
         toggleFullscreen();
       });
     }
-
-    // Request fullscreen on first touch interaction
-    const requestFullscreenOnce = () => {
-      const elem = document.documentElement;
-      if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
-      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-      document.body.removeEventListener('touchstart', requestFullscreenOnce);
-    };
-    document.body.addEventListener('touchstart', requestFullscreenOnce, { once: true });
 
     const savedSkin = localStorage.getItem('gamepad_skin') || 'snes';
     loadSkin(savedSkin);
@@ -620,9 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentUsername = sanitized;
     localStorage.setItem('airinput_username', currentUsername);
     usernameInput.blur();
-    if (userSettings.haptics && navigator.vibrate) {
-      navigator.vibrate(30);
-    }
+    triggerHaptic('confirm');
     socket.emit('register_player', { username: currentUsername });
   };
 
