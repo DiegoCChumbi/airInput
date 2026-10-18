@@ -71,13 +71,13 @@ Turn your smartphone into a wireless controller for your PC. Play your games wit
 **Windows:**
 
    ```powershell
-   go build -o airInput.exe airInput.go
+   go build -o airInput.exe .
    ```
 
 **Linux:**
 
    ```bash
-   go build -o airInput airInput.go
+   go build -o airInput .
    ```
 
 ### Running airInput

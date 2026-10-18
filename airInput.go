@@ -80,7 +80,7 @@ type hotspotErrMsg struct{ err error }
 type pythonLogMsg string
 
 func initialModel(showLogs bool) model {
-	f, _ := os.OpenFile("airinput.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	f, _ := os.OpenFile("airinput.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	return model{
 		players:  []Player{},
 		selected: -1,
@@ -135,6 +135,12 @@ func (m *model) sendNodeCmd(v interface{}) {
 }
 
 func (m *model) startSubprocesses() tea.Cmd {
+	if _, err := os.Stat("node_modules"); os.IsNotExist(err) {
+		return func() tea.Msg {
+			return errorMsg{fmt.Errorf("dependencias de Node.js no encontradas (falta 'node_modules'). Ejecuta 'npm install' primero")}
+		}
+	}
+
 	// Start Python
 	osType := runtime.GOOS
 	var pythonCmdName, pythonScript string
@@ -186,6 +192,9 @@ func (m *model) startSubprocesses() tea.Cmd {
 	}
 	m.udpConn = conn
 
+	// Ensure port 3000 is open in UFW/firewalld/iptables for LAN WiFi connections
+	go openFirewallPort("")
+
 	return nil
 }
 
@@ -210,6 +219,11 @@ func (m *model) waitForNodeActivity() tea.Cmd {
 		if !m.nodeScanner.Scan() {
 			if err := m.nodeScanner.Err(); err != nil {
 				return errorMsg{fmt.Errorf("error reading from node process: %w", err)}
+			}
+			logBytes, _ := os.ReadFile("airinput.log")
+			logDetail := strings.TrimSpace(string(logBytes))
+			if logDetail != "" {
+				return errorMsg{fmt.Errorf("node process exited unexpectedly:\n%s", logDetail)}
 			}
 			return errorMsg{fmt.Errorf("node process exited unexpectedly")}
 		}
@@ -340,7 +354,17 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.hotspotActive = false
 		m.hotspotErr = msg.err.Error()
 	case playerConnectMsg:
-		m.players = append(m.players, Player(msg))
+		found := false
+		for i, p := range m.players {
+			if p.Username == msg.Username {
+				m.players[i].ControllerID = msg.ControllerID
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.players = append(m.players, Player(msg))
+		}
 		return m, m.waitForNodeActivity()
 	case playerDisconnectMsg:
 		var updatedPlayers []Player

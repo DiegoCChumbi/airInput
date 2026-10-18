@@ -70,13 +70,13 @@ Transforma tu smartphone en un control inalámbrico para tu PC. Juega tus juegos
 **Windows:**
 
    ```powershell
-   go build -o airInput.exe airInput.go
+   go build -o airInput.exe .
    ```
 
 **Linux:**
 
    ```bash
-   go build -o airInput airInput.go
+   go build -o airInput .
    ```
 
 ### Ejecutar airInput

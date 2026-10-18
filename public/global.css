@@ -55,13 +55,69 @@ body {
   cursor: pointer;
 }
 
+#join-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #2b2b2b;
+  padding: 32px 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  color: white;
+  text-align: center;
+  max-width: 90vw;
+  width: 340px;
+  z-index: 4000;
+}
+
+#join-screen h1 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  color: #5c7cfa;
+}
+
+#username-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background: #1a1a1a;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+#username-input:focus {
+  border-color: #5c7cfa;
+}
+
+#join-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #5c7cfa;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#join-btn:active {
+  background: #4263eb;
+}
+
 #btn-settings { 
   position: fixed;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.5);
-  border: 1px solid white;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.6);
   color: white;
   border-radius: 50%;
   width: 40px;
@@ -69,6 +125,28 @@ body {
   font-size: 20px;
   z-index: 2000;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#status-badge {
+  position: fixed;
+  top: 14px;
+  left: calc(50% + 30px);
+  background: rgba(0, 0, 0, 0.55);
+  color: #a9e34b;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 10px;
+  z-index: 2000;
+  pointer-events: none;
+  display: none;
+}
+
+#status-badge.disconnected {
+  color: #ff6b6b;
 }
 
 #settings-modal { 
@@ -77,35 +155,95 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #333;
+  background: #2b2b2b;
   color: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 14px;
   z-index: 3000;
-  width: 300px;
-  box-shadow: 0 0 20px black;
+  width: 340px;
+  max-width: 92vw;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.85);
   text-align: center;
+  border: 1px solid #444;
+}
+
+#settings-modal h3 {
+  margin: 0 0 12px 0;
+}
+
+.settings-section {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.settings-section label {
+  display: block;
+  font-size: 13px;
+  color: #bbb;
+  margin-bottom: 6px;
 }
 
 .layout-selector { 
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .sel-btn { 
-  padding: 10px;
-  background: #555;
+  padding: 8px 12px;
+  background: #444;
   color: white;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 13px;
 }
 
+.sel-btn.active,
 .sel-btn:active { 
   background: #5c7cfa;
+  border-color: #91a7ff;
+}
+
+.settings-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #202020;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.toggle-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #5c7cfa;
+}
+
+.toggle-row input[type="range"] {
+  width: 110px;
+  accent-color: #5c7cfa;
+}
+
+#close-settings {
+  width: 100%;
+  padding: 10px;
+  background: #5c7cfa;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 #gamepad-container { 
@@ -115,11 +253,51 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  touch-action: none;
+}
+
+/* Custom Virtual Joystick Base Styles */
+.stick-zone {
+  touch-action: none;
+  user-select: none;
+}
+
+.stick-zone .nipple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.stick-zone .nipple .back {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.stick-zone .nipple .front {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  transform: translate(0px, 0px);
+  will-change: transform;
 }
 
 
 /* =========================================
-   4.ROTATION FOR PORTRAIT MODE 
+   4. ROTATION FOR PORTRAIT MODE 
    ========================================= */
 @media screen and (orientation: portrait) {
 
@@ -133,6 +311,10 @@ body {
     z-index: 1;
   }
 
+  body.portrait-ccw #gamepad-container {
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+
   #btn-settings {
     transform: rotate(90deg);
     left: auto; 
@@ -141,18 +323,39 @@ body {
     margin-top: -20px;
   }
 
+  body.portrait-ccw #btn-settings {
+    transform: rotate(-90deg);
+    right: auto;
+    left: 15px;
+  }
+
+  #status-badge {
+    transform: rotate(90deg);
+    left: auto;
+    right: 8px;
+    top: calc(50% + 36px);
+  }
+
+  body.portrait-ccw #status-badge {
+    transform: rotate(-90deg);
+    right: auto;
+    left: 8px;
+    top: calc(50% - 50px);
+  }
+
   #settings-modal {
     transform: translate(-50%, -50%) rotate(90deg) !important;
-    width: 80vh;
+    width: 85vh;
+    max-width: 360px;
     max-height: 90vw;
+    overflow-y: auto;
+  }
+
+  body.portrait-ccw #settings-modal {
+    transform: translate(-50%, -50%) rotate(-90deg) !important;
   }
 
   .overlay-content {
     transform: rotate(90deg);
   }
-
-  .stick-zone {
-        transform: rotate(-90deg) !important; 
-        transform-origin: center center; 
-    }
 }

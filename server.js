@@ -10,7 +10,13 @@ const server = http.createServer(app);
 const io = socketio(server);
 const udp = dgram.createSocket("udp4");
 
-app.use(express.static("public"));
+app.use((req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    next();
+});
+app.use(express.static("public", { etag: false, lastModified: false }));
 
 const players = new Map(); // Stores { socket.id -> {username, controllerId} }
 const activeUsernames = new Set(); 
@@ -50,25 +56,47 @@ rl.on('line', (line) => {
 });
 
 io.on("connection", socket => {
-    socket.on("register_player", ({ username }) => {
+    socket.on("ping_check", (cb) => {
+        if (typeof cb === "function") cb();
+    });
+
+    socket.on("register_player", (payload) => {
+        const rawUsername = payload && typeof payload.username === "string" ? payload.username : "";
+        const username = rawUsername.replace(/:/g, "").trim().slice(0, 24);
+
+        if (!username || username.toLowerCase() === "system") {
+            socket.emit('registration_failed', 'Nombre de usuario inválido.');
+            return;
+        }
+
+        // If this socket is already registered under the same username, succeed idempotently
+        if (players.has(socket.id) && players.get(socket.id).username === username) {
+            socket.emit('registration_success');
+            return;
+        }
+
         if (activeUsernames.has(username)) {
             socket.emit('registration_failed', `El nombre "${username}" ya está en uso.`);
             return;
         }
 
-        const msg = Buffer.from(`${username}:get_id`);
-        udp.send(msg, 9999, "127.0.0.1", (err) => {
-            if(err){
-                socket.emit('registration_failed', `Error interno del servidor.`);
-                return
-            }
-        });
+        let settled = false;
+        const timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            udp.removeListener('message', listener);
+            socket.emit('registration_failed', 'El controlador virtual no respondió (verifica permisos/uinput o ViGEmBus).');
+        }, 3000);
 
         const listener = (data) => {
             const parts = data.toString().split(":");
-            if(parts.length < 3 || parts[0] !== username || parts[1] !== 'controller_id'){
+            if (parts.length < 3 || parts[0] !== username || parts[1] !== 'controller_id') {
                 return;
             }
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            udp.removeListener('message', listener);
 
             const controllerId = parseInt(parts[2], 10);
 
@@ -83,22 +111,37 @@ io.on("connection", socket => {
             });
 
             socket.emit('registration_success');
-            udp.removeListener('message', listener);
-        }
-        udp.on('message', listener)
+        };
+
+        udp.on('message', listener);
+
+        const msg = Buffer.from(`${username}:get_id`);
+        udp.send(msg, 9999, "127.0.0.1", (err) => {
+            if (err && !settled) {
+                settled = true;
+                clearTimeout(timeoutId);
+                udp.removeListener('message', listener);
+                socket.emit('registration_failed', 'Error interno del servidor.');
+            }
+        });
     });
 
-    socket.on("input", ({ button, state }) => {
-        if (!players.has(socket.id)) return;
+    socket.on("input", ({ button, state } = {}) => {
+        if (!players.has(socket.id) || typeof button !== "string") return;
+        const cleanBtn = button.replace(/:/g, "").trim();
+        const numState = state ? 1 : 0;
         const { username } = players.get(socket.id);
-        const msg = Buffer.from(`${username}:btn:${button}:${state}`);
+        const msg = Buffer.from(`${username}:btn:${cleanBtn}:${numState}`);
         udp.send(msg, 9999, "127.0.0.1");
     });
 
-    socket.on("axis", ({ axis, value }) => {
-        if (!players.has(socket.id)) return;
+    socket.on("axis", ({ axis, value } = {}) => {
+        if (!players.has(socket.id) || typeof axis !== "string") return;
+        const numVal = Number(value);
+        if (!Number.isFinite(numVal)) return;
+        const clamped = Math.max(-1, Math.min(1, numVal));
         const { username } = players.get(socket.id);
-        const msg = Buffer.from(`${username}:axis:${axis}:${value.toFixed(4)}`);
+        const msg = Buffer.from(`${username}:axis:${axis}:${clamped.toFixed(4)}`);
         udp.send(msg, 9999, "127.0.0.1");
     });
 
