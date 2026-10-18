@@ -14,10 +14,6 @@ Turn any smartphone into a low-latency wireless controller for your PC. AirInput
 - **7 Controller Layouts (Classic & Touch-First)**: Switch on the fly between classic console layouts, modern dual-stick pads, and genre-adapted touch-first controllers designed specifically for mobile ergonomics.
 - **Offline Wi-Fi Hotspot Mode**: Create a standalone local Wi-Fi network (`AirInput-Net`) directly from the PC when no router or internet connection is available. *(Tested on Linux via NetworkManager; Windows implementation included as experimental/untested).*
 - **Controller Slot Hot-Swapping**: Reassign which phone controls Player 1, Player 2, etc. directly from the terminal TUI without restarting the game or disconnecting players.
-- **Rotation-Aware Analog Sticks**: Custom virtual joystick engine that accurately projects 2D vectors across landscape, portrait (`+90°`), and inverted portrait (`-90°`) orientations, with configurable radial deadzones and Y-axis inversion.
-- **Multi-Layer Haptic Feedback**: Combines the Web Vibration API, iOS Safari Taptic Engine switch triggers, and a low-frequency Web Audio tactile sub-bass pulse.
-- **Live Input Telemetry & Logs**: Real-time round-trip latency indicator (`ms`) on the controller HUD and an interactive live log viewer in the terminal.
-- **Zero-Dependency Linux `uinput` Fallback**: Includes a native `ioctl` `/dev/uinput` implementation in Python on Linux if `python-uinput` is not installed.
 
 ---
 

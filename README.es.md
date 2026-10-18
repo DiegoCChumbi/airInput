@@ -14,10 +14,6 @@ Transforma tu smartphone en un mando inalámbrico de baja latencia para tu PC. A
 - **7 Diseños de Mando (Clásicos y Touch-First)**: Cambia en tiempo real entre mandos clásicos, controles modernos de doble stick (simétrico y asimétrico) y controles *Touch-First* diseñados específicamente para la ergonomía de pantallas táctiles según el género del juego.
 - **Modo Hotspot Wi-Fi Sin Internet**: Crea una red Wi-Fi propia (`AirInput-Net`) desde cero directamente desde el PC cuando no hay router ni conexión a internet disponible. *(Probado en Linux con NetworkManager; soporte en Windows incluido como experimental/no testeado).*
 - **Intercambio de Mandos en Caliente (Hot-Swap)**: Reasigna qué teléfono controla al Jugador 1, Jugador 2, etc. directamente desde la interfaz de terminal (TUI) sin reiniciar el juego ni desconectar a los jugadores.
-- **Sticks Analógicos con Detección de Rotación**: Motor propio de joysticks virtuales que proyecta vectores 2D con precisión tanto en modo horizontal como vertical (`+90°` y `-90°`), con ajuste de zona muerta (*deadzone*) e inversión de eje Y.
-- **Motor Háptico Multicapa**: Combina la Web Vibration API, soporte para Taptic Engine en iOS Safari y un pulso táctil sub-grave por Web Audio como refuerzo mecánico.
-- **Telemetría de Latencia y Logs en Vivo**: Indicador de latencia (`ms`) en tiempo real integrado en la barra superior del mando y visor interactivo de eventos en la terminal.
-- **Driver Nativo `uinput` en Linux con Respaldo**: Incluye implementación directa mediante `ioctl` sobre `/dev/uinput` en Python para Linux si la librería `python-uinput` no está instalada.
 
 ---
 
@@ -27,7 +23,7 @@ Transforma tu smartphone en un mando inalámbrico de baja latencia para tu PC. A
 
 Antes de conectar, cada jugador elige su identificador y el diseño inicial del mando. Durante la partida, la píldora superior muestra la latencia en vivo (`ms`) y permite abrir el menú del mando para cambiar de carcasa, invertir el giro de pantalla o el eje Y, probar la vibración y calibrar la zona muerta del stick.
 
-| Pantalla de Conexión (`PORT 01`) | Menú de Calibración en Partida |
+| Pantalla de Conexión | Menú de Calibración en Partida |
 | :---: | :---: |
 | ![Pantalla de Conexión](docs/screenshots/join-screen.png) | ![Menú del Mando](docs/screenshots/settings-menu.png) |
 
@@ -35,12 +31,12 @@ Antes de conectar, cada jugador elige su identificador y el diseño inicial del 
 
 ### Controles Clásicos y Estándar
 
-| Diseño | Vista Previa | Ergonomía y Uso Recomendado |
-| :--- | :---: | :--- |
-| **16-Bit (`snes`)** | ![Mando 16-Bit](docs/screenshots/skin-snes.png) | Cruceta clásica con zonas diagonales invisibles, botones `SELECT`/`START` inclinados y clúster de 4 botones (`X`, `Y`, `A`, `B`) con balancines diagonales. Ideal para plataformas 2D y RPGs retro. |
-| **64-Bit (`n64`)** | ![Mando 64-Bit](docs/screenshots/skin-n64.png) | Stick analógico con guía octogonal, cruceta, gatillo central `Z` (`SELECT`), botón `START` central, botones `A`/`B` desplazados y clúster amarillo de 4 botones `C`. |
-| **Simétrico (`xbox`)** | ![Mando Simétrico](docs/screenshots/skin-xbox.png) | Doble stick analógico alineado en la parte inferior, cruceta arriba a la izquierda, botones `XYAB` arriba a la derecha, hombros `L1`/`L2` y `R1`/`R2`, y botones `L3`/`R3`. |
-| **Asimétrico (`asymmetric`)** | ![Mando Asimétrico](docs/screenshots/skin-asymmetric.png) | Sticks analógicos desplazados (stick izquierdo en la posición primaria superior-izquierda, cruceta abajo a la izquierda, `XYAB` arriba a la derecha y stick derecho abajo a la derecha). Ideal para acción 3D y *twin-stick shooters*. |
+| Diseño | Vista Previa |
+| :--- | :---: |
+| **16-Bit** | ![Mando 16-Bit](docs/screenshots/skin-snes.png) |
+| **64-Bit** | ![Mando 64-Bit](docs/screenshots/skin-n64.png) |
+| **Simétrico** | ![Mando Simétrico](docs/screenshots/skin-xbox.png) |
+| **Asimétrico** | ![Mando Asimétrico](docs/screenshots/skin-asymmetric.png) |
 
 ---
 
@@ -48,11 +44,11 @@ Antes de conectar, cada jugador elige su identificador y el diseño inicial del 
 
 Diseñados desde cero para pantallas táctiles móviles evitando posturas incómodas de varios dedos:
 
-| Diseño | Vista Previa | Detalles de Ergonomía Táctil |
-| :--- | :---: | :--- |
-| **Brawler (`brawler`)** | ![Mando Brawler](docs/screenshots/skin-brawler.png) | **Plataforma de Pelea**: Botón gigante central `A` (Ataque) rodeado por dos botones curvos de salto (`Y` arriba y `X` a la derecha) para deslizar el pulgar de salto a ataque aéreo sin levantar el dedo, botón `B` (Especial) a la izquierda y `C-Stick` amarillo ubicado directamente debajo de `A` para ataques *Smash* instantáneos. |
-| **Kart (`kart`)** | ![Mando Kart](docs/screenshots/skin-kart.png) | **Carreras / Arcade Racer**: Volante analógico a la izquierda con un botón grande `OBJETO (L)` justo encima para lanzar o mantener arrastrando ítems sin soltar la dirección, más botón `ESPEJO ATRÁS (X)`. A la derecha, pedalera vertical con `FRENO (B)`, `ACELERAR (A)` y un **pedal combo `DERRAPE (A+R)` de 1 pulgar** que mantiene el acelerador y activa el derrape simultáneamente. |
-| **Arcade 6-Botones (`arcade`)** | ![Mando Arcade](docs/screenshots/skin-arcade.png) | **Pelea 2D / Beat 'em up**: Cruceta de 8 direcciones de gran tamaño con diagonales explícitas (`↖`, `↗`, `↙`, `↘`) para *motion inputs* (`236`, `623`) más palanca auxiliar `LEVER` a la izquierda. A la derecha, tablero curvo estilo *Vewlix* de 6 botones en 2 filas de 3 (`X`, `Y`, `R1` arriba; `A`, `B`, `R2` abajo) y macros superiores `AGARRE (A+X)` / `SKILL (B+Y)`. |
+| Diseño | Vista Previa |
+| :--- | :---: |
+| **Brawler (`brawler`)** | ![Mando Brawler](docs/screenshots/skin-brawler.png) |
+| **Kart / Racing (`kart`)** | ![Mando Kart](docs/screenshots/skin-kart.png) |
+| **Arcade 6-Botones (`arcade`)** | ![Mando Arcade](docs/screenshots/skin-arcade.png) |
 
 ---
 
