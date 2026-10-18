@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AirInput — Mando Táctil</title>
 
-  <link rel="stylesheet" href="global.css?v=5">
+  <link rel="stylesheet" href="global.css?v=8">
   <link id="skin-style" rel="stylesheet" href="">
 
   <script src="/socket.io/socket.io.js"></script>
@@ -98,7 +98,10 @@
         <span class="brand-mark">MENÚ DEL MANDO</span>
         <span class="brand-sub">CARCASA &amp; CALIBRACIÓN TÁCTIL</span>
       </div>
-      <button id="btn-toggle-fullscreen" type="button" class="hw-mini-btn">Pantalla completa ⛶</button>
+      <div class="modal-header-actions">
+        <button id="btn-toggle-fullscreen" type="button" class="hw-mini-btn">Pantalla completa ⛶</button>
+        <button id="btn-close-modal-top" type="button" class="hw-close-btn" aria-label="Cerrar menú">✕ Cerrar</button>
+      </div>
     </div>
 
     <div class="settings-section">
@@ -131,8 +134,8 @@
     <div class="settings-toggles">
       <label class="toggle-row" for="toggle-portrait-flip">
         <span class="toggle-copy">
-          <strong>Invertir giro de pantalla</strong>
-          <small>Rota el mando 180° en modo vertical</small>
+          <strong>Invertir giro</strong>
+          <small>Rota 180° en vertical</small>
         </span>
         <span class="dip-switch">
           <input type="checkbox" id="toggle-portrait-flip" />
@@ -142,8 +145,8 @@
 
       <label class="toggle-row" for="toggle-invert-y">
         <span class="toggle-copy">
-          <strong>Invertir eje Y analógico</strong>
-          <small>Estilo vuelo para sticks virtuales</small>
+          <strong>Invertir eje Y</strong>
+          <small>Eje vertical de sticks</small>
         </span>
         <span class="dip-switch">
           <input type="checkbox" id="toggle-invert-y" />
@@ -154,18 +157,21 @@
       <label class="toggle-row" for="toggle-haptics">
         <span class="toggle-copy">
           <strong>Respuesta háptica</strong>
-          <small>Pulso físico al presionar botones</small>
+          <small id="haptics-status-desc">Pulso al presionar</small>
         </span>
-        <span class="dip-switch">
-          <input type="checkbox" id="toggle-haptics" checked />
-          <span class="dip-track"><span class="dip-thumb"></span></span>
+        <span class="haptics-controls">
+          <button type="button" id="btn-test-haptics" class="hw-mini-btn">Probar</button>
+          <span class="dip-switch">
+            <input type="checkbox" id="toggle-haptics" checked />
+            <span class="dip-track"><span class="dip-thumb"></span></span>
+          </span>
         </span>
       </label>
 
       <div class="toggle-row fader-row">
         <span class="toggle-copy">
-          <strong>Zona muerta del stick</strong>
-          <small>Filtra micro-movimientos (<span id="deadzone-val">8%</span>)</small>
+          <strong>Zona muerta</strong>
+          <small>Filtro stick (<span id="deadzone-val">8%</span>)</small>
         </span>
         <input type="range" id="range-deadzone" min="0" max="30" value="8" />
       </div>
@@ -174,7 +180,12 @@
     <button id="close-settings" type="button">Volver al juego</button>
   </div>
 
-  <script src="script.js?v=6"></script>
+  <!-- Hidden iOS 17.4+ / 18+ Taptic Engine Switch Trigger -->
+  <label id="ios-haptic-label" for="ios-haptic-switch" aria-hidden="true" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
+    <input type="checkbox" id="ios-haptic-switch" switch />
+  </label>
+
+  <script src="script.js?v=8"></script>
 </body>
 
 </html>

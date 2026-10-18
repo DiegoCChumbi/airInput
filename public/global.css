@@ -440,13 +440,13 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
+  width: 490px;
   max-width: 94vw;
   max-height: 92vh;
   overflow-y: auto;
   background: linear-gradient(180deg, #2D2B33 0%, #211F26 100%);
   color: var(--ink-primary);
-  padding: 16px 18px 16px 18px;
+  padding: 12px 16px 14px 16px;
   border-radius: 16px;
   border: 2px solid #494652;
   box-shadow:
@@ -461,13 +461,19 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding-bottom: 10px;
-  margin-bottom: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 #settings-modal .brand-mark {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--ink-primary);
   text-shadow: none;
 }
@@ -477,13 +483,13 @@ body {
 }
 
 .hw-mini-btn {
-  padding: 6px 10px;
+  padding: 5px 9px;
   background: #3B3842;
   color: var(--ink-primary);
   border: 1px solid #575360;
   border-radius: 7px;
   font-family: var(--font-hardware);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 2px 0 #18171C;
@@ -494,25 +500,43 @@ body {
   box-shadow: none;
 }
 
+.hw-close-btn {
+  padding: 5px 10px;
+  background: linear-gradient(180deg, #D92B3A 0%, #AD1B28 100%);
+  color: #FFFFFF;
+  border: 1px solid #781019;
+  border-radius: 7px;
+  font-family: var(--font-hardware);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #5C0A11;
+}
+
+.hw-close-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
 .settings-section {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   text-align: left;
 }
 
 .settings-toggles {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .toggle-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background: var(--chassis-well);
-  padding: 9px 12px;
+  padding: 7px 10px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55);
@@ -535,6 +559,13 @@ body {
 .toggle-copy small {
   font-size: 11px;
   color: var(--ink-muted);
+}
+
+.haptics-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 /* Tactile Rocker / DIP Switch */
@@ -728,9 +759,9 @@ body {
 
   #settings-modal {
     transform: translate(-50%, -50%) rotate(90deg) !important;
-    width: 88vh;
-    max-width: 400px;
-    max-height: 92vw;
+    width: 90vh;
+    max-width: 490px;
+    max-height: 94vw;
     overflow-y: auto;
   }
 
