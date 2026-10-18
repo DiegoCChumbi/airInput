@@ -192,6 +192,9 @@ func (m *model) startSubprocesses() tea.Cmd {
 	}
 	m.udpConn = conn
 
+	// Ensure port 3000 is open in UFW/firewalld/iptables for LAN WiFi connections
+	go openFirewallPort("")
+
 	return nil
 }
 

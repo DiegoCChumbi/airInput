@@ -78,14 +78,14 @@ except ImportError:
                             absfuzz[ev_code] = ev[4]
                             absflat[ev_code] = ev[5]
 
-                # Use standard USB Xbox 360 Controller vendor/product IDs for broad game compatibility
+                # Use generic virtual input IDs (matching python-uinput) so 4-axis ABS_X/Y/RX/RY map directly to Left/Right sticks
                 dev_struct = struct.pack(
                     self._USER_DEV_FMT,
                     name.encode("utf-8")[:79],
                     0x03,   # BUS_USB
-                    0x045e, # Vendor: Microsoft
-                    0x028e, # Product: Xbox 360 Controller
-                    0x0110, # Version
+                    0x0000, # Vendor
+                    0x0000, # Product
+                    0x0001, # Version
                     0,      # ff_effects_max
                     *absmax,
                     *absmin,

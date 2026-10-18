@@ -10,7 +10,13 @@ const server = http.createServer(app);
 const io = socketio(server);
 const udp = dgram.createSocket("udp4");
 
-app.use(express.static("public"));
+app.use((req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    next();
+});
+app.use(express.static("public", { etag: false, lastModified: false }));
 
 const players = new Map(); // Stores { socket.id -> {username, controllerId} }
 const activeUsernames = new Set(); 

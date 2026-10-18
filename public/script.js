@@ -74,6 +74,7 @@ async function loadSkin(skinName) {
     if (settingsModal) settingsModal.style.display = 'none';
 
     // Wait for stylesheet to load (or fallback timeout if cached) before initializing joysticks
+    const cacheBuster = Date.now();
     await new Promise((resolve) => {
       let resolved = false;
       const done = () => {
@@ -84,7 +85,7 @@ async function loadSkin(skinName) {
       };
       styleLink.onload = done;
       styleLink.onerror = done;
-      styleLink.href = `skins/${skinName}/style.css`;
+      styleLink.href = `skins/${skinName}/style.css?v=${cacheBuster}`;
       setTimeout(done, 120);
     });
 
@@ -214,6 +215,9 @@ class VirtualJoystick {
     this.lastY = 0;
     this.lastEmitTime = 0;
 
+    // Force-clear any legacy counter-rotation on .stick-zone even if an old stylesheet was cached
+    this.zone.style.setProperty('transform', 'none', 'important');
+
     // Create visual elements matching skin CSS (.nipple > .back + .front)
     this.nippleEl = document.createElement('div');
     this.nippleEl.className = 'nipple';
@@ -222,8 +226,17 @@ class VirtualJoystick {
     this.frontEl = document.createElement('div');
     this.frontEl.className = 'front';
 
+    // Invisible reference points at (+10px, 0) and (0, +10px) in local coordinates
+    // to measure the exact screen-space direction of Controller Right (+X) and Controller Down (+Y)
+    this.probeXEl = document.createElement('div');
+    this.probeXEl.style.cssText = 'position:absolute;left:10px;top:0;width:0;height:0;pointer-events:none;';
+    this.probeYEl = document.createElement('div');
+    this.probeYEl.style.cssText = 'position:absolute;left:0;top:10px;width:0;height:0;pointer-events:none;';
+
     this.nippleEl.appendChild(this.backEl);
     this.nippleEl.appendChild(this.frontEl);
+    this.nippleEl.appendChild(this.probeXEl);
+    this.nippleEl.appendChild(this.probeYEl);
     this.zone.innerHTML = '';
     this.zone.appendChild(this.nippleEl);
 
@@ -246,18 +259,32 @@ class VirtualJoystick {
   }
 
   updateFromClientPoint(clientX, clientY) {
-    // Always measure live bounding rect to avoid any stale coordinates after CSS/fullscreen/rotation changes
-    const rect = this.zone.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    // Measure live center and local +X / +Y unit vectors directly from rendered DOM positions
+    const originRect = this.nippleEl.getBoundingClientRect();
+    const xRect = this.probeXEl.getBoundingClientRect();
+    const yRect = this.probeYEl.getBoundingClientRect();
+
+    const centerX = originRect.left;
+    const centerY = originRect.top;
 
     const screenDx = clientX - centerX;
     const screenDy = clientY - centerY;
 
-    // Transform screen delta into the controller's local coordinate system
-    const { a, b, c, d } = getContainerRotationBasis();
-    let localDx = a * screenDx + b * screenDy;
-    let localDy = c * screenDx + d * screenDy;
+    let ux = xRect.left - centerX;
+    let uy = xRect.top - centerY;
+    const uLen = Math.hypot(ux, uy) || 1;
+    ux /= uLen;
+    uy /= uLen;
+
+    let vx = yRect.left - centerX;
+    let vy = yRect.top - centerY;
+    const vLen = Math.hypot(vx, vy) || 1;
+    vx /= vLen;
+    vy /= vLen;
+
+    // Project screen delta onto the controller's local Right (+X) and Down (+Y) unit vectors
+    let localDx = screenDx * ux + screenDy * uy;
+    let localDy = screenDx * vx + screenDy * vy;
 
     const dist = Math.hypot(localDx, localDy);
     const maxDist = this.maxRadius;
