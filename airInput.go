@@ -43,18 +43,20 @@ type Player struct {
 }
 
 type model struct {
-	qrCode      string
-	url         string
-	originalURL string // URL before hotspot was activated
-	players     []Player
-	cursor      int
-	selected    int // -1 means nothing is selected
-	nodeCmd     *exec.Cmd
-	pythonCmd   *exec.Cmd
-	udpConn     *net.UDPConn
-	err         error
-	nodeScanner *bufio.Scanner
-	nodeStdin   *bufio.Writer
+	qrCode         string
+	url            string
+	originalURL    string // URL before hotspot was activated
+	offlineStartup bool   // true if started with no active LAN/WiFi IP
+	showWifiQR     bool   // true when displaying the Wi-Fi network QR instead of the URL QR
+	players        []Player
+	cursor         int
+	selected       int // -1 means nothing is selected
+	nodeCmd        *exec.Cmd
+	pythonCmd      *exec.Cmd
+	udpConn        *net.UDPConn
+	err            error
+	nodeScanner    *bufio.Scanner
+	nodeStdin      *bufio.Writer
 	// Hotspot state
 	wifi            wifiInfo
 	hotspotActive   bool
@@ -69,7 +71,11 @@ type model struct {
 	pythonScanner *bufio.Scanner
 }
 
-type qrCodeMsg struct{ qr, url string }
+type qrCodeMsg struct {
+	qr      string
+	url     string
+	offline bool
+}
 type playerConnectMsg Player
 type playerDisconnectMsg string
 type errorMsg struct{ err error }
@@ -110,15 +116,16 @@ func (m *model) doStartHotspot() tea.Cmd {
 			return hotspotErrMsg{err}
 		}
 		// Open firewall AFTER IP is assigned — ensures the interface
-		// is fully registered with firewalld and zone detection works.
+		// is fully registered with firewalld/ufw/iptables and DHCP/DNS work.
 		openFirewallPort(m.wifi.iface)
 		return hotspotStartedMsg{ip: ip}
 	}
 }
 
 func (m *model) doStopHotspot() tea.Cmd {
+	iface := m.wifi.iface
 	return func() tea.Msg {
-		stopHotspot()
+		stopHotspot(iface)
 		return hotspotStoppedMsg{}
 	}
 }
@@ -236,9 +243,13 @@ func (m *model) waitForNodeActivity() tea.Cmd {
 
 		switch msgData["event"] {
 		case "server_ready":
+			qr, _ := msgData["qr"].(string)
+			url, _ := msgData["url"].(string)
+			offline, _ := msgData["offline"].(bool)
 			return qrCodeMsg{
-				qr:  msgData["qr"].(string),
-				url: msgData["url"].(string),
+				qr:      qr,
+				url:     url,
+				offline: offline,
 			}
 		case "player_connect":
 			return playerConnectMsg{Username: msgData["username"].(string), ControllerID: int(msgData["controllerId"].(float64))}
@@ -266,6 +277,23 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "l":
 			m.showLogs = !m.showLogs
+
+		case "w":
+			if m.hotspotActive && m.url != "" {
+				m.showWifiQR = !m.showWifiQR
+				if m.showWifiQR {
+					m.sendNodeCmd(map[string]string{
+						"cmd":    "generate_qr",
+						"url":    m.url,
+						"qrText": wifiQRPayload(),
+					})
+				} else {
+					m.sendNodeCmd(map[string]string{
+						"cmd": "generate_qr",
+						"url": m.url,
+					})
+				}
+			}
 
 		case "h":
 			m.hotspotErr = ""
@@ -327,26 +355,49 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case qrCodeMsg:
 		m.qrCode = msg.qr
 		m.url = msg.url
-		if m.originalURL == "" {
+		if msg.offline {
+			m.offlineStartup = true
+			// If PC started completely offline and Wi-Fi hardware is available, auto-start Hotspot from scratch
+			if m.wifi.available && !m.wifi.connected && !m.hotspotActive && !m.hotspotStarting {
+				m.hotspotStarting = true
+				return m, tea.Batch(m.waitForNodeActivity(), m.doStartHotspot())
+			}
+		} else if m.originalURL == "" && !m.hotspotActive {
 			m.originalURL = msg.url
 		}
 		return m, m.waitForNodeActivity()
 
 	case wifiStatusMsg:
 		m.wifi = wifiInfo(msg)
+		// If PC started offline and Wi-Fi adapter was just detected, auto-start Hotspot from scratch
+		if m.offlineStartup && m.wifi.available && !m.wifi.connected && !m.hotspotActive && !m.hotspotStarting {
+			m.hotspotStarting = true
+			return m, m.doStartHotspot()
+		}
 
 	case hotspotStartedMsg:
 		m.hotspotStarting = false
 		m.hotspotActive = true
+		m.offlineStartup = false
+		m.showWifiQR = false
 		newURL := fmt.Sprintf("http://%s:3000", msg.ip)
+		m.url = newURL
+		m.qrCode = ""
 		m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": newURL})
 
 	case hotspotStoppedMsg:
 		m.hotspotActive = false
 		m.hotspotStarting = false
-		// Restore original QR/URL
+		m.showWifiQR = false
+		// Restore original QR/URL if we had a previous network, otherwise mark as offline
 		if m.originalURL != "" {
+			m.url = m.originalURL
+			m.qrCode = ""
 			m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": m.originalURL})
+		} else {
+			m.url = ""
+			m.qrCode = ""
+			m.offlineStartup = true
 		}
 
 	case hotspotErrMsg:
@@ -411,31 +462,47 @@ func (m *model) View() string {
 	b.WriteString(titleStyle.Render("🚀 AirInput Server is Running") + "\n")
 	if m.url != "" {
 		b.WriteString(fmt.Sprintf("URL: %s\n", lipgloss.NewStyle().Bold(true).Render(m.url)))
+	} else if m.hotspotStarting {
+		b.WriteString(warningStyle.Render("📡 Sin red detectada — creando red Wi-Fi propia (Hotspot)...") + "\n")
+	} else if m.offlineStartup {
+		b.WriteString(warningStyle.Render("⚠️  Sin conexión de red activa. Presiona 'h' para crear una red Hotspot propia.") + "\n")
 	} else {
 		b.WriteString("Waiting for server to start...\n")
 	}
 
 	if m.qrCode != "" {
+		if m.hotspotActive {
+			if m.showWifiQR {
+				b.WriteString(hotspotActiveStyle.Render("📲 QR de Red Wi-Fi (escanéalo para unirte a la red AirInput):") + "\n")
+			} else {
+				b.WriteString(helpStyle.Render("🎮 QR del Mando (escanéalo tras conectarte al Wi-Fi AirInput):") + "\n")
+			}
+		}
 		b.WriteString(qrStyle.Render(m.qrCode) + "\n\n")
 	} else if m.url != "" {
 		b.WriteString("Generating QR code...\n\n")
 	}
 
 	// --- Hotspot section ---
+	if runtime.GOOS == "windows" && (m.wifi.available || m.hotspotActive || m.hotspotStarting) {
+		b.WriteString(warningStyle.Render("⚠️  Aviso (Windows): El soporte de Hotspot en Windows NO ha sido testeado en hardware real.") + "\n")
+	}
+
 	if m.hotspotWarning {
 		b.WriteString(warningStyle.Render("⚠️  Activar el hotspot desconectará tu WiFi actual.") + "\n")
 		b.WriteString(helpStyle.Render("   Presiona 'y' para continuar o 'n' para cancelar.") + "\n\n")
 	} else if m.hotspotStarting {
-		b.WriteString(hotspotInactiveStyle.Render("📡 Iniciando hotspot...") + "\n\n")
+		b.WriteString(hotspotInactiveStyle.Render("📡 Iniciando hotspot y servidor DHCP local...") + "\n\n")
 	} else if m.hotspotActive {
 		b.WriteString(hotspotActiveStyle.Render(
-			fmt.Sprintf("📡 [ACTIVO]  Red: %s   Contraseña: %s", hotspotSSID, hotspotPass),
+			fmt.Sprintf("📡 [ACTIVO]  Red: %s   Contraseña: %s   IP: %s", hotspotSSID, hotspotPass, m.url),
 		) + "\n")
-		b.WriteString(helpStyle.Render("   💡 Si no carga en el móvil: apaga sus Datos Móviles o acepta 'Mantener Wi-Fi'") + "\n\n")
+		b.WriteString(helpStyle.Render("   💡 Si no carga en el móvil: apaga sus Datos Móviles o acepta 'Mantener conexión Wi-Fi'") + "\n")
+		b.WriteString(helpStyle.Render("   🔄 Presiona 'w' para alternar entre el QR de la Red Wi-Fi y el QR de la URL del mando") + "\n\n")
 	} else if m.hotspotErr != "" {
 		b.WriteString(warningStyle.Render("❌ Error hotspot: "+m.hotspotErr) + "\n\n")
 	} else if m.wifi.available {
-		b.WriteString(hotspotInactiveStyle.Render("📡 Hotspot inactivo") + "\n\n")
+		b.WriteString(hotspotInactiveStyle.Render("📡 Hotspot inactivo (presiona 'h' para crear red propia sin router)") + "\n\n")
 	}
 
 	b.WriteString(playerListTitleStyle.Render("🎮 Connected Players") + "\n")
@@ -484,7 +551,7 @@ func (m *model) View() string {
 	case m.selected != -1:
 		help = fmt.Sprintf("Swapping '%s'. Select another to swap or Esc to cancel.", m.players[m.selected].Username)
 	case m.hotspotActive:
-		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' apagar hotspot  %s  'q' salir", logsHelp)
+		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'w' QR Wi-Fi/URL  'h' apagar hotspot  %s  'q' salir", logsHelp)
 	default:
 		help = fmt.Sprintf("↑/↓ navegar  Enter seleccionar  'h' hotspot  %s  'q' salir", logsHelp)
 	}
@@ -495,7 +562,9 @@ func (m *model) View() string {
 
 func (m *model) cleanup() {
 	if m.hotspotActive {
-		stopHotspot()
+		stopHotspot(m.wifi.iface)
+	} else {
+		closeFirewallPort("")
 	}
 	if m.udpConn != nil {
 		m.udpConn.Close()

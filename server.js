@@ -23,14 +23,16 @@ const activeUsernames = new Set();
 
 function getLocalIP() {
     const interfaces = os.networkInterfaces();
+    const virtualPattern = /^(docker|br-|veth|virbr|vmnet|vboxnet|tailscale|tun|tap|wg|zt)/i;
     for (const name of Object.keys(interfaces)) {
+        if (virtualPattern.test(name)) continue;
         for (const iface of interfaces[name]) {
             if (iface.family === 'IPv4' && !iface.internal) {
                 return iface.address;
             }
         }
     }
-    return 'localhost';
+    return '';
 }
 
 function sendToParent(message) {
@@ -44,7 +46,8 @@ rl.on('line', (line) => {
     try {
         const cmd = JSON.parse(line.trim());
         if (cmd.cmd === 'generate_qr' && cmd.url) {
-            qrcode.toString(cmd.url, { type: 'terminal', small: true }, (err, qrString) => {
+            const qrPayload = cmd.qrText || cmd.url;
+            qrcode.toString(qrPayload, { type: 'terminal', small: true }, (err, qrString) => {
                 sendToParent({
                     event: 'server_ready',
                     url: cmd.url,
@@ -165,6 +168,16 @@ io.on("connection", socket => {
 const PORT = 3000;
 server.listen(PORT, () => {
     const ip = getLocalIP();
+    if (!ip) {
+        sendToParent({
+            event: "server_ready",
+            url: "",
+            qr: "",
+            offline: true
+        });
+        return;
+    }
+
     const url = `http://${ip}:${PORT}`;
 
     qrcode.toString(url, { type: 'terminal', small: true }, (err, qrString) => {

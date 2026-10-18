@@ -202,12 +202,21 @@ This project is licensed under the MIT License.
 - [vgamepad](https://github.com/yagnateos/vgamepad) - Virtual gamepad for Windows
 - [ViGEmBus](https://github.com/ViGEm/ViGEmBus) - Virtual gamepad driver for Windows
 
+### Offline Hotspot Mode (No Router / No Internet Required)
+
+If you don't have a WiFi router or internet connection, AirInput can create its own local WiFi Access Point (`AirInput` / password `airinput1`) with a built-in DHCP server:
+
+- If your PC starts with no network connection and has a WiFi adapter, AirInput automatically activates Hotspot mode.
+- You can also press **`h`** at any time in the terminal UI to start or stop the Hotspot.
+- While Hotspot mode is active, press **`w`** to switch the terminal QR code between the **WiFi Network QR** (scan to join the `AirInput` WiFi automatically) and the **Controller URL QR**.
+- **⚠️ Note (Windows)**: Hotspot mode on Windows is experimental and **untested** on physical Windows hardware.
+
 ## TODO
 
 - [x] Allow phone user to input a name to identify each controller
 - [x] Allow to link phones with controller numbers
-- [ ] Create your own network to work without wifi.
+- [x] Create your own network to work without wifi (Tested on Linux; Windows support included as experimental/untested).
 
 ---
 
-**Note**: This is a local network solution. Your phone and PC must be connected to the same WiFi network.
+**Note**: This is a local network solution. Your phone and PC must be connected to the same WiFi network or to AirInput's built-in Hotspot.

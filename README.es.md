@@ -201,6 +201,15 @@ Este proyecto está licenciado bajo la Licencia MIT.
 - [vgamepad](https://github.com/yagnateos/vgamepad) - Mando virtual para Windows
 - [ViGEmBus](https://github.com/ViGEm/ViGEmBus) - Driver de mando virtual para Windows
 
+### Modo Hotspot Sin Internet (Sin Router)
+
+Si no tienes un router WiFi ni conexión a internet, AirInput puede crear su propio Punto de Acceso WiFi (`AirInput` / contraseña `airinput1`) desde cero con su propio servidor DHCP local:
+
+- Si tu PC inicia sin ninguna conexión de red y cuenta con antena WiFi, AirInput activará el modo Hotspot automáticamente.
+- También puedes presionar **`h`** en cualquier momento desde la interfaz de terminal para encender o apagar el Hotspot.
+- Con el Hotspot activo, presiona **`w`** para alternar el código QR entre el **QR de Red WiFi** (para conectar el teléfono a la red `AirInput` automáticamente sin escribir contraseña) y el **QR de la URL del mando**.
+- **⚠️ Nota (Windows)**: El soporte de Hotspot en Windows es experimental y **no ha sido testeado** en una máquina Windows física.
+
 ---
 
-**Nota**: Esta es una solución de red local. Tu teléfono y PC deben estar conectados a la misma red WiFi.
+**Nota**: Esta es una solución de red local. Tu teléfono y PC deben estar conectados a la misma red WiFi o al Hotspot propio de AirInput.
