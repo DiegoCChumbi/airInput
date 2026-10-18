@@ -106,9 +106,9 @@
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
   position: absolute;
-  top: 72px;
-  left: 22px;
-  transform: scale(0.9);
+  top: 58px;
+  left: 18px;
+  transform: scale(0.88);
   padding: 8px;
   border-radius: 50%;
   background: radial-gradient(circle, #141519 0%, #22242B 100%);
@@ -169,7 +169,7 @@
 /* --- CENTER CLUSTER: GUIDE JEWEL, SELECT/START, L3/R3 --- */
 .layout-xbox .center-cluster {
   position: absolute;
-  top: 60px;
+  top: 52px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -179,8 +179,8 @@
 }
 
 .layout-xbox .guide-jewel {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #484C59 0%, #1E2026 75%);
   border: 2px solid #121317;
@@ -193,8 +193,8 @@
 }
 
 .layout-xbox .guide-ring {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 2px solid rgba(44, 230, 122, 0.75);
   box-shadow: 0 0 8px rgba(44, 230, 122, 0.45);
@@ -240,9 +240,9 @@
 .layout-xbox .actions {
   --btn-size: 62px;
   position: absolute;
-  top: 72px;
-  right: 22px;
-  transform: scale(0.9);
+  top: 58px;
+  right: 18px;
+  transform: scale(0.88);
   width: calc(var(--btn-size) * 3);
   height: calc(var(--btn-size) * 3);
 }
@@ -326,16 +326,16 @@
   display: flex;
   justify-content: space-between;
   position: absolute;
-  bottom: 16px;
+  bottom: 12px;
   width: 100%;
-  padding: 0 clamp(60px, 18%, 145px);
-  height: 118px;
+  padding: 0 clamp(145px, 24%, 195px);
+  height: 116px;
   pointer-events: none;
 }
 
 .layout-xbox .stick-zone {
-  width: 118px;
-  height: 118px;
+  width: 116px;
+  height: 116px;
   pointer-events: auto;
   position: relative;
   border-radius: 50%;
