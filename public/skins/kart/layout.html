@@ -1,0 +1,105 @@
+<div id="gamepad" class="layout-kart">
+  <!-- Top Bumpers (Item & Hop/Drift) -->
+  <div class="shoulders">
+    <div class="shoulder-group left-group">
+      <button class="btn-trigger" data-btn="L2">ÍTEM · L2</button>
+      <button class="btn-shoulder" data-btn="L">OBJETO · L</button>
+    </div>
+    <div class="shoulder-group right-group">
+      <button class="btn-shoulder" data-btn="R">SALTO / DRIFT · R</button>
+      <button class="btn-trigger" data-btn="R2">DERRAPE · R2</button>
+    </div>
+  </div>
+
+  <div class="face">
+    <!-- Left Wing: Quick Item Bar + Steering Wheel Stick + Mini D-Pad -->
+    <div class="kart-left">
+      <div class="item-hub">
+        <button class="item-launch-btn" data-btn="L">
+          <span class="item-main-label">OBJETO</span>
+          <span class="item-sub-label">USAR / ARRASTRAR</span>
+        </button>
+        <button class="rearview-btn" data-btn="X">
+          <span class="rear-main-label">ESPEJO</span>
+          <span class="rear-sub-label">ATRÁS · X</span>
+        </button>
+      </div>
+
+      <div class="kart-left-bottom">
+        <div class="steering-housing">
+          <div class="wheel-ring" aria-hidden="true"></div>
+          <div id="stick-left-zone" class="stick-zone"></div>
+          <span class="steering-tag" aria-hidden="true">DIRECCIÓN</span>
+        </div>
+
+        <div class="dpad mini-dpad">
+          <button class="diagonal" data-btns="UP,LEFT"></button>
+          <button class="up" data-btn="UP">▲</button>
+          <button class="diagonal" data-btns="UP,RIGHT"></button>
+          <button class="left" data-btn="LEFT">◀</button>
+          <div class="center"></div>
+          <button class="right" data-btn="RIGHT">▶</button>
+          <button class="diagonal" data-btns="DOWN,LEFT"></button>
+          <button class="down" data-btn="DOWN">▼</button>
+          <button class="diagonal" data-btns="DOWN,RIGHT"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Dashboard Telemetry & Start/Select (Always Centered) -->
+    <div class="kart-center">
+      <div class="kart-crest" aria-hidden="true">
+        <span class="crest-main">AIRINPUT</span>
+        <span class="crest-sub">AI-KART · RACING RIG</span>
+      </div>
+
+      <div class="rpm-cluster" aria-hidden="true">
+        <div class="rpm-leds">
+          <span class="rpm-dot g"></span>
+          <span class="rpm-dot g"></span>
+          <span class="rpm-dot y"></span>
+          <span class="rpm-dot y"></span>
+          <span class="rpm-dot r"></span>
+        </div>
+        <span class="rpm-caption">TELEMETRY</span>
+      </div>
+
+      <div class="center-pills">
+        <button class="pill-btn" data-btn="SELECT">SELECT</button>
+        <button class="pill-btn start-pill" data-btn="START">START</button>
+      </div>
+    </div>
+
+    <!-- Right Wing: Touch-First Pedalboard (Brake + Gas + 1-Thumb Gas+Drift Combo) -->
+    <div class="kart-right">
+      <div class="pedalboard">
+        <!-- Brake / Reverse Pedal (B) -->
+        <button class="pedal-btn pedal-brake" data-btn="B">
+          <span class="pedal-title">FRENO</span>
+          <span class="pedal-sub">ATRÁS · B</span>
+          <span class="pedal-treads" aria-hidden="true"></span>
+        </button>
+
+        <!-- Tall Gas Pedal (A) -->
+        <button class="pedal-btn pedal-gas" data-btn="A">
+          <span class="pedal-title">ACELERAR</span>
+          <span class="pedal-sub">GAS · A</span>
+          <span class="pedal-treads" aria-hidden="true"></span>
+        </button>
+
+        <!-- 1-Thumb Drift Combo Column: Holds Gas (A) + Drift (R) together -->
+        <div class="drift-column">
+          <button class="pedal-btn pedal-drift-combo" data-btns="A,R">
+            <span class="drift-badge">1-PULGAR</span>
+            <span class="pedal-title">DERRAPE</span>
+            <span class="pedal-sub">GAS + DRIFT</span>
+            <span class="pedal-treads" aria-hidden="true"></span>
+          </button>
+          <button class="aux-boost-btn" data-btn="Y">
+            <span>NITRO · Y</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

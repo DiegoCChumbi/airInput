@@ -1,0 +1,103 @@
+<div id="gamepad" class="layout-arcade">
+  <!-- Top Shoulder & Combo Macro Bumpers -->
+  <div class="shoulders">
+    <div class="shoulder-group left-group">
+      <button class="btn-trigger" data-btn="L2">MACRO · L2</button>
+      <button class="btn-shoulder" data-btn="L">ASSIST · L1</button>
+    </div>
+    <div class="shoulder-group right-group">
+      <button class="btn-shoulder" data-btns="A,X">AGARRE (A+X)</button>
+      <button class="btn-trigger" data-btns="B,Y">SKILL (B+Y)</button>
+    </div>
+  </div>
+
+  <div class="face">
+    <!-- Left Wing: Large Fightpad D-Pad + Auxiliary Arcade Stick -->
+    <div class="arcade-left">
+      <div class="dpad fight-dpad">
+        <button class="diagonal" data-btns="UP,LEFT">↖</button>
+        <button class="up" data-btn="UP">▲</button>
+        <button class="diagonal" data-btns="UP,RIGHT">↗</button>
+        <button class="left" data-btn="LEFT">◀</button>
+        <div class="center"></div>
+        <button class="right" data-btn="RIGHT">▶</button>
+        <button class="diagonal" data-btns="DOWN,LEFT">↙</button>
+        <button class="down" data-btn="DOWN">▼</button>
+        <button class="diagonal" data-btns="DOWN,RIGHT">↘</button>
+      </div>
+
+      <div class="arcade-lever-housing">
+        <div id="stick-left-zone" class="stick-zone"></div>
+        <span class="lever-caption" aria-hidden="true">LEVER</span>
+      </div>
+    </div>
+
+    <!-- Center Control Tower (Always Centered) -->
+    <div class="arcade-center">
+      <div class="arcade-crest" aria-hidden="true">
+        <span class="crest-main">AIRINPUT</span>
+        <span class="crest-sub">AI-FIGHT · 6-BTN</span>
+      </div>
+
+      <div class="service-buttons">
+        <div class="service-wrap">
+          <button class="coin-btn" data-btn="SELECT" aria-label="Select / Coin"></button>
+          <span class="service-label">COIN · SEL</span>
+        </div>
+        <div class="service-wrap">
+          <button class="start-arcade-btn" data-btn="START" aria-label="Start"></button>
+          <span class="service-label">1P START</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Wing: Ergonomic Curved 6-Button Arcade Cluster (2x3) -->
+    <div class="arcade-right">
+      <div class="fight-deck-grid">
+        <!-- Top Row: Punches / High Attacks (X, Y, R) -->
+        <div class="arcade-row top-row">
+          <div class="arcade-socket col-1">
+            <button class="arcade-btn punch-light" data-btn="X">
+              <span class="btn-main-char">X</span>
+              <span class="btn-sub-role">LP · 1</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-2">
+            <button class="arcade-btn punch-med" data-btn="Y">
+              <span class="btn-main-char">Y</span>
+              <span class="btn-sub-role">MP · 2</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-3">
+            <button class="arcade-btn punch-heavy" data-btn="R">
+              <span class="btn-main-char">R1</span>
+              <span class="btn-sub-role">HP · 3</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Kicks / Low Attacks (A, B, R2) -->
+        <div class="arcade-row bot-row">
+          <div class="arcade-socket col-1">
+            <button class="arcade-btn kick-light" data-btn="A">
+              <span class="btn-main-char">A</span>
+              <span class="btn-sub-role">LK · 4</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-2">
+            <button class="arcade-btn kick-med" data-btn="B">
+              <span class="btn-main-char">B</span>
+              <span class="btn-sub-role">MK · 5</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-3">
+            <button class="arcade-btn kick-heavy" data-btn="R2">
+              <span class="btn-main-char">R2</span>
+              <span class="btn-sub-role">HK · 6</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

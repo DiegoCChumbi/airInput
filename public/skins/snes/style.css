@@ -1,177 +1,468 @@
-/* /* ==========================================================================
-   3. GAMEPAD (General Structure)
+/* ==========================================================================
+   SNES / SUPER FAMICOM (SHVC-005) TACTILE HARDWARE SKIN
    ========================================================================== */
 
-#gamepad {
-  width: 95%;
-  max-width: 750px;
-  height: 400px;
-  background: #dcdcdc;
-  border-radius: 50px;
+#gamepad.layout-snes {
+  width: 96%;
+  max-width: 760px;
+  height: calc(100% - 34px);
+  max-height: 365px;
+  margin-top: 28px;
+  background: linear-gradient(180deg, #DEDAD2 0%, #CFCBC2 60%, #BFB9AE 100%);
+  border-radius: 185px;
+  border: 2px solid #EAE7E0;
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-  transition: background 0.3s, border-radius 0.3s;
+  box-shadow:
+    0 8px 0 #8C877D,
+    0 20px 40px rgba(0, 0, 0, 0.7),
+    inset 0 3px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.18);
 }
 
-.face {
-  flex: 1;
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  padding: 0 30px;
-}
-
-
-/* ==========================================================================
-   4. GENERAL COMPONENTS 
-   ========================================================================== */
-
-/* --- GENERAL ANITATIONS --- */
-button {
-  transition: transform 0.05s ease, box-shadow 0.05s ease;
-}
-button:active, button.active {
-  transform: scale(0.92);
-  box-shadow: inset 0 3px 5px rgba(0,0,0,0.5) !important;
-  filter: brightness(0.8);
-}
-
-/* --- TRIGGERS (L/R) --- */
-.shoulders {
+/* --- TOP CONTOURED SHOULDER BUMPERS (L / R) --- */
+.layout-snes .shoulders {
+  position: absolute;
+  top: -26px;
+  left: 0;
   width: 100%;
-  height: 60px;
+  height: 44px;
   display: flex;
   justify-content: space-between;
-  padding: 40px 40px;
-  margin-top: -20px;
+  padding: 0 64px;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.btn-shoulder {
-  width: 120px;
-  height: 50px;
-  background: #a0a0a0;
-  border: 2px solid #666;
-  border-radius: 20px 20px 0 0;
-  font-weight: bold;
-  font-size: 20px;
-  color: #333;
-}
-.btn-shoulder:active { 
-  background: #888; 
-  transform: translateY(5px); 
+.layout-snes .shoulder-group {
+  pointer-events: auto;
 }
 
-/* --- CROSS (D-PAD) --- */
-.dpad {
-  --cell-size: 60px;
+.layout-snes .btn-shoulder {
+  width: 144px;
+  height: 42px;
+  background: linear-gradient(180deg, #C7C3B9 0%, #A6A196 100%);
+  border: 2px solid #7C776E;
+  color: #46433D;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 4px 0 #6B665E,
+    inset 0 2px 1px rgba(255, 255, 255, 0.7);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-snes .l-shoulder {
+  border-radius: 38px 16px 0 0;
+}
+
+.layout-snes .r-shoulder {
+  border-radius: 16px 38px 0 0;
+}
+
+.layout-snes .btn-shoulder:active,
+.layout-snes .btn-shoulder.active {
+  transform: translateY(5px);
+  background: linear-gradient(180deg, #B0ACA2 0%, #948F84 100%);
+  box-shadow:
+    0 1px 0 #6B665E,
+    inset 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* --- FRONT FACEPLATE --- */
+.layout-snes .face {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+/* --- LEFT D-PAD CIRCULAR RECESSED DISH --- */
+.layout-snes .dpad-well {
+  width: 224px;
+  height: 224px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #C5C0B6 0%, #D8D4CC 100%);
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.22),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.7),
+    0 1px 0 rgba(255, 255, 255, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.layout-snes .dpad {
+  --cell-size: 58px;
   display: grid;
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
-  position: relative; 
-}
-
-.dpad button {
-  background: #333;
-  border: none;
-  width: 100%; height: 100%;
-}
-.dpad button:active { background: #111; }
-
-.up { border-radius: 30px 30px 0 0; }
-.down { border-radius: 0 0 30px 30px; }
-.left { border-radius: 30px 0 0 30px; }
-.right { border-radius: 0 30px 30px 0; }
-.center { background: #333; pointer-events: none; } 
-.diagonal { background: transparent !important; border: none; }
-
-.center-cluster {
-  position: absolute;
-  gap: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.pill-btn {
-  width: 60px; height: 20px;
-  background: #555;
-  border-radius: 10px;
-  border: none;
-  color: #ccc;
-  font-size: 10px;
-  line-height: 20px;
-}
-.pill-btn:active { background: #222; }
-
-.actions {
-  --btn-size: 65px; 
-  
   position: relative;
-  
+  filter: drop-shadow(0 5px 3px rgba(0, 0, 0, 0.38));
+}
+
+.layout-snes .dpad button {
+  background: linear-gradient(180deg, #434247 0%, #2E2D32 100%);
+  border: 1px solid #1E1D21;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.layout-snes .dpad .up {
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.22);
+}
+
+.layout-snes .dpad .down {
+  border-radius: 0 0 10px 10px;
+  border-top: none;
+  box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.layout-snes .dpad .left {
+  border-radius: 10px 0 0 10px;
+  border-right: none;
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.18);
+}
+
+.layout-snes .dpad .right {
+  border-radius: 0 10px 10px 0;
+  border-left: none;
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.18);
+}
+
+/* Molded Directional Arrows on D-Pad Arms */
+.layout-snes .dpad .up::after,
+.layout-snes .dpad .down::after,
+.layout-snes .dpad .left::after,
+.layout-snes .dpad .right::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  opacity: 0.55;
+}
+
+.layout-snes .dpad .up::after {
+  border-width: 0 9px 12px 9px;
+  border-color: transparent transparent #201F23 transparent;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22));
+}
+
+.layout-snes .dpad .down::after {
+  border-width: 12px 9px 0 9px;
+  border-color: #201F23 transparent transparent transparent;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22));
+}
+
+.layout-snes .dpad .left::after {
+  border-width: 9px 12px 9px 0;
+  border-color: transparent #201F23 transparent transparent;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22));
+}
+
+.layout-snes .dpad .right::after {
+  border-width: 9px 0 9px 12px;
+  border-color: transparent transparent transparent #201F23;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22));
+}
+
+/* Concave Center Thumb Pivot */
+.layout-snes .dpad .center {
+  background: #353439;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-snes .dpad .center::after {
+  content: "";
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 65% 65%, #45444A 0%, #232226 85%);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.7);
+}
+
+.layout-snes .dpad .diagonal {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.layout-snes .dpad button:active:not(.diagonal),
+.layout-snes .dpad button.active:not(.diagonal) {
+  background: #222126;
+  transform: scale(0.95);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* --- CENTER SILK-SCREEN & ANGLED RUBBER PILLS --- */
+.layout-snes .center-deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 195px;
+  padding: 6px 0 10px 0;
+  z-index: 3;
+}
+
+.layout-snes .console-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 14px;
+  background: #8B877E;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.layout-snes .badge-main {
+  font-size: 13px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: #EAE6DF;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.layout-snes .badge-sub {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #32302D;
+}
+
+.layout-snes .center-cluster {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: auto;
+}
+
+.layout-snes .pill-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.layout-snes .pill-btn {
+  width: 52px;
+  height: 18px;
+  background: linear-gradient(180deg, #4B4A50 0%, #2C2B30 100%);
+  border-radius: 999px;
+  border: 1px solid #1C1B1F;
+  transform: rotate(-28deg);
+  box-shadow:
+    0 4px 4px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    0 0 0 3px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+
+.layout-snes .pill-btn:active,
+.layout-snes .pill-btn.active {
+  transform: rotate(-28deg) translateY(2px) scale(0.95);
+  background: #232226;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.layout-snes .pill-legend {
+  font-size: 11px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: #54514B;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* --- RIGHT MEDALLION & DUAL CAPSULE ACTION CLUSTER --- */
+.layout-snes .actions-medallion {
+  width: 244px;
+  height: 244px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ABA79E 0%, #969289 100%);
+  border: 2px solid #827E75;
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.35),
+    0 2px 0 rgba(255, 255, 255, 0.75);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Angled Stadium Capsule Recesses linking X-Y and A-B */
+.layout-snes .capsule-well {
+  position: absolute;
+  width: 162px;
+  height: 76px;
+  border-radius: 999px;
+  background: #C4C0B7;
+  border: 1px solid #7C7870;
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: rotate(-36deg);
+  pointer-events: none;
+}
+
+.layout-snes .capsule-xy {
+  top: 52px;
+  left: 16px;
+}
+
+.layout-snes .capsule-ab {
+  bottom: 52px;
+  right: 16px;
+}
+
+.layout-snes .actions {
+  --btn-size: 64px;
+  position: relative;
   width: calc(var(--btn-size) * 3);
   height: calc(var(--btn-size) * 3);
+  z-index: 2;
 }
 
-.round-btn {
+.layout-snes .round-btn {
   width: var(--btn-size);
   height: var(--btn-size);
-  
   border-radius: 50%;
-  border: none;
   position: absolute;
-  color: white;
-  font-weight: bold;
-  
-  font-size: calc(var(--btn-size) * 0.35); 
-  
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  color: rgba(255, 255, 255, 0.94);
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-.round-btn:active, .round-btn.active { 
-  transform: scale(0.85); 
-  box-shadow: none; 
-}
-
-.btn-y { 
-  top: 0; 
+/* Note: Layout positions match original SNES layout.html mapping */
+.layout-snes .btn-y {
+  top: 4px;
   left: var(--btn-size);
 }
 
-.btn-x { 
-  top: var(--btn-size); 
-  left: 0; 
-}
-
-.btn-b { 
+.layout-snes .btn-x {
   top: var(--btn-size);
-  right: 0; 
+  left: 4px;
 }
 
-.btn-a { 
-  bottom: 0; 
-  left: var(--btn-size); 
-}
-/* ==========================================================================
-   5. SKIN: CLASSIC MODE SNES 
-   ========================================================================== */
-.layout-snes {
-  background: #dcdcdc;
-  border-radius: 50px;
+.layout-snes .btn-b {
+  top: var(--btn-size);
+  right: 4px;
 }
 
-.layout-snes .extra-btn {
-  display: none !important; 
+.layout-snes .btn-a {
+  bottom: 4px;
+  left: var(--btn-size);
 }
 
-.layout-snes .btn-x { background: #5c7cfa; }
+/* Super Famicom 4-Color Molded Caps with Concave/Convex Specular Highlights */
+.layout-snes .btn-x {
+  background: radial-gradient(circle at 32% 28%, #4279E3 0%, #1F52B5 65%, #153B85 100%);
+  border: 2px solid #102D69;
+  box-shadow:
+    0 5px 0 #0D2352,
+    0 7px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.48);
+}
 .layout-snes .btn-x::after { content: "X"; }
 
-.layout-snes .btn-y { background: #40c057; }
+.layout-snes .btn-y {
+  background: radial-gradient(circle at 32% 28%, #36C96E 0%, #199649 65%, #116E34 100%);
+  border: 2px solid #0C5427;
+  box-shadow:
+    0 5px 0 #093D1C,
+    0 7px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.48);
+}
 .layout-snes .btn-y::after { content: "Y"; }
 
-.layout-snes .btn-a { background: #fa5252; }
+.layout-snes .btn-a {
+  background: radial-gradient(circle at 32% 28%, #F24B59 0%, #D12130 65%, #9E1420 100%);
+  border: 2px solid #7A0E17;
+  box-shadow:
+    0 5px 0 #590910,
+    0 7px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.48);
+}
 .layout-snes .btn-a::after { content: "A"; }
 
-.layout-snes .btn-b { background: #fab005; }
+.layout-snes .btn-b {
+  background: radial-gradient(circle at 32% 28%, #FFCA3A 0%, #E0A10D 65%, #B07C06 100%);
+  border: 2px solid #8A6004;
+  color: #2B1E02;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 5px 0 #664702,
+    0 7px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55);
+}
 .layout-snes .btn-b::after { content: "B"; }
 
+.layout-snes .round-btn:active,
+.layout-snes .round-btn.active {
+  transform: translateY(4px) scale(0.95);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    inset 0 3px 6px rgba(0, 0, 0, 0.55) !important;
+  filter: brightness(0.92);
+}
+
+/* Compact mobile screen adjustments */
+@media (max-width: 720px), (max-height: 400px) {
+  #gamepad.layout-snes {
+    border-radius: 150px;
+  }
+  .layout-snes .dpad-well {
+    width: 196px;
+    height: 196px;
+  }
+  .layout-snes .dpad {
+    --cell-size: 52px;
+  }
+  .layout-snes .actions-medallion {
+    width: 212px;
+    height: 212px;
+  }
+  .layout-snes .capsule-well {
+    width: 142px;
+    height: 66px;
+  }
+  .layout-snes .capsule-xy {
+    top: 44px;
+    left: 14px;
+  }
+  .layout-snes .capsule-ab {
+    bottom: 44px;
+    right: 14px;
+  }
+  .layout-snes .actions {
+    --btn-size: 56px;
+  }
+}

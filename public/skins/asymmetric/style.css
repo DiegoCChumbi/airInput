@@ -1,0 +1,350 @@
+/* ==========================================================================
+   MODERNO ASIMÉTRICO (OFFSET DUAL-STICK) TACTILE HARDWARE SKIN
+   ========================================================================== */
+
+#gamepad.layout-asymmetric {
+  width: 96%;
+  max-width: 780px;
+  height: calc(100% - 10px);
+  max-height: 395px;
+  background:
+    radial-gradient(circle at 50% 20%, #272B36 0%, #191C24 62%, #111319 100%);
+  border-radius: 95px 95px 62px 62px;
+  border: 2px solid #394050;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 8px 0 #0A0B0F,
+    0 22px 44px rgba(0, 0, 0, 0.82),
+    inset 0 2px 1px rgba(255, 255, 255, 0.16),
+    inset 0 -10px 24px rgba(0, 0, 0, 0.75);
+}
+
+.layout-asymmetric .face {
+  flex: 1;
+  position: relative;
+}
+
+/* --- TOP SHOULDER & ANALOG TRIGGER BUMPERS --- */
+.layout-asymmetric .shoulders {
+  width: 100%;
+  height: 54px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 36px 0 36px;
+}
+
+.layout-asymmetric .shoulder-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.layout-asymmetric .btn-shoulder {
+  width: 112px;
+  height: 44px;
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(180deg, #4E5566 0%, #333845 100%);
+  border: 2px solid #20242D;
+  border-radius: 20px 20px 8px 8px;
+  color: #F0F2F7;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 4px 0 #15181F,
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-asymmetric .btn-shoulder:active,
+.layout-asymmetric .btn-shoulder.active {
+  transform: translateY(4px);
+  background: #282C37;
+  box-shadow: 0 1px 0 #15181F, inset 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.layout-asymmetric .btn-trigger {
+  width: 88px;
+  height: 44px;
+  background: linear-gradient(180deg, #303542 0%, #1B1E26 100%);
+  color: #F59E0B;
+  border: 2px solid #262A36;
+  border-radius: 16px 16px 8px 8px;
+  font-family: var(--font-hardware, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 4px 0 #101217,
+    inset 0 2px 2px rgba(255, 255, 255, 0.16);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-asymmetric .btn-trigger:active,
+.layout-asymmetric .btn-trigger.active {
+  background: #13151B;
+  transform: translateY(4px);
+  color: #FFFFFF;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* --- OFFSET ANALOG STICKS (LEFT: TOP-LEFT, RIGHT: BOTTOM-RIGHT) --- */
+.layout-asymmetric .stick-zone {
+  width: 122px;
+  height: 122px;
+  pointer-events: auto;
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0E1015 0%, #1B1E26 70%, #2C313E 100%);
+  border: 2px solid #444B5E;
+  box-shadow:
+    inset 0 6px 14px rgba(0, 0, 0, 0.9),
+    0 0 0 4px rgba(245, 158, 11, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.layout-asymmetric .stick-top-left {
+  top: 14px;
+  left: 38px;
+}
+
+.layout-asymmetric .stick-bottom-right {
+  bottom: 14px;
+  right: 152px;
+}
+
+.layout-asymmetric .nipple .back {
+  background: radial-gradient(circle, rgba(12, 13, 18, 0.85) 0%, rgba(28, 31, 40, 0.95) 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.32) !important;
+}
+
+.layout-asymmetric .nipple .front {
+  background: radial-gradient(circle at 32% 30%, #505666 0%, #252830 68%, #14161B 100%) !important;
+  border: 2px solid #0C0D10 !important;
+  box-shadow:
+    0 7px 15px rgba(0, 0, 0, 0.75),
+    inset 0 2px 3px rgba(255, 255, 255, 0.28) !important;
+}
+
+.layout-asymmetric .nipple .front::after {
+  content: "";
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  border-radius: 50%;
+  border: 2px dashed rgba(245, 158, 11, 0.28);
+}
+
+/* --- BOTTOM-LEFT FACETED D-PAD --- */
+.layout-asymmetric .dpad-bottom-left {
+  --cell-size: 50px;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  position: absolute;
+  bottom: 8px;
+  left: 142px;
+  transform: scale(0.88);
+  padding: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #12141A 0%, #20242E 100%);
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.layout-asymmetric .dpad button {
+  background: linear-gradient(180deg, #3A3F4D 0%, #262A34 100%);
+  border: 1px solid #15171D;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-asymmetric .dpad .up    { border-radius: 12px 12px 0 0; border-bottom: none; }
+.layout-asymmetric .dpad .down  { border-radius: 0 0 12px 12px; border-top: none; }
+.layout-asymmetric .dpad .left  { border-radius: 12px 0 0 12px; border-right: none; }
+.layout-asymmetric .dpad .right { border-radius: 0 12px 12px 0; border-left: none; }
+.layout-asymmetric .dpad .center {
+  background: radial-gradient(circle, #1F222B 0%, #2D313D 100%);
+  pointer-events: none;
+}
+.layout-asymmetric .dpad .diagonal {
+  background: transparent !important;
+  border: none !important;
+}
+
+.layout-asymmetric .dpad .up::after,
+.layout-asymmetric .dpad .down::after,
+.layout-asymmetric .dpad .left::after,
+.layout-asymmetric .dpad .right::after {
+  content: "";
+  width: 10px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(245, 158, 11, 0.45);
+}
+
+.layout-asymmetric .dpad .up::after,
+.layout-asymmetric .dpad .down::after {
+  width: 3px;
+  height: 10px;
+}
+
+.layout-asymmetric .dpad button:active:not(.diagonal),
+.layout-asymmetric .dpad button.active:not(.diagonal) {
+  background: #191B22;
+  transform: scale(0.94);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* --- CENTER CLUSTER --- */
+.layout-asymmetric .center-cluster {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.layout-asymmetric .guide-jewel {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #484C59 0%, #1E2026 75%);
+  border: 2px solid #121317;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-asymmetric .guide-ring {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(245, 158, 11, 0.85);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.55);
+}
+
+.layout-asymmetric .center-row {
+  display: flex;
+  gap: 12px;
+}
+
+.layout-asymmetric .pill-btn {
+  width: 64px;
+  height: 25px;
+  background: linear-gradient(180deg, #434754 0%, #2B2E38 100%);
+  border-radius: 999px;
+  border: 1px solid #18191E;
+  color: #D8DCE6;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  box-shadow:
+    0 3px 0 #141519,
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.layout-asymmetric .pill-btn.thumb-btn {
+  width: 52px;
+  height: 25px;
+  background: linear-gradient(180deg, #32353E 0%, #22242B 100%);
+  border: 1px solid #454854;
+  color: #F59E0B;
+}
+
+.layout-asymmetric .pill-btn:active,
+.layout-asymmetric .pill-btn.active {
+  transform: translateY(2px);
+  background: #1B1C22;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* --- TOP-RIGHT ABXY CLUSTER --- */
+.layout-asymmetric .actions-top-right {
+  --btn-size: 60px;
+  position: absolute;
+  top: 2px;
+  right: 20px;
+  transform: scale(0.9);
+  width: calc(var(--btn-size) * 3);
+  height: calc(var(--btn-size) * 3);
+}
+
+.layout-asymmetric .round-btn {
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 50%;
+  position: absolute;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-asymmetric .btn-y {
+  top: 0;
+  left: var(--btn-size);
+  background: radial-gradient(circle at 32% 26%, #FFDA47 0%, #E0A200 68%, #9E7000 100%);
+  color: #261B00;
+  border: 2px solid #6E4E00;
+  box-shadow: 0 5px 0 #473200, 0 8px 14px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.65);
+}
+.layout-asymmetric .btn-y::after { content: "Y"; font-size: 23px; }
+
+.layout-asymmetric .btn-x {
+  top: var(--btn-size);
+  left: 0;
+  background: radial-gradient(circle at 32% 26%, #4DA3FF 0%, #1B6EC9 68%, #104887 100%);
+  color: #FFFFFF;
+  border: 2px solid #0B3361;
+  box-shadow: 0 5px 0 #072242, 0 8px 14px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.55);
+}
+.layout-asymmetric .btn-x::after { content: "X"; font-size: 23px; }
+
+.layout-asymmetric .btn-b {
+  top: var(--btn-size);
+  right: 0;
+  background: radial-gradient(circle at 32% 26%, #FF5C5C 0%, #D42222 68%, #911111 100%);
+  color: #FFFFFF;
+  border: 2px solid #660A0A;
+  box-shadow: 0 5px 0 #450606, 0 8px 14px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.55);
+}
+.layout-asymmetric .btn-b::after { content: "B"; font-size: 23px; }
+
+.layout-asymmetric .btn-a {
+  bottom: 0;
+  left: var(--btn-size);
+  background: radial-gradient(circle at 32% 26%, #45E083 0%, #19A350 68%, #0E6B33 100%);
+  color: #FFFFFF;
+  border: 2px solid #094D23;
+  box-shadow: 0 5px 0 #063317, 0 8px 14px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.55);
+}
+.layout-asymmetric .btn-a::after { content: "A"; font-size: 23px; }
+
+.layout-asymmetric .round-btn:active,
+.layout-asymmetric .round-btn.active {
+  transform: translateY(4px) scale(0.94);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.8), inset 0 3px 6px rgba(0, 0, 0, 0.65) !important;
+  filter: brightness(0.92);
+}

@@ -1,34 +1,57 @@
 <div id="gamepad" class="layout-snes">
   <div class="shoulders">
     <div class="shoulder-group left-group">
-      <button class="btn-shoulder" data-btn="L">L</button>
+      <button class="btn-shoulder l-shoulder" data-btn="L">L</button>
     </div>
     <div class="shoulder-group right-group">
-      <button class="btn-shoulder" data-btn="R">R</button>
+      <button class="btn-shoulder r-shoulder" data-btn="R">R</button>
     </div>
   </div>
 
   <div class="face">
-    <div class="dpad">
-      <button class="diagonal" data-btns="UP,LEFT"></button>
-      <button class="up" data-btn="UP"></button>
-      <button class="diagonal" data-btns="UP,RIGHT"></button>
-      <button class="left" data-btn="LEFT"></button>
-      <div class="center"></div>
-      <button class="right" data-btn="RIGHT"></button>
-      <button class="diagonal" data-btns="DOWN,LEFT"></button>
-      <button class="down" data-btn="DOWN"></button>
-      <button class="diagonal" data-btns="DOWN,RIGHT"></button>
+    <!-- Left Circular Well: Cross D-Pad -->
+    <div class="dpad-well">
+      <div class="dpad">
+        <button class="diagonal" data-btns="UP,LEFT" aria-label="Arriba Izquierda"></button>
+        <button class="up" data-btn="UP" aria-label="Arriba"></button>
+        <button class="diagonal" data-btns="UP,RIGHT" aria-label="Arriba Derecha"></button>
+        <button class="left" data-btn="LEFT" aria-label="Izquierda"></button>
+        <div class="center"></div>
+        <button class="right" data-btn="RIGHT" aria-label="Derecha"></button>
+        <button class="diagonal" data-btns="DOWN,LEFT" aria-label="Abajo Izquierda"></button>
+        <button class="down" data-btn="DOWN" aria-label="Abajo"></button>
+        <button class="diagonal" data-btns="DOWN,RIGHT" aria-label="Abajo Derecha"></button>
+      </div>
     </div>
-    <div class="center-cluster">
-      <button class="pill-btn" data-btn="SELECT">SELECT</button>
-      <button class="pill-btn" data-btn="START">START</button>
+
+    <!-- Center Molded Silk-Screen & Angled Rubber Pills -->
+    <div class="center-deck">
+      <div class="console-badge" aria-hidden="true">
+        <span class="badge-main">AIRINPUT</span>
+        <span class="badge-sub">AI-16 · 16-BIT PAD</span>
+      </div>
+      <div class="center-cluster">
+        <div class="pill-slot">
+          <button class="pill-btn" data-btn="SELECT" aria-label="Select"></button>
+          <span class="pill-legend">SELECT</span>
+        </div>
+        <div class="pill-slot">
+          <button class="pill-btn" data-btn="START" aria-label="Start"></button>
+          <span class="pill-legend">START</span>
+        </div>
+      </div>
     </div>
-    <div class="actions">
-      <button class="round-btn btn-x" data-btn="X"></button>
-      <button class="round-btn btn-y" data-btn="Y"></button>
-      <button class="round-btn btn-b" data-btn="B"></button>
-      <button class="round-btn btn-a" data-btn="A"></button>
+
+    <!-- Right Medallion: Dual Capsule ABXY Cluster -->
+    <div class="actions-medallion">
+      <div class="capsule-well capsule-xy" aria-hidden="true"></div>
+      <div class="capsule-well capsule-ab" aria-hidden="true"></div>
+      <div class="actions">
+        <button class="round-btn btn-x" data-btn="X" aria-label="X"></button>
+        <button class="round-btn btn-y" data-btn="Y" aria-label="Y"></button>
+        <button class="round-btn btn-b" data-btn="B" aria-label="B"></button>
+        <button class="round-btn btn-a" data-btn="A" aria-label="A"></button>
+      </div>
     </div>
   </div>
 </div>

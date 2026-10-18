@@ -1,0 +1,533 @@
+/* ==========================================================================
+   AIRINPUT — TOUCH-FIRST KART / ARCADE RACER RIG (AI-KART)
+   Ergonomic Steering + Dedicated Item Trigger + 1-Thumb Gas & Drift Pedalboard
+   ========================================================================== */
+
+#gamepad.layout-kart {
+  width: 96%;
+  max-width: 790px;
+  height: calc(100% - 10px);
+  max-height: 398px;
+  background:
+    radial-gradient(circle at 18% 58%, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 82% 52%, rgba(234, 88, 12, 0.07) 0%, transparent 45%),
+    linear-gradient(165deg, #1E222B 0%, #111319 100%);
+  border-radius: 78px 78px 54px 54px;
+  border: 2px solid #394050;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 18px 12px 18px;
+  box-shadow:
+    0 8px 0 #090B0E,
+    0 22px 44px rgba(0, 0, 0, 0.85),
+    inset 0 2px 2px rgba(255, 255, 255, 0.16),
+    inset 0 -8px 18px rgba(0, 0, 0, 0.65);
+}
+
+/* --- TOP BUMPERS (ITEM & DRIFT) --- */
+.layout-kart .shoulders {
+  width: 100%;
+  height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 18px;
+  z-index: 10;
+}
+
+.layout-kart .shoulder-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.layout-kart .btn-shoulder,
+.layout-kart .btn-trigger {
+  height: 40px;
+  padding: 0 12px;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  border-radius: 18px 18px 8px 8px;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-kart .btn-trigger {
+  min-width: 88px;
+  background: linear-gradient(180deg, #475569 0%, #293240 100%);
+  color: #FACC15;
+  border: 2px solid #1E2530;
+  box-shadow:
+    0 4px 0 #11151C,
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.layout-kart .btn-shoulder {
+  min-width: 108px;
+  background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+  color: #F8FAFC;
+  border: 2px solid #0F172A;
+  box-shadow:
+    0 4px 0 #090D16,
+    inset 0 1px 1px rgba(255, 255, 255, 0.22);
+}
+
+.layout-kart .btn-shoulder:active,
+.layout-kart .btn-shoulder.active,
+.layout-kart .btn-trigger:active,
+.layout-kart .btn-trigger.active {
+  transform: translateY(4px);
+  background: linear-gradient(180deg, #EA580C 0%, #9A3412 100%);
+  color: #FFFFFF;
+  box-shadow: 0 1px 0 #090D16, inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* --- FACE CONTAINER --- */
+.layout-kart .face {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* --- LEFT WING: QUICK ITEM HUB + STEERING STICK + MINI D-PAD --- */
+.layout-kart .kart-left {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 6px;
+  width: 248px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.layout-kart .item-hub {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.layout-kart .item-launch-btn {
+  flex: 1;
+  height: 54px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #FACC15 0%, #CA8A04 100%);
+  border: 2px solid #422006;
+  color: #1C1917;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow:
+    0 5px 0 #713F12,
+    0 8px 14px rgba(0, 0, 0, 0.5),
+    inset 0 2px 2px rgba(255, 255, 255, 0.65);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.layout-kart .item-main-label {
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  line-height: 1.05;
+}
+
+.layout-kart .item-sub-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.88;
+}
+
+.layout-kart .rearview-btn {
+  width: 82px;
+  height: 54px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0EA5E9 0%, #0369A1 100%);
+  border: 2px solid #082F49;
+  color: #F0F9FF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow:
+    0 5px 0 #0C4A6E,
+    0 8px 14px rgba(0, 0, 0, 0.5),
+    inset 0 2px 2px rgba(255, 255, 255, 0.45);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.layout-kart .rear-main-label {
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.layout-kart .rear-sub-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.layout-kart .item-launch-btn:active,
+.layout-kart .item-launch-btn.active,
+.layout-kart .rearview-btn:active,
+.layout-kart .rearview-btn.active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), inset 0 2px 5px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.08);
+}
+
+.layout-kart .kart-left-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+}
+
+.layout-kart .steering-housing {
+  position: relative;
+  width: 138px;
+  height: 138px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-kart .wheel-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px dashed rgba(250, 204, 21, 0.28);
+  background: radial-gradient(circle, #0B0D11 0%, #161922 100%);
+  box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+.layout-kart .wheel-ring::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 6px;
+  border-radius: 3px;
+  background: #EF4444;
+}
+
+.layout-kart .steering-tag {
+  position: absolute;
+  bottom: -11px;
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #94A3B8;
+  pointer-events: none;
+}
+
+.layout-kart #stick-left-zone {
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 3;
+}
+
+.layout-kart #stick-left-zone .nipple .back {
+  background: radial-gradient(circle, #090A0D 0%, #181B22 75%, #262B36 100%) !important;
+  border: 2px solid rgba(250, 204, 21, 0.35) !important;
+}
+
+.layout-kart #stick-left-zone .nipple .front {
+  background: radial-gradient(circle at 35% 35%, #475569 0%, #1E293B 65%, #0F172A 100%) !important;
+  border: 2px solid #FACC15 !important;
+}
+
+/* Compact D-Pad for Menu & Tricks */
+.layout-kart .mini-dpad {
+  --cell-size: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.5));
+}
+
+.layout-kart .mini-dpad button,
+.layout-kart .mini-dpad .center {
+  background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+  border: 1px solid #0F172A;
+  color: #CBD5E1;
+  font-size: 10px;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.layout-kart .mini-dpad .up    { border-radius: 6px 6px 0 0; border-bottom: none; }
+.layout-kart .mini-dpad .down  { border-radius: 0 0 6px 6px; border-top: none; }
+.layout-kart .mini-dpad .left  { border-radius: 6px 0 0 6px; border-right: none; }
+.layout-kart .mini-dpad .right { border-radius: 0 6px 6px 0; border-left: none; }
+.layout-kart .mini-dpad .diagonal {
+  background: transparent !important;
+  border: none !important;
+}
+
+.layout-kart .mini-dpad button:active:not(.diagonal),
+.layout-kart .mini-dpad button.active:not(.diagonal) {
+  background: #FACC15;
+  color: #0F172A;
+  transform: scale(0.94);
+}
+
+/* --- CENTER TELEMETRY CLUSTER (EXACT HORIZONTAL CENTER) --- */
+.layout-kart .kart-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 3;
+}
+
+.layout-kart .kart-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9px;
+  background: rgba(9, 11, 16, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.layout-kart .crest-main {
+  font-size: 13px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: #F8FAFC;
+}
+
+.layout-kart .crest-sub {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #FACC15;
+}
+
+.layout-kart .rpm-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.layout-kart .rpm-leds {
+  display: flex;
+  gap: 5px;
+}
+
+.layout-kart .rpm-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.layout-kart .rpm-dot.g { background: #22C55E; box-shadow: 0 0 6px #22C55E; }
+.layout-kart .rpm-dot.y { background: #EAB308; box-shadow: 0 0 6px #EAB308; }
+.layout-kart .rpm-dot.r { background: #EF4444; box-shadow: 0 0 6px #EF4444; }
+
+.layout-kart .rpm-caption {
+  font-family: var(--font-mono, monospace);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  color: #94A3B8;
+}
+
+.layout-kart .center-pills {
+  display: flex;
+  gap: 10px;
+}
+
+.layout-kart .pill-btn {
+  width: 56px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+  border: 2px solid #0F172A;
+  color: #F8FAFC;
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #090D16;
+  cursor: pointer;
+}
+
+.layout-kart .pill-btn:active,
+.layout-kart .pill-btn.active {
+  transform: translateY(2px);
+  box-shadow: none;
+  background: #FACC15;
+  color: #0F172A;
+}
+
+/* --- RIGHT WING: TOUCH-FIRST PEDALBOARD --- */
+.layout-kart .kart-right {
+  position: absolute;
+  top: 4px;
+  bottom: 6px;
+  right: 6px;
+  width: 262px;
+  display: flex;
+  align-items: stretch;
+}
+
+.layout-kart .pedalboard {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 72px 86px 88px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.layout-kart .pedal-btn {
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 4px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.04s ease, box-shadow 0.04s ease, filter 0.04s ease;
+}
+
+.layout-kart .pedal-title {
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.layout-kart .pedal-sub {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 0.92;
+}
+
+.layout-kart .pedal-treads {
+  width: 74%;
+  height: 46px;
+  border-radius: 6px;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.38) 0px,
+    rgba(0, 0, 0, 0.38) 4px,
+    rgba(255, 255, 255, 0.14) 4px,
+    rgba(255, 255, 255, 0.14) 8px
+  );
+}
+
+/* Brake Pedal (B) */
+.layout-kart .pedal-brake {
+  height: 74%;
+  align-self: end;
+  background: linear-gradient(180deg, #EF4444 0%, #B91C1C 100%);
+  border: 2px solid #450A0A;
+  color: #FFFFFF;
+  box-shadow:
+    0 5px 0 #7F1D1D,
+    0 8px 16px rgba(0, 0, 0, 0.55),
+    inset 0 2px 3px rgba(255, 255, 255, 0.45);
+}
+
+/* Tall Gas Pedal (A) */
+.layout-kart .pedal-gas {
+  height: 100%;
+  background: linear-gradient(180deg, #22C55E 0%, #15803D 100%);
+  border: 2px solid #052E16;
+  color: #FFFFFF;
+  box-shadow:
+    0 5px 0 #14532D,
+    0 8px 16px rgba(0, 0, 0, 0.6),
+    inset 0 2px 3px rgba(255, 255, 255, 0.5);
+}
+
+/* 1-Thumb Drift Combo Column */
+.layout-kart .drift-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.layout-kart .pedal-drift-combo {
+  flex: 1;
+  background: linear-gradient(180deg, #FB923C 0%, #EA580C 60%, #C2410C 100%);
+  border: 2px solid #431407;
+  color: #FFFFFF;
+  box-shadow:
+    0 5px 0 #7C2D12,
+    0 8px 16px rgba(0, 0, 0, 0.6),
+    inset 0 2px 3px rgba(255, 255, 255, 0.5);
+}
+
+.layout-kart .drift-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 7px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #FDE047;
+}
+
+.layout-kart .aux-boost-btn {
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #A855F7 0%, #6B21A8 100%);
+  border: 2px solid #3B0764;
+  color: #FFFFFF;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 #4C1D95,
+    inset 0 2px 2px rgba(255, 255, 255, 0.4);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.layout-kart .pedal-btn:active,
+.layout-kart .pedal-btn.active,
+.layout-kart .aux-boost-btn:active,
+.layout-kart .aux-boost-btn.active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.8), inset 0 3px 8px rgba(0, 0, 0, 0.45);
+  filter: brightness(1.12);
+}

@@ -1,199 +1,395 @@
+/* ==========================================================================
+   NINTENDO 64 (NUS-005) TACTILE HARDWARE SKIN
+   ========================================================================== */
+
 .n64-skin {
-    width: 100%;
-    height: 100%;
-    background-color: #d3d3d3;
-    display: flex;
-    flex-direction: column;
-    padding: 10px 20px 30px 20px;
-    box-sizing: border-box;
-    touch-action: none;
-    user-select: none;
-    position: relative;
-    overflow: hidden;
+  width: 96%;
+  max-width: 780px;
+  height: calc(100% - 10px);
+  max-height: 395px;
+  background:
+    radial-gradient(circle at 50% 18%, #D8DADF 0%, #C2C5CC 58%, #AEB2BA 100%);
+  border-radius: 82px 82px 54px 54px;
+  border: 2px solid #E4E6EB;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 22px 14px 22px;
+  box-sizing: border-box;
+  touch-action: none;
+  user-select: none;
+  position: relative;
+  box-shadow:
+    0 8px 0 #7E828A,
+    0 20px 42px rgba(0, 0, 0, 0.72),
+    inset 0 3px 2px rgba(255, 255, 255, 0.78),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.22);
 }
 
-.top-triggers {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 25px;
-    z-index: 10;
+/* --- TOP SHOULDER ARCHES & NUS-005 CREST --- */
+.n64-skin .top-triggers {
+  width: 100%;
+  height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 20px;
+  z-index: 10;
 }
 
-.trigger-btn, .z-btn {
-    background: #a9a9a9;
-    border: 2px solid #808080;
-    color: #333;
-    font-weight: bold;
-    box-shadow: 0 4px 0 #696969;
+.n64-skin .n64-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.65);
+  pointer-events: none;
 }
 
-.trigger-btn {
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-    width: 80px;
-    height: 50px;
+.n64-skin .crest-title {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #4D5057;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
-.main-layout {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    margin-top: 50px;
+.n64-skin .crest-model {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #6B6F78;
 }
 
-.side-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+.n64-skin .trigger-btn {
+  width: 132px;
+  height: 42px;
+  background: linear-gradient(180deg, #AFB3BC 0%, #8E929B 100%);
+  border: 2px solid #676A73;
+  color: #2B2D33;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 4px 0 #565961,
+    inset 0 2px 1px rgba(255, 255, 255, 0.6);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-.right-handle {
-    justify-content: flex-start;
-    padding-top: 0px;
-    gap: 0;
+.n64-skin .l-btn {
+  border-radius: 34px 12px 14px 14px;
 }
 
-.center-column {
-    flex: 0 0 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.n64-skin .r-btn {
+  border-radius: 12px 34px 14px 14px;
 }
 
-.z-btn {
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-size: 16px;
-    margin-bottom: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* --- MAIN 3-WING LAYOUT --- */
+.n64-skin .main-layout {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
-.start-btn {
-    background: #cc0000;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-weight: bold;
-    font-size: 11px;
-    box-shadow: 0 3px 0 #8b0000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.n64-skin .side-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
 }
 
-.dpad-container {
-    display: grid;
-    grid-template-columns: 45px 45px 45px;
-    grid-template-rows: 45px 45px 45px;
-    margin-bottom: 10px;
-    transform: scale(0.95);
+/* --- LEFT WING: D-PAD + OCTAGONAL STICK BOWL --- */
+.n64-skin .dpad-container {
+  display: grid;
+  grid-template-columns: 45px 45px 45px;
+  grid-template-rows: 45px 45px 45px;
+  filter: drop-shadow(0 5px 3px rgba(0, 0, 0, 0.35));
 }
 
-.dpad-btn, .dpad-center {
-    background: #555;
-    border: none;
-    color: #ccc;
-    font-size: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.n64-skin .dpad-btn,
+.n64-skin .dpad-center {
+  background: linear-gradient(180deg, #52555E 0%, #3B3D45 100%);
+  border: 1px solid #25272C;
+  color: #ACB0BA;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 }
 
-.dpad-diag { background: transparent; border: none; outline: none; pointer-events: auto; }
-.d-nw { grid-column: 1; grid-row: 1; }
-.d-up { grid-column: 2; grid-row: 1; border-radius: 5px 5px 0 0; }
-.d-ne { grid-column: 3; grid-row: 1; }
-.d-left { grid-column: 1; grid-row: 2; border-radius: 5px 0 0 5px; }
-.dpad-center { grid-column: 2; grid-row: 2; background: #555; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-.d-right { grid-column: 3; grid-row: 2; border-radius: 0 5px 5px 0; }
-.d-sw { grid-column: 1; grid-row: 3; }
-.d-down { grid-column: 2; grid-row: 3; border-radius: 0 0 5px 5px; }
-.d-se { grid-column: 3; grid-row: 3; }
-
-.stick-zone {
-    width: 120px;
-    height: 120px;
-    background: rgba(0,0,0,0.05);
-    border-radius: 50%;
-    border: 2px solid #bbb;
-    position: relative;
+.n64-skin .dpad-diag {
+  background: transparent;
+  border: none;
+  outline: none;
+  pointer-events: auto;
 }
 
-.c-grid {
-    display: grid;
-    grid-template-columns: 42px 42px 42px;
-    grid-template-rows: 42px 42px 42px;
-    gap: 4px;
-    margin-left: 30px;
+.n64-skin .d-nw { grid-column: 1; grid-row: 1; }
+.n64-skin .d-up { grid-column: 2; grid-row: 1; border-radius: 8px 8px 0 0; border-bottom: none; }
+.n64-skin .d-ne { grid-column: 3; grid-row: 1; }
+.n64-skin .d-left { grid-column: 1; grid-row: 2; border-radius: 8px 0 0 8px; border-right: none; }
+.n64-skin .dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background: radial-gradient(circle, #33353C 0%, #444750 100%);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+.n64-skin .d-right { grid-column: 3; grid-row: 2; border-radius: 0 8px 8px 0; border-left: none; }
+.n64-skin .d-sw { grid-column: 1; grid-row: 3; }
+.n64-skin .d-down { grid-column: 2; grid-row: 3; border-radius: 0 0 8px 8px; border-top: none; }
+.n64-skin .d-se { grid-column: 3; grid-row: 3; }
+
+/* Octagonal Gate Housing for N64 Control Stick */
+.n64-skin .octagon-bezel {
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #9FA3AC 0%, #CDD0D6 100%);
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.35),
+    0 2px 0 rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.c-btn {
-    background: #ffcc00;
-    border: none;
-    border-radius: 50%;
-    width: 42px;
-    height: 42px;
-    color: #664400;
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: 0 3px 0 #e6b800;
-    display: flex; justify-content: center; align-items: center;
+.n64-skin .stick-zone {
+  width: 118px;
+  height: 118px;
+  background: radial-gradient(circle, #2B2D33 0%, #43464F 65%, #686C75 100%);
+  border-radius: 50%;
+  border: 3px solid #5A5D66;
+  box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.85);
+  position: relative;
 }
 
-.c-up    { grid-column: 2; grid-row: 1; }
-.c-left  { grid-column: 1; grid-row: 2; }
-.c-right { grid-column: 3; grid-row: 2; }
-.c-down  { grid-column: 2; grid-row: 3; }
-.c-spacer { pointer-events: none; }
-
-
-.ab-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-top: 15px;
-    margin-right: 40px;
+/* Custom N64 Light-Grey Ribbed Stick Cap */
+.n64-skin .stick-zone .nipple .back {
+  background: radial-gradient(circle, #1E2024 0%, #373A42 72%, #525660 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.22) !important;
 }
 
-.ab-btn {
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    color: white;
-    font-weight: bold;
-    font-size: 24px;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-    display: flex; justify-content: center; align-items: center;
+.n64-skin .stick-zone .nipple .front {
+  background: radial-gradient(circle at 35% 30%, #F2F3F5 0%, #C7CAD1 68%, #9498A1 100%) !important;
+  border: 2px solid #5E6169 !important;
+  box-shadow:
+    0 7px 14px rgba(0, 0, 0, 0.6),
+    inset 0 2px 2px rgba(255, 255, 255, 0.9) !important;
 }
 
-.a-btn { 
-    background: #0000cc; 
-    margin-top: 25px; 
+.n64-skin .stick-zone .nipple .front::after {
+  border: 2px solid rgba(90, 93, 102, 0.55) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25) !important;
 }
 
-.b-btn { 
-    background: #009900; 
-    margin-top: 0; 
+/* --- CENTER PRONG: Z TRIGGER & CRIMSON START DOME --- */
+.n64-skin .center-column {
+  flex: 0 0 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
 }
 
-.trigger-btn.active, .z-btn.active { transform: translateY(4px); box-shadow: none; filter: brightness(0.8); border-bottom: none; }
-.dpad-btn.active { background: #777; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-.dpad-diag.active { background: rgba(0,0,0,0.05); border-radius: 50%; }
-.start-btn.active { transform: scale(0.95); box-shadow: none; filter: brightness(0.9); }
-.c-btn.active, .ab-btn.active { transform: scale(0.95); box-shadow: none; filter: brightness(0.9); }
+.n64-skin .z-housing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.n64-skin .z-btn {
+  width: 64px;
+  height: 54px;
+  border-radius: 12px 12px 22px 22px;
+  background: linear-gradient(180deg, #9EA2AC 0%, #7C8089 100%);
+  border: 2px solid #575A62;
+  color: #23252A;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 20px;
+  box-shadow:
+    0 5px 0 #484B52,
+    0 7px 12px rgba(0, 0, 0, 0.35),
+    inset 0 2px 1px rgba(255, 255, 255, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.n64-skin .hw-caption {
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #555860;
+}
+
+.n64-skin .start-well {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #A2A6AF 0%, #CFD2D8 100%);
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.n64-skin .start-btn {
+  background: radial-gradient(circle at 32% 28%, #FF4747 0%, #D91C1C 65%, #9E0E0E 100%);
+  color: #FFFFFF;
+  border: 2px solid #750808;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 4px 0 #5E0505,
+    0 6px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- RIGHT WING: YELLOW C-CLUSTER & OFFSET B/A --- */
+.n64-skin .c-well {
+  padding: 10px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #A6AAB3 0%, #CFD2D8 100%);
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.n64-skin .c-grid {
+  display: grid;
+  grid-template-columns: 44px 44px 44px;
+  grid-template-rows: 44px 44px 44px;
+  gap: 4px;
+}
+
+.n64-skin .c-btn {
+  background: radial-gradient(circle at 32% 28%, #FFE047 0%, #F0B400 68%, #BD8B00 100%);
+  border: 2px solid #8F6800;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  color: #4D3600;
+  font-weight: 900;
+  font-size: 15px;
+  box-shadow:
+    0 4px 0 #705000,
+    0 6px 8px rgba(0, 0, 0, 0.35),
+    inset 0 2px 2px rgba(255, 255, 255, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.n64-skin .c-up    { grid-column: 2; grid-row: 1; }
+.n64-skin .c-left  { grid-column: 1; grid-row: 2; }
+.n64-skin .c-right { grid-column: 3; grid-row: 2; }
+.n64-skin .c-down  { grid-column: 2; grid-row: 3; }
+.n64-skin .c-spacer { pointer-events: none; }
+.n64-skin .c-emblem {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 15px;
+  color: #636770;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.n64-skin .ab-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.n64-skin .ab-btn {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  color: #FFFFFF;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 24px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.n64-skin .b-btn {
+  background: radial-gradient(circle at 32% 28%, #29C766 0%, #109442 65%, #0A662C 100%);
+  border: 2px solid #074D20;
+  box-shadow:
+    0 5px 0 #053816,
+    0 7px 12px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.48);
+  margin-top: 0;
+}
+
+.n64-skin .a-btn {
+  background: radial-gradient(circle at 32% 28%, #3B73F2 0%, #1748BD 65%, #0E2F82 100%);
+  border: 2px solid #09215E;
+  box-shadow:
+    0 5px 0 #061642,
+    0 7px 12px rgba(0, 0, 0, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.48);
+  margin-top: 24px;
+}
+
+/* Active physical depression states */
+.n64-skin .trigger-btn.active,
+.n64-skin .trigger-btn:active,
+.n64-skin .z-btn.active,
+.n64-skin .z-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #484B52, inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  filter: brightness(0.9);
+}
+
+.n64-skin .dpad-btn.active,
+.n64-skin .dpad-btn:active {
+  background: #2B2D33;
+  transform: scale(0.95);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.n64-skin .start-btn.active,
+.n64-skin .start-btn:active,
+.n64-skin .c-btn.active,
+.n64-skin .c-btn:active,
+.n64-skin .ab-btn.active,
+.n64-skin .ab-btn:active {
+  transform: translateY(4px) scale(0.95);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), inset 0 3px 5px rgba(0, 0, 0, 0.5);
+  filter: brightness(0.92);
+}

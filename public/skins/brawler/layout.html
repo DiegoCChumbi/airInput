@@ -1,0 +1,80 @@
+<div id="gamepad" class="layout-brawler">
+  <div class="shoulders">
+    <div class="shoulder-group left-group">
+      <button class="btn-trigger" data-btn="L2">ESCUDO L</button>
+      <button class="btn-shoulder" data-btn="L">AGARRE</button>
+    </div>
+    <div class="shoulder-group right-group">
+      <button class="btn-shoulder z-bumper" data-btn="R">Z · AGARRE</button>
+      <button class="btn-trigger" data-btn="R2">ESCUDO R</button>
+    </div>
+  </div>
+
+  <div class="face">
+    <!-- Left Wing: Primary Octagonal Stick (Top) + Taunt D-Pad (Bottom) -->
+    <div class="brawler-left">
+      <div class="octagon-well">
+        <div id="stick-left-zone" class="stick-zone"></div>
+      </div>
+
+      <div class="dpad taunt-dpad">
+        <button class="diagonal" data-btns="UP,LEFT"></button>
+        <button class="up" data-btn="UP">▲</button>
+        <button class="diagonal" data-btns="UP,RIGHT"></button>
+        <button class="left" data-btn="LEFT">◀</button>
+        <div class="center"></div>
+        <button class="right" data-btn="RIGHT">▶</button>
+        <button class="diagonal" data-btns="DOWN,LEFT"></button>
+        <button class="down" data-btn="DOWN">▼</button>
+        <button class="diagonal" data-btns="DOWN,RIGHT"></button>
+      </div>
+    </div>
+
+    <!-- Center Column: Brawler Crest & Start/Select -->
+    <div class="brawler-center">
+      <div class="brawler-crest" aria-hidden="true">
+        <span class="crest-main">AIRINPUT</span>
+        <span class="crest-sub">AI-BRAWL · SMASH PAD</span>
+      </div>
+      <div class="center-pills">
+        <button class="pill-btn" data-btn="SELECT">SELECT</button>
+        <button class="pill-btn start-pill" data-btn="START">START</button>
+      </div>
+    </div>
+
+    <!-- Right Wing: Touch-First "A-Island" & Yellow C-Stick -->
+    <div class="brawler-right">
+      <div class="a-island">
+        <!-- Top Kidney Jump Button (Y) -->
+        <button class="brawler-btn btn-jump-y" data-btn="Y">
+          <span class="btn-glyph">Y</span>
+          <span class="btn-role">SALTO</span>
+        </button>
+
+        <!-- Giant Central A Button (Normal Attack) -->
+        <button class="brawler-btn btn-attack-a" data-btn="A">
+          <span class="btn-glyph">A</span>
+          <span class="btn-role">ATAQUE</span>
+        </button>
+
+        <!-- Right Kidney Jump Button (X) -->
+        <button class="brawler-btn btn-jump-x" data-btn="X">
+          <span class="btn-glyph">X</span>
+          <span class="btn-role">SALTO</span>
+        </button>
+
+        <!-- Bottom-Left Crimson B Button (Special Attack) -->
+        <button class="brawler-btn btn-special-b" data-btn="B">
+          <span class="btn-glyph">B</span>
+          <span class="btn-role">ESPEC.</span>
+        </button>
+      </div>
+
+      <!-- C-Stick for instant Smash Attacks -->
+      <div class="c-stick-housing">
+        <span class="c-stick-label" aria-hidden="true">C-STICK</span>
+        <div id="stick-right-zone" class="stick-zone c-stick-zone"></div>
+      </div>
+    </div>
+  </div>
+</div>
