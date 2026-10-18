@@ -1,98 +1,103 @@
-<div id="gamepad" class="arcade-skin">
-    <!-- Top Shoulder Macro Buttons -->
-    <div id="triggers-left" class="triggers-group">
-        <button id="btn-L2" data-btn="L2" class="shoulder-btn">MACRO · L2</button>
-        <button id="btn-L" data-btn="L" class="shoulder-btn">ASSIST · L1</button>
+<div id="gamepad" class="layout-arcade">
+  <!-- Top Shoulder & Combo Macro Bumpers -->
+  <div class="shoulders">
+    <div class="shoulder-group left-group">
+      <button class="btn-trigger" data-btn="L2">MACRO · L2</button>
+      <button class="btn-shoulder" data-btn="L">ASSIST · L1</button>
     </div>
-    <div id="triggers-right" class="triggers-group">
-        <button id="btn-combo-grab" data-btns="A,X" class="shoulder-btn">THROW (A+X)</button>
-        <button id="btn-combo-focus" data-btns="B,Y" class="shoulder-btn">SKILL (B+Y)</button>
+    <div class="shoulder-group right-group">
+      <button class="btn-shoulder" data-btns="A,X">AGARRE (A+X)</button>
+      <button class="btn-trigger" data-btns="B,Y">SKILL (B+Y)</button>
     </div>
+  </div>
 
-    <!-- Left Side: Large Fightpad D-Pad + Auxiliary Arcade Stick -->
-    <div id="left-controls">
-        <div id="dpad-container">
-            <div class="dpad-bezel"></div>
-            <div id="dpad">
-                <button id="btn-up" data-btn="UP" aria-label="Up"><span class="arrow up"></span></button>
-                <button id="btn-down" data-btn="DOWN" aria-label="Down"><span class="arrow down"></span></button>
-                <button id="btn-left" data-btn="LEFT" aria-label="Left"><span class="arrow left"></span></button>
-                <button id="btn-right" data-btn="RIGHT" aria-label="Right"><span class="arrow right"></span></button>
-                <div id="dpad-center"></div>
-            </div>
-        </div>
+  <div class="face">
+    <!-- Left Wing: Large Fightpad D-Pad + Auxiliary Arcade Stick -->
+    <div class="arcade-left">
+      <div class="dpad fight-dpad">
+        <button class="diagonal" data-btns="UP,LEFT">↖</button>
+        <button class="up" data-btn="UP">▲</button>
+        <button class="diagonal" data-btns="UP,RIGHT">↗</button>
+        <button class="left" data-btn="LEFT">◀</button>
+        <div class="center"></div>
+        <button class="right" data-btn="RIGHT">▶</button>
+        <button class="diagonal" data-btns="DOWN,LEFT">↙</button>
+        <button class="down" data-btn="DOWN">▼</button>
+        <button class="diagonal" data-btns="DOWN,RIGHT">↘</button>
+      </div>
 
-        <div id="arcade-stick-housing">
-            <div class="gate-plate"></div>
-            <div id="stick-left-zone" class="stick-zone"></div>
-            <span class="stick-caption">LEVER</span>
-        </div>
-    </div>
-
-    <!-- Center Control Tower (Coin / Start / Brand) -->
-    <div id="center-controls">
-        <div class="brand-badge">
-            <span class="brand-main">AIRINPUT</span>
-            <span class="brand-sub">AI-FIGHT · 6-BTN DECK</span>
-        </div>
-        <div class="meta-buttons">
-            <div class="service-btn-wrap">
-                <button id="btn-select" data-btn="SELECT" class="coin-btn"></button>
-                <span class="pill-label">COIN / SEL</span>
-            </div>
-            <div class="service-btn-wrap">
-                <button id="btn-start" data-btn="START" class="start-arcade-btn"></button>
-                <span class="pill-label">1P START</span>
-            </div>
-        </div>
+      <div class="arcade-lever-housing">
+        <div id="stick-left-zone" class="stick-zone"></div>
+        <span class="lever-caption" aria-hidden="true">LEVER</span>
+      </div>
     </div>
 
-    <!-- Right Side: Ergonomic Curved 6-Button Arcade Cluster (2x3) -->
-    <div id="right-controls">
-        <div id="fight-deck-grid">
-            <!-- Top Row: Punches / High Attacks (X, Y, R) -->
-            <div class="arcade-row top-row">
-                <div class="arcade-socket col-1">
-                    <button id="btn-X" data-btn="X" class="arcade-btn punch-light">
-                        <span class="btn-main-char">X</span>
-                        <span class="btn-sub-role">LP · 1</span>
-                    </button>
-                </div>
-                <div class="arcade-socket col-2">
-                    <button id="btn-Y" data-btn="Y" class="arcade-btn punch-med">
-                        <span class="btn-main-char">Y</span>
-                        <span class="btn-sub-role">MP · 2</span>
-                    </button>
-                </div>
-                <div class="arcade-socket col-3">
-                    <button id="btn-R" data-btn="R" class="arcade-btn punch-heavy">
-                        <span class="btn-main-char">R1</span>
-                        <span class="btn-sub-role">HP · 3</span>
-                    </button>
-                </div>
-            </div>
+    <!-- Center Control Tower (Always Centered) -->
+    <div class="arcade-center">
+      <div class="arcade-crest" aria-hidden="true">
+        <span class="crest-main">AIRINPUT</span>
+        <span class="crest-sub">AI-FIGHT · 6-BTN</span>
+      </div>
 
-            <!-- Bottom Row: Kicks / Low Attacks (A, B, R2) -->
-            <div class="arcade-row bot-row">
-                <div class="arcade-socket col-1">
-                    <button id="btn-A" data-btn="A" class="arcade-btn kick-light">
-                        <span class="btn-main-char">A</span>
-                        <span class="btn-sub-role">LK · 4</span>
-                    </button>
-                </div>
-                <div class="arcade-socket col-2">
-                    <button id="btn-B" data-btn="B" class="arcade-btn kick-med">
-                        <span class="btn-main-char">B</span>
-                        <span class="btn-sub-role">MK · 5</span>
-                    </button>
-                </div>
-                <div class="arcade-socket col-3">
-                    <button id="btn-R2" data-btn="R2" class="arcade-btn kick-heavy">
-                        <span class="btn-main-char">R2</span>
-                        <span class="btn-sub-role">HK · 6</span>
-                    </button>
-                </div>
-            </div>
+      <div class="service-buttons">
+        <div class="service-wrap">
+          <button class="coin-btn" data-btn="SELECT" aria-label="Select / Coin"></button>
+          <span class="service-label">COIN · SEL</span>
         </div>
+        <div class="service-wrap">
+          <button class="start-arcade-btn" data-btn="START" aria-label="Start"></button>
+          <span class="service-label">1P START</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Right Wing: Ergonomic Curved 6-Button Arcade Cluster (2x3) -->
+    <div class="arcade-right">
+      <div class="fight-deck-grid">
+        <!-- Top Row: Punches / High Attacks (X, Y, R) -->
+        <div class="arcade-row top-row">
+          <div class="arcade-socket col-1">
+            <button class="arcade-btn punch-light" data-btn="X">
+              <span class="btn-main-char">X</span>
+              <span class="btn-sub-role">LP · 1</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-2">
+            <button class="arcade-btn punch-med" data-btn="Y">
+              <span class="btn-main-char">Y</span>
+              <span class="btn-sub-role">MP · 2</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-3">
+            <button class="arcade-btn punch-heavy" data-btn="R">
+              <span class="btn-main-char">R1</span>
+              <span class="btn-sub-role">HP · 3</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Kicks / Low Attacks (A, B, R2) -->
+        <div class="arcade-row bot-row">
+          <div class="arcade-socket col-1">
+            <button class="arcade-btn kick-light" data-btn="A">
+              <span class="btn-main-char">A</span>
+              <span class="btn-sub-role">LK · 4</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-2">
+            <button class="arcade-btn kick-med" data-btn="B">
+              <span class="btn-main-char">B</span>
+              <span class="btn-sub-role">MK · 5</span>
+            </button>
+          </div>
+          <div class="arcade-socket col-3">
+            <button class="arcade-btn kick-heavy" data-btn="R2">
+              <span class="btn-main-char">R2</span>
+              <span class="btn-sub-role">HK · 6</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

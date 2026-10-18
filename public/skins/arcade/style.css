@@ -1,443 +1,409 @@
 /* ==========================================================================
    AIRINPUT — ARCADE 6-BUTTON FIGHTPAD (AI-FIGHT)
-   Ergonomic Vewlix 2x3 Curved 6-Button Deck + Precision D-Pad & Lever
+   Ergonomic Vewlix 2x3 Curved 6-Button Deck + 8-Way Fight D-Pad & Lever
    ========================================================================== */
 
-:root {
-    --arc-body-top: #18181b;
-    --arc-body-bot: #09090b;
-    --arc-panel-bg: #121318;
-    --arc-border: #3f3f46;
-    --arc-accent-red: #e11d48;
-    --arc-accent-cyan: #06b6d4;
-    --arc-accent-gold: #f59e0b;
+#gamepad.layout-arcade {
+  width: 96%;
+  max-width: 790px;
+  height: calc(100% - 10px);
+  max-height: 398px;
+  background:
+    radial-gradient(circle at 76% 52%, rgba(225, 29, 72, 0.09) 0%, transparent 48%),
+    radial-gradient(circle at 22% 45%, rgba(6, 182, 212, 0.07) 0%, transparent 45%),
+    linear-gradient(170deg, #1E1E24 0%, #0E0E12 100%);
+  border-radius: 74px 74px 52px 52px;
+  border: 2px solid #3F3F46;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 18px 12px 18px;
+  box-shadow:
+    0 8px 0 #070709,
+    0 22px 44px rgba(0, 0, 0, 0.85),
+    inset 0 2px 2px rgba(255, 255, 255, 0.15),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.75);
 }
 
-#gamepad.arcade-skin {
-    width: 96vw;
-    max-width: 860px;
-    height: calc(100% - 10px);
-    max-height: 395px;
-    margin-top: 4px;
-    background:
-        radial-gradient(circle at 75% 50%, rgba(225, 29, 72, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 22% 45%, rgba(6, 182, 212, 0.06) 0%, transparent 45%),
-        linear-gradient(170deg, var(--arc-body-top) 0%, var(--arc-body-bot) 100%);
-    border-radius: 36px 36px 48px 48px;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 26px;
-    box-sizing: border-box;
-    box-shadow:
-        inset 0 3px 6px rgba(255, 255, 255, 0.14),
-        inset 0 -8px 20px rgba(0, 0, 0, 0.85),
-        0 20px 44px rgba(0, 0, 0, 0.85),
-        0 0 0 2px var(--arc-border);
+/* --- TOP SHOULDER & COMBO MACRO TRIGGERS --- */
+.layout-arcade .shoulders {
+  width: 100%;
+  height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 18px;
+  z-index: 10;
 }
 
-/* Arcade Control Panel Acrylic Top Plate */
-#gamepad.arcade-skin::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    bottom: 12px;
-    left: 16px;
-    right: 16px;
-    border-radius: 26px 26px 38px 38px;
-    border: 1.5px solid rgba(255, 255, 255, 0.07);
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
-    pointer-events: none;
+.layout-arcade .shoulder-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
-/* ==========================================================================
-   TOP SHOULDER & COMBO MACRO TRIGGERS
-   ========================================================================== */
-.triggers-group {
-    position: absolute;
-    top: -12px;
-    display: flex;
-    gap: 8px;
-    z-index: 1;
+.layout-arcade .btn-shoulder,
+.layout-arcade .btn-trigger {
+  height: 40px;
+  padding: 0 12px;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  border-radius: 18px 18px 8px 8px;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-#triggers-left {
-    left: 38px;
+.layout-arcade .btn-trigger {
+  min-width: 96px;
+  background: linear-gradient(180deg, #3F3F46 0%, #27272A 100%);
+  color: #38BDF8;
+  border: 2px solid #18181B;
+  box-shadow:
+    0 4px 0 #09090B,
+    inset 0 1px 1px rgba(255, 255, 255, 0.22);
 }
 
-#triggers-right {
-    right: 38px;
+.layout-arcade .btn-shoulder {
+  min-width: 104px;
+  background: linear-gradient(180deg, #52525B 0%, #27272A 100%);
+  color: #F4F4F5;
+  border: 2px solid #18181B;
+  box-shadow:
+    0 4px 0 #09090B,
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
 }
 
-.shoulder-btn {
-    width: 106px;
-    height: 30px;
-    background: linear-gradient(180deg, #3f3f46 0%, #18181b 100%);
-    border: 1.5px solid #09090b;
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    color: #e4e4e7;
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    box-shadow:
-        inset 0 2px 2px rgba(255, 255, 255, 0.2),
-        0 -3px 8px rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 5px;
-    transition: transform 0.05s ease, background 0.05s ease;
+.layout-arcade .btn-shoulder:active,
+.layout-arcade .btn-shoulder.active,
+.layout-arcade .btn-trigger:active,
+.layout-arcade .btn-trigger.active {
+  transform: translateY(4px);
+  background: linear-gradient(180deg, #E11D48 0%, #9F1239 100%);
+  color: #FFFFFF;
+  box-shadow: 0 1px 0 #09090B, inset 0 2px 5px rgba(0, 0, 0, 0.55);
 }
 
-.shoulder-btn.active {
-    transform: translateY(4px);
-    background: linear-gradient(180deg, #e11d48 0%, #9f1239 100%);
-    color: #fff;
+/* --- FACE CONTAINER --- */
+.layout-arcade .face {
+  flex: 1;
+  width: 100%;
+  position: relative;
 }
 
-/* ==========================================================================
-   LEFT CONTROLS: FIGHTPAD D-PAD + AUXILIARY SANWA LEVER
-   ========================================================================== */
-#left-controls {
-    width: 245px;
-    height: 100%;
-    position: relative;
-    z-index: 2;
+/* --- LEFT WING: 8-WAY FIGHTPAD D-PAD + AUXILIARY SANWA LEVER --- */
+.layout-arcade .arcade-left {
+  position: absolute;
+  top: 2px;
+  bottom: 4px;
+  left: 6px;
+  width: 248px;
 }
 
-#dpad-container {
-    position: absolute;
-    top: 26px;
-    left: 4px;
-    width: 156px;
-    height: 156px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Large Precision 8-Way D-Pad with visible diagonalzones for Motion Inputs (236 / 623) */
+.layout-arcade .fight-dpad {
+  --cell-size: 46px;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #181920 0%, #0C0D12 100%);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 5px 12px rgba(0, 0, 0, 0.85),
+    0 2px 4px rgba(255, 255, 255, 0.05);
 }
 
-.dpad-bezel {
-    position: absolute;
-    width: 152px;
-    height: 152px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #1f2128 0%, #0d0e12 100%);
-    border: 2px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-        inset 0 6px 14px rgba(0, 0, 0, 0.85),
-        0 2px 4px rgba(255, 255, 255, 0.05);
-    pointer-events: none;
+.layout-arcade .fight-dpad button,
+.layout-arcade .fight-dpad .center {
+  background: linear-gradient(145deg, #343844, #22252E);
+  border: 1px solid #090A0D;
+  color: #CBD5E1;
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
 }
 
-#dpad {
-    position: relative;
-    width: 132px;
-    height: 132px;
-    z-index: 2;
+.layout-arcade .fight-dpad .up    { border-radius: 9px 9px 0 0; border-bottom: none; }
+.layout-arcade .fight-dpad .down  { border-radius: 0 0 9px 9px; border-top: none; }
+.layout-arcade .fight-dpad .left  { border-radius: 9px 0 0 9px; border-right: none; }
+.layout-arcade .fight-dpad .right { border-radius: 0 9px 9px 0; border-left: none; }
+
+/* Subtle tactile diagonal corners for Quarter-Circle / Dragon-Punch slides */
+.layout-arcade .fight-dpad .diagonal {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px;
+  font-size: 10px;
+  color: rgba(203, 213, 225, 0.35);
 }
 
-#dpad button, #dpad-center {
-    background: linear-gradient(145deg, #343844, #22252e);
-    position: absolute;
-    border: 1px solid #090a0d;
+.layout-arcade .fight-dpad button:active,
+.layout-arcade .fight-dpad button.active {
+  background: #06B6D4 !important;
+  color: #090D16 !important;
+  transform: scale(0.94);
 }
 
-#dpad button {
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow:
-        0 4px 0 #090a0d,
-        inset 0 1px 1px rgba(255, 255, 255, 0.22);
-    transition: transform 0.04s ease, background 0.04s ease;
+/* Auxiliary Sanwa Ball-Top Lever */
+.layout-arcade .arcade-lever-housing {
+  position: absolute;
+  bottom: 2px;
+  right: 0px;
+  width: 112px;
+  height: 112px;
+  border-radius: 22px;
+  background: #0A0B0E;
+  border: 2px solid #27272A;
+  box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#dpad button.active {
-    background: #06b6d4;
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #090a0d;
+.layout-arcade .lever-caption {
+  position: absolute;
+  bottom: -12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #71717A;
+  pointer-events: none;
 }
 
-#btn-up { top: 0; left: 44px; width: 44px; height: 46px; border-radius: 8px 8px 0 0; }
-#btn-down { bottom: 0; left: 44px; width: 44px; height: 46px; border-radius: 0 0 8px 8px; }
-#btn-left { top: 44px; left: 0; width: 46px; height: 44px; border-radius: 8px 0 0 8px; }
-#btn-right { top: 44px; right: 0; width: 46px; height: 44px; border-radius: 0 8px 8px 0; }
-
-#dpad-center {
-    top: 44px;
-    left: 44px;
-    width: 44px;
-    height: 44px;
-    background: #272b35;
-    border: none;
-    z-index: 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.layout-arcade #stick-left-zone {
+  width: 102px;
+  height: 102px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 3;
 }
 
-#dpad-center::after {
-    content: '';
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 65% 65%, #343844, #14161c);
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.75);
+.layout-arcade #stick-left-zone .nipple .back {
+  width: 88px !important;
+  height: 88px !important;
+  margin-left: -44px !important;
+  margin-top: -44px !important;
+  background: radial-gradient(circle, #050507 0%, #141418 75%, #27272A 100%) !important;
+  border: 2px solid #3F3F46 !important;
 }
 
-.arrow { width: 0; height: 0; border-style: solid; }
-.arrow.up { border-width: 0 8px 11px 8px; border-color: transparent transparent #cbd5e1 transparent; }
-.arrow.down { border-width: 11px 8px 0 8px; border-color: #cbd5e1 transparent transparent transparent; }
-.arrow.left { border-width: 8px 11px 8px 0; border-color: transparent #cbd5e1 transparent transparent; }
-.arrow.right { border-width: 8px 0 8px 11px; border-color: transparent transparent transparent #cbd5e1; }
-
-/* Auxiliary Arcade Lever (Stick Left Zone) */
-#arcade-stick-housing {
-    position: absolute;
-    bottom: 18px;
-    right: -12px;
-    width: 122px;
-    height: 122px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.layout-arcade #stick-left-zone .nipple .front {
+  width: 50px !important;
+  height: 50px !important;
+  margin-left: -25px !important;
+  margin-top: -25px !important;
+  background: radial-gradient(circle at 32% 30%, #FB7185 0%, #E11D48 55%, #881337 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
 }
 
-.gate-plate {
-    position: absolute;
-    width: 114px;
-    height: 114px;
-    border-radius: 22px;
-    background: #0a0b0e;
-    border: 2px solid #27272a;
-    box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.9);
-    pointer-events: none;
+/* --- CENTER CONTROL TOWER (EXACT HORIZONTAL CENTER) --- */
+.layout-arcade .arcade-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 3;
 }
 
-.stick-caption {
-    position: absolute;
-    bottom: -11px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.16em;
-    color: #71717a;
-    pointer-events: none;
+.layout-arcade .arcade-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9px;
+  background: rgba(9, 9, 11, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.stick-zone {
-    width: 108px;
-    height: 108px;
-    border-radius: 50%;
-    position: relative;
-    z-index: 3;
+.layout-arcade .crest-main {
+  font-size: 13px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: #F4F4F5;
 }
 
-.stick-zone .nipple .back {
-    background: radial-gradient(circle, #050507 0%, #141418 75%, #27272a 100%) !important;
-    border: 2px solid #3f3f46 !important;
-    opacity: 1 !important;
+.layout-arcade .crest-sub {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #FB7185;
 }
 
-/* Red Arcade Ball-Top Stick */
-.stick-zone .nipple .front {
-    background: radial-gradient(circle at 32% 30%, #fb7185 0%, #e11d48 55%, #881337 100%) !important;
-    border: 2px solid rgba(255, 255, 255, 0.35) !important;
-    box-shadow:
-        0 6px 14px rgba(0, 0, 0, 0.8),
-        inset 0 2px 4px rgba(255, 255, 255, 0.5) !important;
-    opacity: 1 !important;
+.layout-arcade .service-buttons {
+  display: flex;
+  gap: 14px;
+  align-items: center;
 }
 
-/* ==========================================================================
-   CENTER CONTROL TOWER (COIN & 1P START)
-   ========================================================================== */
-#center-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 64%;
-    z-index: 2;
+.layout-arcade .service-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.brand-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+.layout-arcade .coin-btn,
+.layout-arcade .start-arcade-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #27272A;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 #09090B,
+    inset 0 2px 3px rgba(255, 255, 255, 0.45);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
 }
 
-.brand-main {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 14px;
-    letter-spacing: 0.16em;
-    color: #f4f4f5;
+.layout-arcade .coin-btn {
+  background: radial-gradient(circle at 35% 35%, #FACC15, #CA8A04);
 }
 
-.brand-sub {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.14em;
-    color: #e11d48;
+.layout-arcade .start-arcade-btn {
+  background: radial-gradient(circle at 35% 35%, #F8FAFC, #CBD5E1);
 }
 
-.meta-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    align-items: center;
+.layout-arcade .coin-btn:active,
+.layout-arcade .coin-btn.active,
+.layout-arcade .start-arcade-btn:active,
+.layout-arcade .start-arcade-btn.active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #09090B;
 }
 
-.service-btn-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+.layout-arcade .service-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #A1A1AA;
 }
 
-.coin-btn, .start-arcade-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 3px solid #27272a;
-    cursor: pointer;
-    box-shadow:
-        0 4px 0 #09090b,
-        inset 0 2px 3px rgba(255, 255, 255, 0.45);
-    transition: transform 0.04s ease, box-shadow 0.04s ease;
+/* --- RIGHT WING: VEWLIX CURVED 6-BUTTON ARCADE CLUSTER --- */
+.layout-arcade .arcade-right {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: 6px;
+  width: 274px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.coin-btn {
-    background: radial-gradient(circle at 35% 35%, #facc15, #ca8a04);
+.layout-arcade .fight-deck-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.start-arcade-btn {
-    background: radial-gradient(circle at 35% 35%, #f8fafc, #cbd5e1);
+.layout-arcade .arcade-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.coin-btn.active, .start-arcade-btn.active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #09090b;
+/* Ergonomic Vewlix Curve */
+.layout-arcade .arcade-socket.col-1 {
+  transform: translateY(12px);
 }
 
-.pill-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    color: #a1a1aa;
+.layout-arcade .arcade-socket.col-2 {
+  transform: translateY(-4px);
 }
 
-/* ==========================================================================
-   RIGHT CONTROLS: VEWLIX CURVED 6-BUTTON ARCADE CLUSTER
-   ========================================================================== */
-#right-controls {
-    width: 325px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
+.layout-arcade .arcade-socket.col-3 {
+  transform: translateY(0px);
 }
 
-#fight-deck-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 16px;
+.layout-arcade .arcade-socket {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #09090B;
+  border: 3px solid #27272A;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.7),
+    inset 0 3px 6px rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.arcade-row {
-    display: flex;
-    gap: 14px;
-    align-items: center;
+.layout-arcade .arcade-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.85),
+    inset 0 3px 5px rgba(255, 255, 255, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.03s ease, box-shadow 0.03s ease, filter 0.03s ease;
 }
 
-/* Vewlix ergonomic curve: Col 1 is slightly lower, Col 2 & 3 arch up then level */
-.arcade-socket.col-1 {
-    transform: translateY(14px);
+.layout-arcade .btn-main-char {
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
 }
 
-.arcade-socket.col-2 {
-    transform: translateY(-4px);
+.layout-arcade .btn-sub-role {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 2px;
 }
 
-.arcade-socket.col-3 {
-    transform: translateY(0px);
+/* Color-Coded Strength Columns: Light (Cyan), Medium (Gold), Heavy (Crimson) */
+.layout-arcade .punch-light,
+.layout-arcade .kick-light {
+  background: radial-gradient(circle at 35% 30%, #38BDF8 0%, #0284C7 70%, #0369A1 100%);
 }
 
-.arcade-socket {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    background: #09090b;
-    border: 4px solid #27272a;
-    box-shadow:
-        0 6px 14px rgba(0, 0, 0, 0.7),
-        inset 0 3px 6px rgba(0, 0, 0, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.layout-arcade .punch-med,
+.layout-arcade .kick-med {
+  background: radial-gradient(circle at 35% 30%, #FACC15 0%, #CA8A04 70%, #A16207 100%);
 }
 
-.arcade-btn {
-    width: 74px;
-    height: 74px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow:
-        0 5px 0 rgba(0, 0, 0, 0.85),
-        inset 0 3px 5px rgba(255, 255, 255, 0.45),
-        inset 0 -3px 6px rgba(0, 0, 0, 0.35);
-    transition: transform 0.03s ease, box-shadow 0.03s ease, filter 0.03s ease;
+.layout-arcade .punch-heavy,
+.layout-arcade .kick-heavy {
+  background: radial-gradient(circle at 35% 30%, #FB7185 0%, #E11D48 70%, #9F1239 100%);
 }
 
-.btn-main-char {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    font-size: 22px;
-    line-height: 1;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
-}
-
-.btn-sub-role {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.88);
-    margin-top: 2px;
-}
-
-/* Color-coded rows: Cyan/Blue/Red for Light/Medium/Heavy */
-.punch-light, .kick-light {
-    background: radial-gradient(circle at 35% 30%, #38bdf8 0%, #0284c7 70%, #0369a1 100%);
-}
-
-.punch-med, .kick-med {
-    background: radial-gradient(circle at 35% 30%, #facc15 0%, #ca8a04 70%, #a16207 100%);
-}
-
-.punch-heavy, .kick-heavy {
-    background: radial-gradient(circle at 35% 30%, #fb7185 0%, #e11d48 70%, #9f1239 100%);
-}
-
-.arcade-btn.active {
-    transform: translateY(4px);
-    box-shadow:
-        0 1px 0 rgba(0, 0, 0, 0.9),
-        inset 0 4px 8px rgba(0, 0, 0, 0.5);
-    filter: brightness(1.15);
+.layout-arcade .arcade-btn:active,
+.layout-arcade .arcade-btn.active {
+  transform: translateY(4px);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.9),
+    inset 0 4px 8px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.15);
 }

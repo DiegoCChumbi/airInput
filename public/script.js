@@ -83,7 +83,8 @@ async function loadSkin(skinName) {
   try {
     releaseAllInputs();
 
-    const response = await fetch(`skins/${skinName}/layout.html`);
+    const cacheBuster = Date.now();
+    const response = await fetch(`skins/${skinName}/layout.html?v=${cacheBuster}`);
     if (!response.ok) throw new Error("Skin not found");
 
     const html = await response.text();
@@ -103,7 +104,6 @@ async function loadSkin(skinName) {
     if (settingsModal) settingsModal.style.display = 'none';
 
     // Wait for stylesheet to load (or fallback timeout if cached) before initializing joysticks
-    const cacheBuster = Date.now();
     await new Promise((resolve) => {
       let resolved = false;
       const done = () => {
