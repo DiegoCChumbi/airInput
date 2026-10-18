@@ -1,216 +1,498 @@
-/* public/global.css */
+/* public/global.css — Tactile Retro Console Hardware Design System */
+
+:root {
+  --chassis-bg: #141318;
+  --chassis-surface: #232129;
+  --chassis-well: #17161C;
+  --shell-pebble: #D4D0C8;
+  --shell-shadow: #9E9A90;
+  --shell-recess: #4A494E;
+  --ink-primary: #F2EFE9;
+  --ink-muted: #A39E93;
+  --ink-engraved: #68645D;
+
+  /* Authentic Console Pigments */
+  --snes-red: #D92B3A;
+  --snes-yellow: #EAB01E;
+  --snes-blue: #2057B5;
+  --snes-green: #1E9E54;
+  --snes-purple: #6A4C9C;
+  --n64-crimson: #CF2323;
+
+  /* Physical LED Indicators */
+  --led-online: #2CE67A;
+  --led-warn: #F59E0B;
+  --led-fault: #EF4444;
+
+  --font-hardware: 'Bahnschrift', 'DIN Alternate', 'Franklin Gothic Medium', 'Trebuchet MS', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+}
 
 /* 1. RESET & BASE */
-* { 
-  box-sizing: border-box; 
+* {
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none; 
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
 }
 
-html, body { 
+html, body {
   margin: 0;
   padding: 0;
-  width: 100%; 
-  height: 100%;
-  overflow: hidden;
-  background: #202020;
-}
-
-body { 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: sans-serif;
-}
-
-#start-overlay { 
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.9);
-  z-index: 5000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  background-color: var(--chassis-bg);
+  background-image:
+    radial-gradient(circle at 50% 45%, #25232C 0%, #121116 78%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.015) 0px,
+      rgba(255, 255, 255, 0.015) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  color: var(--ink-primary);
+  font-family: var(--font-hardware);
 }
 
-.overlay-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#btn-fullscreen { 
-  padding: 20px 40px;
-  font-size: 24px;
-  background: #5c7cfa;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-#join-screen {
+body {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 14px;
-  background: #2b2b2b;
-  padding: 32px 28px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  color: white;
-  text-align: center;
-  max-width: 90vw;
-  width: 340px;
+  align-items: center;
+}
+
+/* =========================================================
+   2. PORT 01 CONSOLE DECK (JOIN SCREEN)
+   ========================================================= */
+#join-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 370px;
+  max-width: 92vw;
+  padding: 26px 24px;
+  background: linear-gradient(180deg, #D8D4CC 0%, #C6C1B7 100%);
+  color: #232126;
+  border-radius: 18px;
+  border: 2px solid #E6E3DC;
+  box-shadow:
+    0 8px 0 #89847A,
+    0 18px 42px rgba(0, 0, 0, 0.72),
+    inset 0 2px 0 rgba(255, 255, 255, 0.75);
   z-index: 4000;
 }
 
-#join-screen h1 {
-  margin: 0 0 6px 0;
-  font-size: 28px;
-  color: #5c7cfa;
+.chassis-screws {
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.top-screws {
+  margin: -10px -8px -4px -8px;
+}
+
+.bottom-screws {
+  margin: -4px -8px -10px -8px;
+}
+
+.screw {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ABA69C, #78736A);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.65),
+    0 1px 0 rgba(255, 255, 255, 0.6);
+  position: relative;
+}
+
+.screw::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 2px;
+  right: 2px;
+  height: 1.5px;
+  background: rgba(35, 33, 38, 0.55);
+  transform: rotate(-32deg);
+}
+
+.deck-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 2px groove rgba(255, 255, 255, 0.55);
+}
+
+.deck-brand {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.brand-mark {
+  font-size: 22px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: #2A282E;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5C5850;
+}
+
+.power-module {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2C2A30;
+  padding: 5px 10px;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.led-jewel,
+.led-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--led-online);
+  box-shadow:
+    0 0 8px var(--led-online),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.led-jewel.offline,
+#status-badge.disconnected .led-dot {
+  background: var(--led-fault);
+  box-shadow:
+    0 0 8px var(--led-fault),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.led-caption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #D8D4CC;
+  letter-spacing: 0.08em;
+}
+
+.cartridge-well {
+  background: #3A383E;
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.75),
+    0 1px 0 rgba(255, 255, 255, 0.7);
+  text-align: left;
+}
+
+.well-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #B9B4A9;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.shell-preselector .well-label {
+  color: #46433E;
+  text-align: left;
 }
 
 #username-input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #555;
-  background: #1a1a1a;
-  color: white;
+  padding: 11px 12px;
+  border-radius: 7px;
+  border: 2px solid #222026;
+  background: #161815;
+  color: #6BF29A;
+  font-family: var(--font-mono);
   font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   outline: none;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
   user-select: text;
   -webkit-user-select: text;
 }
 
+#username-input::placeholder {
+  color: rgba(107, 242, 154, 0.32);
+}
+
 #username-input:focus {
-  border-color: #5c7cfa;
+  border-color: var(--led-online);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.9),
+    0 0 0 2px rgba(44, 230, 122, 0.25);
 }
 
-#join-btn {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  background: #5c7cfa;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-#join-btn:active {
-  background: #4263eb;
-}
-
-#btn-settings { 
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.6);
-  color: white;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 20px;
-  z-index: 2000;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#status-badge {
-  position: fixed;
-  top: 14px;
-  left: calc(50% + 30px);
-  background: rgba(0, 0, 0, 0.55);
-  color: #a9e34b;
+.join-feedback {
+  min-height: 0;
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 10px;
-  z-index: 2000;
-  pointer-events: none;
+  color: #FF8585;
+  margin-top: 6px;
   display: none;
 }
 
-#status-badge.disconnected {
-  color: #ff6b6b;
+.join-feedback.visible {
+  display: block;
 }
 
-#settings-modal { 
+.layout-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.sel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 10px;
+  background: linear-gradient(180deg, #4B4950 0%, #37353B 100%);
+  color: #ECE8DF;
+  border: 1px solid #252328;
+  border-radius: 8px;
+  font-family: var(--font-hardware);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 3px 0 #201E23,
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+
+.sel-btn:active,
+.sel-btn.active {
+  background: linear-gradient(180deg, #2B2A2F 0%, #1F1E22 100%);
+  color: #FFFFFF;
+  border-color: var(--snes-yellow);
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 #151418,
+    inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.shell-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.snes-dot { background: var(--snes-red); box-shadow: 0 0 4px var(--snes-red); }
+.n64-dot  { background: var(--snes-yellow); box-shadow: 0 0 4px var(--snes-yellow); }
+.xbox-dot { background: var(--snes-green); box-shadow: 0 0 4px var(--snes-green); }
+
+#join-btn {
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+#join-btn .btn-cap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 13px 18px;
+  font-family: var(--font-hardware);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #FFFDF9;
+  background: linear-gradient(180deg, #E03544 0%, #B81D2B 100%);
+  border-radius: 10px;
+  border: 1px solid #8F131E;
+  box-shadow:
+    0 5px 0 #6E0D16,
+    0 8px 14px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+
+#join-btn:active .btn-cap {
+  transform: translateY(4px);
+  box-shadow:
+    0 1px 0 #6E0D16,
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* =========================================================
+   3. TOP HARDWARE TELEMETRY & CFG PILL (#hud-bar)
+   ========================================================= */
+#hud-bar {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 10px;
+  background: rgba(24, 23, 28, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #D8D4CC;
+  pointer-events: none;
+  padding-right: 4px;
+}
+
+#status-badge.disconnected {
+  color: #FF8585;
+}
+
+#btn-settings {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  background: linear-gradient(180deg, #4A4850 0%, #323037 100%);
+  color: #F2EFE9;
+  border: 1px solid #1E1D22;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow:
+    0 2px 0 #18171C,
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+#btn-settings:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.gear-bars {
+  width: 10px;
+  height: 8px;
+  border-top: 2px solid #EAB01E;
+  border-bottom: 2px solid #EAB01E;
+  position: relative;
+}
+
+.gear-bars::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #EAB01E;
+}
+
+/* =========================================================
+   4. HARDWARE CONFIGURATION MODAL (DIP SWITCHES)
+   ========================================================= */
+#settings-modal {
   display: none;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #2b2b2b;
-  color: white;
-  padding: 20px;
-  border-radius: 14px;
+  width: 390px;
+  max-width: 94vw;
+  background: linear-gradient(180deg, #2D2B33 0%, #211F26 100%);
+  color: var(--ink-primary);
+  padding: 18px 18px 16px 18px;
+  border-radius: 16px;
+  border: 2px solid #494652;
+  box-shadow:
+    0 8px 0 #121115,
+    0 24px 48px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   z-index: 3000;
-  width: 340px;
-  max-width: 92vw;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.85);
-  text-align: center;
-  border: 1px solid #444;
 }
 
-#settings-modal h3 {
-  margin: 0 0 12px 0;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#settings-modal .brand-mark {
+  font-size: 15px;
+  color: var(--ink-primary);
+  text-shadow: none;
+}
+
+#settings-modal .brand-sub {
+  color: var(--ink-muted);
+}
+
+.hw-mini-btn {
+  padding: 6px 10px;
+  background: #3B3842;
+  color: var(--ink-primary);
+  border: 1px solid #575360;
+  border-radius: 7px;
+  font-family: var(--font-hardware);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #18171C;
+}
+
+.hw-mini-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .settings-section {
-  margin-bottom: 14px;
-  text-align: left;
-}
-
-.settings-section label {
-  display: block;
-  font-size: 13px;
-  color: #bbb;
-  margin-bottom: 6px;
-}
-
-.layout-selector { 
-  display: flex;
-  gap: 8px;
-  justify-content: center;
   margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.sel-btn { 
-  padding: 8px 12px;
-  background: #444;
-  color: white;
-  border: 1px solid transparent;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 13px;
-}
-
-.sel-btn.active,
-.sel-btn:active { 
-  background: #5c7cfa;
-  border-color: #91a7ff;
+  text-align: left;
 }
 
 .settings-toggles {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   margin-bottom: 14px;
 }
 
@@ -218,35 +500,132 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #202020;
-  padding: 8px 12px;
-  border-radius: 8px;
+  gap: 12px;
+  background: var(--chassis-well);
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  text-align: left;
+}
+
+.toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.toggle-copy strong {
   font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-primary);
 }
 
-.toggle-row input[type="checkbox"] {
-  width: 18px;
+.toggle-copy small {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* Tactile Rocker / DIP Switch */
+.dip-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.dip-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.dip-track {
+  position: absolute;
+  inset: 0;
+  background: #100F13;
+  border: 1px solid #3E3B46;
+  border-radius: 6px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+  transition: border-color 0.15s ease;
+}
+
+.dip-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 19px;
   height: 18px;
-  accent-color: #5c7cfa;
+  background: linear-gradient(180deg, #8E8A82 0%, #635F58 100%);
+  border-radius: 4px;
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.14s cubic-bezier(0.2, 0.85, 0.4, 1), background 0.14s ease;
 }
 
+.dip-switch input:checked + .dip-track {
+  border-color: rgba(44, 230, 122, 0.55);
+}
+
+.dip-switch input:checked + .dip-track .dip-thumb {
+  transform: translateX(21px);
+  background: linear-gradient(180deg, #35F085 0%, #1CA858 100%);
+}
+
+/* Hardware Fader Range Input */
 .toggle-row input[type="range"] {
-  width: 110px;
-  accent-color: #5c7cfa;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 115px;
+  height: 8px;
+  background: #0F0E12;
+  border-radius: 4px;
+  border: 1px solid #3B3842;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9);
+}
+
+.toggle-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 22px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #EAB01E 0%, #B8820A 100%);
+  border: 1px solid #593E02;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
 }
 
 #close-settings {
   width: 100%;
-  padding: 10px;
-  background: #5c7cfa;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  padding: 11px;
+  background: linear-gradient(180deg, #D92B3A 0%, #AD1B28 100%);
+  color: #FFFFFF;
+  border: 1px solid #781019;
+  border-radius: 9px;
+  font-family: var(--font-hardware);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   cursor: pointer;
+  box-shadow:
+    0 4px 0 #5C0A11,
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-#gamepad-container { 
+#close-settings:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #5C0A11;
+}
+
+/* =========================================================
+   5. GAMEPAD STAGE & ANALOG STICK BASE
+   ========================================================= */
+#gamepad-container {
   width: 100%;
   height: 100%;
   position: relative;
@@ -254,9 +633,9 @@ body {
   justify-content: center;
   align-items: center;
   touch-action: none;
+  padding: 6px;
 }
 
-/* Custom Virtual Joystick Base Styles */
 .stick-zone {
   touch-action: none;
   user-select: none;
@@ -274,33 +653,47 @@ body {
 
 .stick-zone .nipple .back {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  margin-left: -50px;
-  margin-top: -50px;
+  width: 104px;
+  height: 104px;
+  margin-left: -52px;
+  margin-top: -52px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: radial-gradient(circle, rgba(16, 16, 20, 0.72) 0%, rgba(10, 10, 14, 0.92) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 6px 12px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .stick-zone .nipple .front {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  margin-left: -25px;
-  margin-top: -25px;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
+  background: radial-gradient(circle at 35% 30%, #68666E 0%, #2C2B30 68%, #1B1A1E 100%);
+  border: 2px solid #141317;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.65),
+    inset 0 2px 3px rgba(255, 255, 255, 0.35);
   transform: translate(0px, 0px);
   will-change: transform;
 }
 
+.stick-zone .nipple .front::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.65), 0 1px 0 rgba(255, 255, 255, 0.15);
+}
 
-/* =========================================
-   4. ROTATION FOR PORTRAIT MODE 
-   ========================================= */
+/* =========================================================
+   6. PORTRAIT ORIENTATION ROTATION
+   ========================================================= */
 @media screen and (orientation: portrait) {
-
   #gamepad-container {
     position: fixed;
     top: 50%;
@@ -315,47 +708,29 @@ body {
     transform: translate(-50%, -50%) rotate(-90deg);
   }
 
-  #btn-settings {
-    transform: rotate(90deg);
-    left: auto; 
-    right: 15px;
+  #hud-bar {
     top: 50%;
-    margin-top: -20px;
-  }
-
-  body.portrait-ccw #btn-settings {
-    transform: rotate(-90deg);
-    right: auto;
-    left: 15px;
-  }
-
-  #status-badge {
-    transform: rotate(90deg);
     left: auto;
-    right: 8px;
-    top: calc(50% + 36px);
+    right: 6px;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center center;
   }
 
-  body.portrait-ccw #status-badge {
-    transform: rotate(-90deg);
+  body.portrait-ccw #hud-bar {
     right: auto;
-    left: 8px;
-    top: calc(50% - 50px);
+    left: 6px;
+    transform: translateY(-50%) rotate(-90deg);
   }
 
   #settings-modal {
     transform: translate(-50%, -50%) rotate(90deg) !important;
-    width: 85vh;
-    max-width: 360px;
-    max-height: 90vw;
+    width: 88vh;
+    max-width: 400px;
+    max-height: 92vw;
     overflow-y: auto;
   }
 
   body.portrait-ccw #settings-modal {
     transform: translate(-50%, -50%) rotate(-90deg) !important;
-  }
-
-  .overlay-content {
-    transform: rotate(90deg);
   }
 }

@@ -6,10 +6,14 @@ const socket = io({ autoConnect: false, reconnection: true, reconnectionDelay: 5
 const joinScreen = document.getElementById('join-screen');
 const usernameInput = document.getElementById('username-input');
 const joinBtn = document.getElementById('join-btn');
+const joinFeedback = document.getElementById('join-feedback');
+const joinLed = document.getElementById('join-led');
 
 const gamepadContainer = document.getElementById('gamepad-container');
+const hudBar = document.getElementById('hud-bar');
 const btnSettings = document.getElementById('btn-settings');
 const statusBadge = document.getElementById('status-badge');
+const statusText = document.getElementById('status-text');
 const settingsModal = document.getElementById('settings-modal');
 const btnCloseSettings = document.getElementById('close-settings');
 
@@ -35,6 +39,31 @@ const userSettings = {
   deadzone: parseInt(localStorage.getItem('airinput_deadzone') ?? '8', 10)
 };
 
+function syncSkinButtonsUI(skinName) {
+  document.querySelectorAll('.layout-selector .sel-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.skin === skinName);
+  });
+}
+
+function selectInitialSkin(skinName) {
+  localStorage.setItem('gamepad_skin', skinName);
+  syncSkinButtonsUI(skinName);
+  if (userSettings.haptics && navigator.vibrate) {
+    navigator.vibrate(15);
+  }
+}
+
+function showJoinFeedback(msg) {
+  if (!joinFeedback) return;
+  if (!msg) {
+    joinFeedback.textContent = '';
+    joinFeedback.classList.remove('visible');
+    return;
+  }
+  joinFeedback.textContent = msg;
+  joinFeedback.classList.add('visible');
+}
+
 function applyUserSettingsUI() {
   document.body.classList.toggle('portrait-ccw', userSettings.portraitFlip);
   if (togglePortraitFlip) togglePortraitFlip.checked = userSettings.portraitFlip;
@@ -42,6 +71,8 @@ function applyUserSettingsUI() {
   if (toggleHaptics) toggleHaptics.checked = userSettings.haptics;
   if (rangeDeadzone) rangeDeadzone.value = String(userSettings.deadzone);
   if (deadzoneVal) deadzoneVal.textContent = `${userSettings.deadzone}%`;
+  const savedSkin = localStorage.getItem('gamepad_skin') || 'snes';
+  syncSkinButtonsUI(savedSkin);
 }
 
 // ==========================================
@@ -65,11 +96,7 @@ async function loadSkin(skinName) {
       document.head.appendChild(styleLink);
     }
 
-    // Highlight active skin button in settings
-    document.querySelectorAll('.layout-selector .sel-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.skin === skinName);
-    });
-
+    syncSkinButtonsUI(skinName);
     localStorage.setItem('gamepad_skin', skinName);
     if (settingsModal) settingsModal.style.display = 'none';
 
@@ -93,7 +120,7 @@ async function loadSkin(skinName) {
 
   } catch (e) {
     console.error("Error loading skin:", e);
-    gamepadContainer.innerHTML = `<h2 style="color:white; text-align:center;">Error loading skin: ${skinName}</h2>`;
+    gamepadContainer.innerHTML = `<h2 style="color:white; text-align:center;">Error al cargar carcasa: ${skinName}</h2>`;
   }
 }
 
@@ -124,8 +151,8 @@ function releaseAllInputs() {
 }
 
 function scanGamePad(e) {
-  // Ignore interactions inside the settings modal or settings toggle button
-  if (e.target && (e.target.closest('#btn-settings') || e.target.closest('#settings-modal'))) {
+  // Ignore interactions inside the settings modal or HUD bar
+  if (e.target && (e.target.closest('#hud-bar') || e.target.closest('#btn-settings') || e.target.closest('#settings-modal'))) {
     return;
   }
 
@@ -453,9 +480,11 @@ function toggleFullscreen() {
 
 function initializeGamepad() {
   gamepadContainer.style.display = 'flex';
-  btnSettings.style.display = 'flex';
-  statusBadge.style.display = 'block';
+  if (hudBar) hudBar.style.display = 'flex';
+  btnSettings.style.display = 'inline-flex';
+  statusBadge.style.display = 'flex';
   joinScreen.style.display = 'none';
+  showJoinFeedback('');
 
   if (!isGamepadInitialized) {
     isGamepadInitialized = true;
@@ -522,7 +551,7 @@ function initializeGamepad() {
     };
     document.body.addEventListener('touchstart', requestFullscreenOnce, { once: true });
 
-    const savedSkin = localStorage.getItem('gamepad_skin') || 'xbox';
+    const savedSkin = localStorage.getItem('gamepad_skin') || 'snes';
     loadSkin(savedSkin);
   }
 }
@@ -536,7 +565,9 @@ function startPingLoop() {
       const rtt = Math.round(performance.now() - start);
       if (statusBadge) {
         statusBadge.classList.remove('disconnected');
-        statusBadge.textContent = `● ${rtt}ms`;
+      }
+      if (statusText) {
+        statusText.textContent = `${rtt}ms`;
       }
     });
   }, 2000);
@@ -557,29 +588,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const rawName = usernameInput.value.trim();
     const sanitized = rawName.replace(/:/g, '').trim();
     if (!sanitized) {
-      alert('Por favor, ingresa un nombre válido.');
+      showJoinFeedback('Escribe tu identificador de jugador.');
+      usernameInput.focus();
       return;
     }
     if (sanitized.toLowerCase() === 'system') {
-      alert('Ese nombre está reservado. Elige otro nombre.');
+      showJoinFeedback('Identificador reservado por la consola. Elige otro.');
+      usernameInput.focus();
       return;
     }
+    showJoinFeedback('');
     currentUsername = sanitized;
     localStorage.setItem('airinput_username', currentUsername);
     usernameInput.blur();
+    if (userSettings.haptics && navigator.vibrate) {
+      navigator.vibrate(30);
+    }
     socket.emit('register_player', { username: currentUsername });
   };
 
   joinBtn.addEventListener('click', submitJoin);
+  usernameInput.addEventListener('input', () => showJoinFeedback(''));
   usernameInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') submitJoin();
   });
 
   socket.on('connect', () => {
-    if (statusBadge) {
-      statusBadge.classList.remove('disconnected');
-      statusBadge.textContent = '● Conectado';
-    }
+    if (joinLed) joinLed.classList.remove('offline');
+    if (statusBadge) statusBadge.classList.remove('disconnected');
+    if (statusText) statusText.textContent = 'En línea';
     // Auto re-register if we were already playing and reconnected
     if (isGamepadInitialized && currentUsername) {
       socket.emit('register_player', { username: currentUsername });
@@ -592,17 +629,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   socket.on('registration_failed', (message) => {
-    alert(`Error: ${message}`);
+    showJoinFeedback(message || 'No se pudo conectar el mando.');
     joinScreen.style.display = 'flex';
     gamepadContainer.style.display = 'none';
+    if (hudBar) hudBar.style.display = 'none';
   });
 
   socket.on('disconnect', () => {
     releaseAllInputs();
-    if (statusBadge) {
-      statusBadge.classList.add('disconnected');
-      statusBadge.textContent = '● Reconectando...';
-    }
+    if (joinLed) joinLed.classList.add('offline');
+    if (statusBadge) statusBadge.classList.add('disconnected');
+    if (statusText) statusText.textContent = 'Sin señal';
   });
 });
+
 

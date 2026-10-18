@@ -1,359 +1,369 @@
 /* ==========================================================================
-   3. GAMEPAD (General Structure)
+   PRO DUAL-STICK (X-INPUT) TACTILE HARDWARE SKIN
    ========================================================================== */
 
-#gamepad {
-  width: 95%;
-  max-width: 750px;
-  height: 400px;
-  background: #dcdcdc;
-  border-radius: 50px;
+#gamepad.layout-xbox {
+  width: 96%;
+  max-width: 780px;
+  height: min(415px, 92vh);
+  background:
+    radial-gradient(circle at 50% 22%, #2E3038 0%, #1F2026 62%, #15161A 100%);
+  border-radius: 110px 110px 68px 68px;
+  border: 2px solid #3C3F4A;
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-  transition: background 0.3s, border-radius 0.3s;
+  box-shadow:
+    0 10px 0 #0D0E11,
+    0 24px 48px rgba(0, 0, 0, 0.8),
+    inset 0 2px 1px rgba(255, 255, 255, 0.16),
+    inset 0 -10px 24px rgba(0, 0, 0, 0.75);
 }
 
-/* Front button area */
-.face {
+.layout-xbox .face {
   flex: 1;
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   padding: 0 30px;
 }
 
-
-/* ==========================================================================
-   4. GENERAL COMPONENTS
-   ========================================================================== */
-
-/* --- GENERAL ANIMATIONS --- */
-button {
-  transition: transform 0.05s ease, box-shadow 0.05s ease;
-}
-button:active, button.active {
-  transform: scale(0.92);
-  box-shadow: inset 0 3px 5px rgba(0,0,0,0.5) !important;
-  filter: brightness(0.8);
-}
-
-/* --- TRIGGERS --- */
-.shoulders {
+/* --- TOP SHOULDER & ANALOG TRIGGER BUMPERS (L1/L2 & R1/R2) --- */
+.layout-xbox .shoulders {
   width: 100%;
   height: 60px;
   display: flex;
   justify-content: space-between;
-  padding: 40px 40px;
-  margin-top: -20px;
+  padding: 36px 38px 0 38px;
+  margin-top: -12px;
 }
 
-.btn-shoulder {
-  width: 120px;
-  height: 50px;
-  background: #a0a0a0;
-  border: 2px solid #666;
-  border-radius: 20px 20px 0 0;
-  font-weight: bold;
-  font-size: 20px;
-  color: #333;
-}
-.btn-shoulder:active { 
-  background: #888; 
-  transform: translateY(5px); 
+.layout-xbox .shoulder-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
 }
 
-/* --- CROSS --- */
-.dpad {
-  --cell-size: 60px;
+.layout-xbox .btn-shoulder {
+  width: 118px;
+  height: 48px;
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(180deg, #525560 0%, #373942 100%);
+  border: 2px solid #23252B;
+  border-radius: 22px 22px 6px 6px;
+  color: #F0F2F7;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 4px 0 #18191E,
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-xbox .btn-shoulder:active,
+.layout-xbox .btn-shoulder.active {
+  transform: translateY(4px);
+  background: #2C2E36;
+  box-shadow: 0 1px 0 #18191E, inset 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.layout-xbox .btn-trigger {
+  width: 92px;
+  height: 46px;
+  background: linear-gradient(180deg, #32343D 0%, #1C1D22 100%);
+  color: #B4B8C4;
+  border: 2px solid #262830;
+  border-radius: 16px 16px 6px 6px;
+  font-family: var(--font-hardware, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  transform: translateY(3px);
+  z-index: 1;
+  box-shadow:
+    0 4px 0 #111216,
+    inset 0 2px 2px rgba(255, 255, 255, 0.16);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-xbox .btn-trigger:active,
+.layout-xbox .btn-trigger.active {
+  background: #141519;
+  transform: translateY(8px);
+  color: #FFFFFF;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* --- FACETED MATTE D-PAD --- */
+.layout-xbox .dpad {
+  --cell-size: 58px;
   display: grid;
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
-  position: relative; 
-}
-
-.dpad button {
-  background: #333;
-  border: none;
-  width: 100%; height: 100%;
-}
-.dpad button:active { background: #111; }
-
-.up { border-radius: 30px 30px 0 0; }
-.down { border-radius: 0 0 30px 30px; }
-.left { border-radius: 30px 0 0 30px; }
-.right { border-radius: 0 30px 30px 0; }
-.center { background: #333; pointer-events: none; } 
-.diagonal { background: transparent !important; border: none; }
-
-/* --- (Select/Start/L3/R3) --- */
-.center-cluster {
   position: absolute;
+  top: 98px;
+  left: 24px;
+  transform: scale(0.92);
+  padding: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #141519 0%, #22242B 100%);
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.layout-xbox .dpad button {
+  background: linear-gradient(180deg, #383B45 0%, #262830 100%);
+  border: 1px solid #17181D;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-xbox .dpad .up    { border-radius: 14px 14px 0 0; border-bottom: none; }
+.layout-xbox .dpad .down  { border-radius: 0 0 14px 14px; border-top: none; }
+.layout-xbox .dpad .left  { border-radius: 14px 0 0 14px; border-right: none; }
+.layout-xbox .dpad .right { border-radius: 0 14px 14px 0; border-left: none; }
+.layout-xbox .dpad .center {
+  background: radial-gradient(circle, #202229 0%, #2D3038 100%);
+  pointer-events: none;
+}
+.layout-xbox .dpad .diagonal {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Subtle metallic directional ticks on D-pad */
+.layout-xbox .dpad .up::after,
+.layout-xbox .dpad .down::after,
+.layout-xbox .dpad .left::after,
+.layout-xbox .dpad .right::after {
+  content: "";
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.layout-xbox .dpad .up::after,
+.layout-xbox .dpad .down::after {
+  width: 4px;
+  height: 12px;
+}
+
+.layout-xbox .dpad button:active:not(.diagonal),
+.layout-xbox .dpad button.active:not(.diagonal) {
+  background: #1B1C22;
+  transform: scale(0.94);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* --- CENTER CLUSTER: GUIDE JEWEL, SELECT/START, L3/R3 --- */
+.layout-xbox .center-cluster {
+  position: absolute;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  left: 50%;
-  transform: translateX(-50%);
 }
-.center-row {
+
+.layout-xbox .guide-jewel {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #484C59 0%, #1E2026 75%);
+  border: 2px solid #121317;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-xbox .guide-ring {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(44, 230, 122, 0.75);
+  box-shadow: 0 0 8px rgba(44, 230, 122, 0.45);
+}
+
+.layout-xbox .center-row {
   display: flex;
   gap: 12px;
 }
-.pill-btn {
-  width: 60px; height: 22px;
-  background: #555;
-  border-radius: 11px;
-  border: none;
-  color: #ccc;
+
+.layout-xbox .pill-btn {
+  width: 66px;
+  height: 26px;
+  background: linear-gradient(180deg, #434652 0%, #2C2E36 100%);
+  border-radius: 999px;
+  border: 1px solid #18191E;
+  color: #D8DCE6;
+  font-family: var(--font-mono, monospace);
   font-size: 10px;
-  font-weight: bold;
-  line-height: 22px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  box-shadow:
+    0 3px 0 #141519,
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
-.pill-btn.thumb-btn {
-  width: 48px;
-  height: 22px;
-  background: #3a3a3a;
-  border: 1px solid #555;
+
+.layout-xbox .pill-btn.thumb-btn {
+  width: 54px;
+  height: 26px;
+  background: linear-gradient(180deg, #32353E 0%, #22242B 100%);
+  border: 1px solid #454854;
+  color: #AEB3C2;
 }
-.pill-btn:active, .pill-btn.active { background: #222; }
 
-/* ---  (ABXY) --- */
-.actions {
-  --btn-size: 65px; 
+.layout-xbox .pill-btn:active,
+.layout-xbox .pill-btn.active {
+  transform: translateY(2px);
+  background: #1B1C22;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
 
-  position: relative;
-
+/* --- LIQUID-RESIN JEWEL ABXY CLUSTER --- */
+.layout-xbox .actions {
+  --btn-size: 64px;
+  position: absolute;
+  top: 102px;
+  right: 26px;
+  transform: scale(0.92);
   width: calc(var(--btn-size) * 3);
   height: calc(var(--btn-size) * 3);
 }
 
-.round-btn {
+.layout-xbox .round-btn {
   width: var(--btn-size);
   height: var(--btn-size);
-
   border-radius: 50%;
-  border: none;
   position: absolute;
-  color: white;
-  font-weight: bold;
-
-  font-size: calc(var(--btn-size) * 0.35); 
-
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-}
-
-.round-btn:active, .round-btn.active { 
-  transform: scale(0.85); 
-  box-shadow: none; 
-}
-
-.btn-y { 
-  top: 0; 
-  left: var(--btn-size);
-}
-
-.btn-x { 
-  top: var(--btn-size); 
-  left: 0; 
-}
-
-.btn-b { 
-  top: var(--btn-size);
-  right: 0; 
-}
-
-.btn-a { 
-  bottom: 0; 
-  left: var(--btn-size); 
-}
-
-/* --- Joysticks --- */
-.analog-sticks-container {
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
   display: flex;
-  justify-content: space-between;
-  position: absolute;
-  bottom: 20px;
-  width: 100%;
-  padding: 0 50px;
-  height: 120px;
-  pointer-events: none;
-}
-
-.stick-zone {
-  width: 120px; height: 120px;
-  pointer-events: auto;
-  position: relative;
-}
-.nipple { z-index: 500; }
-
-/* ==========================================================================
-   6. SKIN: MODERN
-   ========================================================================== */
-.layout-xbox {
-  background: #1a1a1a;
-  border-radius: 100px 100px 60px 60px;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
-}
-
-/* Show Rear Triggers */
-.layout-xbox .shoulder-group {
-  display: flex; 
-}
-
-/* --- POSITION SETTING --- */
-
-.layout-xbox .dpad {
-  position: absolute;
-  top: 105px;
-  left: 20px;
-  transform: scale(0.9);
-}
-
-.layout-xbox .actions {
-  position: absolute;
-  top:  105px;
-  right: 20px;
-  transform: scale(0.9);
-}
-
-.layout-xbox .center-cluster {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-}
-
-.layout-xbox .analog-sticks-container {
-  bottom: 25px;
-  padding: 0 clamp(60px, 18%, 145px);
-  height: 120px;
-}
-
-/* =========================================
-    TRIGGERS STYLE (L2 / R2)
-   ========================================= */
-
-.layout-xbox .shoulders {
-  margin-top: 15px; 
-  padding-top: 55px;
-}
-
-.layout-xbox .shoulder-group {
-  display: flex;
-  align-items: flex-end; 
-  gap: 8px; 
-}
-
-.layout-xbox .btn-trigger {
-  width: 90px;
-  height: 45px;
-
-  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
-  color: #888;
-
-  border: 2px solid #333;
-  border-bottom: none; 
-  border-radius: 12px 12px 0 0; 
-
-  font-size: 16px;
-  font-weight: bold;
-
-  transform: translateY(5px) scale(0.95);
-  z-index: 1; 
-  box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
-}
-
-.layout-xbox .btn-trigger:active, 
-.layout-xbox .btn-trigger.active {
-  background: #000;
-  transform: translateY(10px) scale(0.95);
-  color: #fff;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,1);
-}
-
-.layout-xbox .btn-shoulder {
-  z-index: 10; 
-  position: relative;
-  background: linear-gradient(to bottom, #555, #444);
-  color: white;
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
-  border-color: #666;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
 .layout-xbox .btn-y {
-  background: #f1c40f;
-  color: #333;
-  border: none;
+  top: 0;
+  left: var(--btn-size);
+  background: radial-gradient(circle at 32% 26%, #FFDA47 0%, #E0A200 68%, #9E7000 100%);
+  color: #261B00;
+  border: 2px solid #6E4E00;
+  box-shadow:
+    0 5px 0 #473200,
+    0 8px 14px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.65);
 }
-.layout-xbox .btn-y::after {
-  content: "Y";
-  font-size: 24px;
-  position: static;
-  transform: none;
-}
-
-.layout-xbox .btn-b {
-  background: #e74c3c;
-  color: white;
-  border: none;
-}
-.layout-xbox .btn-b::after {
-  content: "B";
-  font-size: 24px;
-  position: static;
-  transform: none;
-}
-
-.layout-xbox .btn-a {
-  background: #2ecc71;
-  color: white;
-  border: none;
-}
-.layout-xbox .btn-a::after {
-  content: "A";
-  font-size: 24px;
-  position: static;
-  transform: none;
-}
+.layout-xbox .btn-y::after { content: "Y"; font-size: 24px; }
 
 .layout-xbox .btn-x {
-  background: #3498db;
-  color: white;
-  border: none;
+  top: var(--btn-size);
+  left: 0;
+  background: radial-gradient(circle at 32% 26%, #4DA3FF 0%, #1B6EC9 68%, #104887 100%);
+  color: #FFFFFF;
+  border: 2px solid #0B3361;
+  box-shadow:
+    0 5px 0 #072242,
+    0 8px 14px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.55);
 }
-.layout-xbox .btn-x::after {
-  content: "X"; 
-  font-size: 24px;
-  position: static;
-  transform: none;
+.layout-xbox .btn-x::after { content: "X"; font-size: 24px; }
+
+.layout-xbox .btn-b {
+  top: var(--btn-size);
+  right: 0;
+  background: radial-gradient(circle at 32% 26%, #FF5C5C 0%, #D42222 68%, #911111 100%);
+  color: #FFFFFF;
+  border: 2px solid #660A0A;
+  box-shadow:
+    0 5px 0 #450606,
+    0 8px 14px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.55);
+}
+.layout-xbox .btn-b::after { content: "B"; font-size: 24px; }
+
+.layout-xbox .btn-a {
+  bottom: 0;
+  left: var(--btn-size);
+  background: radial-gradient(circle at 32% 26%, #45E083 0%, #19A350 68%, #0E6B33 100%);
+  color: #FFFFFF;
+  border: 2px solid #094D23;
+  box-shadow:
+    0 5px 0 #063317,
+    0 8px 14px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.55);
+}
+.layout-xbox .btn-a::after { content: "A"; font-size: 24px; }
+
+.layout-xbox .round-btn:active,
+.layout-xbox .round-btn.active {
+  transform: translateY(4px) scale(0.94);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.8),
+    inset 0 3px 6px rgba(0, 0, 0, 0.65) !important;
+  filter: brightness(0.92);
 }
 
-/* =========================================
-    VISUAL STYLES OF JOYSTICKS
-   ========================================= */
-
-.nipple .front {
-    background: radial-gradient(circle at 30% 30%, #444, #151515) !important;
-
-    border: 2px solid #000 !important;
-
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
-
-    position: relative;
+/* --- TWIN KNURLED ANALOG THUMBSTICKS --- */
+.layout-xbox .analog-sticks-container {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 22px;
+  width: 100%;
+  padding: 0 clamp(60px, 18%, 145px);
+  height: 124px;
+  pointer-events: none;
 }
 
-.nipple .front::after {
-    content: "";
-    position: absolute;
-    top: 10%; left: 10%; width: 80%; height: 80%;
-    border-radius: 50%;
-    border: 2px dashed rgba(255,255,255,0.1);
-    opacity: 0.5;
+.layout-xbox .stick-zone {
+  width: 124px;
+  height: 124px;
+  pointer-events: auto;
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle, #101114 0%, #1C1E24 72%, #2B2E37 100%);
+  border: 2px solid #383B46;
+  box-shadow:
+    inset 0 6px 14px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
+.layout-xbox .nipple .back {
+  background: radial-gradient(circle, rgba(12, 13, 16, 0.85) 0%, rgba(28, 30, 36, 0.95) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
 
-.nipple .back {
-    background: rgba(0, 0, 0, 0.4) !important; 
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+.layout-xbox .nipple .front {
+  background: radial-gradient(circle at 32% 30%, #4E525E 0%, #24262D 68%, #141519 100%) !important;
+  border: 2px solid #0C0D10 !important;
+  box-shadow:
+    0 7px 15px rgba(0, 0, 0, 0.75),
+    inset 0 2px 3px rgba(255, 255, 255, 0.28) !important;
+}
+
+.layout-xbox .nipple .front::after {
+  content: "";
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.18);
 }

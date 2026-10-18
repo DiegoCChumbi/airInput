@@ -1,45 +1,63 @@
 <div class="n64-skin">
   <div class="top-triggers">
     <button data-btn="L" class="trigger-btn l-btn">L</button>
+    <div class="n64-crest" aria-hidden="true">
+      <span class="crest-title">NINTENDO 64</span>
+      <span class="crest-model">NUS-005</span>
+    </div>
     <button data-btn="R" class="trigger-btn r-btn">R</button>
   </div>
 
   <div class="main-layout">
 
+    <!-- Left Wing: Cross D-Pad & Octagonal Analog Gate -->
     <div class="side-column left-handle">
       <div class="dpad-container">
-        <button class="dpad-diag d-nw" data-btns="UP,LEFT"></button>
-        <button class="dpad-btn d-up" data-btn="UP">▲</button>
-        <button class="dpad-diag d-ne" data-btns="UP,RIGHT"></button>
+        <button class="dpad-diag d-nw" data-btns="UP,LEFT" aria-label="Arriba Izquierda"></button>
+        <button class="dpad-btn d-up" data-btn="UP" aria-label="Arriba">▲</button>
+        <button class="dpad-diag d-ne" data-btns="UP,RIGHT" aria-label="Arriba Derecha"></button>
 
-        <button class="dpad-btn d-left" data-btn="LEFT">◀</button>
+        <button class="dpad-btn d-left" data-btn="LEFT" aria-label="Izquierda">◀</button>
         <div class="dpad-center"></div>
-        <button class="dpad-btn d-right" data-btn="RIGHT">▶</button>
+        <button class="dpad-btn d-right" data-btn="RIGHT" aria-label="Derecha">▶</button>
 
-        <button class="dpad-diag d-sw" data-btns="DOWN,LEFT"></button>
-        <button class="dpad-btn d-down" data-btn="DOWN">▼</button>
-        <button class="dpad-diag d-se" data-btns="DOWN,RIGHT"></button>
+        <button class="dpad-diag d-sw" data-btns="DOWN,LEFT" aria-label="Abajo Izquierda"></button>
+        <button class="dpad-btn d-down" data-btn="DOWN" aria-label="Abajo">▼</button>
+        <button class="dpad-diag d-se" data-btns="DOWN,RIGHT" aria-label="Abajo Derecha"></button>
       </div>
 
-      <div id="stick-left-zone" class="stick-zone"></div>
+      <div class="octagon-bezel">
+        <div id="stick-left-zone" class="stick-zone"></div>
+      </div>
     </div>
+
+    <!-- Center Prong: Rear Z Trigger & Crimson START Button -->
     <div class="center-column">
-      <button data-btn="SELECT" class="z-btn">Z</button>
-      <button data-btn="START" class="start-btn">START</button>
+      <div class="z-housing">
+        <button data-btn="SELECT" class="z-btn">Z</button>
+        <span class="hw-caption">Z-TRIG</span>
+      </div>
+      <div class="start-well">
+        <button data-btn="START" class="start-btn">START</button>
+      </div>
     </div>
+
+    <!-- Right Wing: Yellow C-Cluster & Offset B/A Buttons -->
     <div class="side-column right-handle">
-      <div class="c-grid">
-        <div class="c-spacer"></div>
-        <button data-btn="Y" class="c-btn c-up">▲</button>
-        <div class="c-spacer"></div>
+      <div class="c-well">
+        <div class="c-grid">
+          <div class="c-spacer"></div>
+          <button data-btn="Y" class="c-btn c-up">▲</button>
+          <div class="c-spacer"></div>
 
-        <button data-btn="X" class="c-btn c-left">◀</button>
-        <div class="c-spacer"></div>
-        <button data-btn="R2" class="c-btn c-right">▶</button>
+          <button data-btn="X" class="c-btn c-left">◀</button>
+          <div class="c-spacer c-emblem">C</div>
+          <button data-btn="R2" class="c-btn c-right">▶</button>
 
-        <div class="c-spacer"></div>
-        <button data-btn="L2" class="c-btn c-down">▼</button>
-        <div class="c-spacer"></div>
+          <div class="c-spacer"></div>
+          <button data-btn="L2" class="c-btn c-down">▼</button>
+          <div class="c-spacer"></div>
+        </div>
       </div>
 
       <div class="ab-group">
