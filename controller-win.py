@@ -25,6 +25,7 @@ BTN_MAP = {
 players = {}
 players_axes = {}
 player_numbers = {} # {username: controller_number}
+last_axis_log = {}  # {(username, axis): timestamp}
 global_controller_counter = 0
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -48,7 +49,7 @@ while True:
         # Handle system commands from Go TUI
         if username == "system":
             command = parts[1]
-            if command == "swap":
+            if command == "swap" and len(parts) >= 4:
                 user_a, user_b = parts[2], parts[3]
                 if user_a in players and user_b in players:
                     # Swap the actual device objects and their states
@@ -80,7 +81,7 @@ while True:
                 print(f"New player registered: '{username}' as 'airInput-Controller{controller_number}'", flush=True)
                 gamepad = vg.VX360Gamepad()
                 players[username] = gamepad
-                players_axes[username] = {'lx': 0, 'ly': 0, 'rx': 0, 'ry': 0, 'lt': 0, 'rt': 0}
+                players_axes[username] = {'lx': 0.0, 'ly': 0.0, 'rx': 0.0, 'ry': 0.0, 'lt': 0.0, 'rt': 0.0}
 
             # Respond to Node.js with the controller ID
             response_msg = f"{username}:controller_id:{player_numbers[username]}".encode()
@@ -119,19 +120,28 @@ while True:
         elif msg_type == "axis":
             if len(parts) < 4: continue
             axis = parts[2]
-            val = float(parts[3])
+            if axis not in axes_state:
+                continue
+            val = max(-1.0, min(1.0, float(parts[3])))
 
             axes_state[axis] = val
             
+            # Note: Client sends -1.0 for UP and +1.0 for DOWN (standard screen/evdev convention).
+            # XInput (VX360Gamepad) expects +32767 for UP and -32767 for DOWN, so we negate ly and ry.
             lx_val = int(axes_state['lx'] * MAX_ABS_VAL)
-            ly_val = int(axes_state['ly'] * MAX_ABS_VAL) # Y-axis is often inverted
+            ly_val = int(-axes_state['ly'] * MAX_ABS_VAL)
             rx_val = int(axes_state['rx'] * MAX_ABS_VAL)
-            ry_val = int(axes_state['ry'] * MAX_ABS_VAL)
+            ry_val = int(-axes_state['ry'] * MAX_ABS_VAL)
 
             gamepad.left_joystick(x_value=lx_val, y_value=ly_val)
             gamepad.right_joystick(x_value=rx_val, y_value=ry_val)
-            print(f"[{username} (C{player_numbers[username]})] Axis: {axis} -> {val:.2f}", flush=True)
             gamepad.update()
+
+            now = time.monotonic()
+            log_key = (username, axis)
+            if val == 0.0 or (now - last_axis_log.get(log_key, 0.0) >= 0.25):
+                last_axis_log[log_key] = now
+                print(f"[{username} (C{player_numbers[username]})] Axis: {axis} -> {val:.2f}", flush=True)
 
     except socket.timeout:
         continue
@@ -139,4 +149,5 @@ while True:
         print(f"Error processing message: '{msg}'. Malformed message. Details: {e}", flush=True)
     except Exception as e:
         print(f"An unexpected error occurred: {e}", flush=True)
+
 

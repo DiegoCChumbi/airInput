@@ -87,23 +87,37 @@ button:active, button.active {
 .center { background: #333; pointer-events: none; } 
 .diagonal { background: transparent !important; border: none; }
 
-/* --- (Select/Start) --- */
+/* --- (Select/Start/L3/R3) --- */
 .center-cluster {
   position: absolute;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   left: 50%;
   transform: translateX(-50%);
 }
+.center-row {
+  display: flex;
+  gap: 12px;
+}
 .pill-btn {
-  width: 60px; height: 20px;
+  width: 60px; height: 22px;
   background: #555;
-  border-radius: 10px;
+  border-radius: 11px;
   border: none;
   color: #ccc;
   font-size: 10px;
-  line-height: 20px;
+  font-weight: bold;
+  line-height: 22px;
 }
-.pill-btn:active { background: #222; }
+.pill-btn.thumb-btn {
+  width: 48px;
+  height: 22px;
+  background: #3a3a3a;
+  border: 1px solid #555;
+}
+.pill-btn:active, .pill-btn.active { background: #222; }
 
 /* ---  (ABXY) --- */
 .actions {
@@ -155,7 +169,7 @@ button:active, button.active {
   left: var(--btn-size); 
 }
 
-/* --- Joysticks (Nipple.js) --- */
+/* --- Joysticks --- */
 .analog-sticks-container {
   display: flex;
   justify-content: space-between;
@@ -204,12 +218,6 @@ button:active, button.active {
   transform: scale(0.9);
 }
 
-.layout-xbox .analog-sticks-container {
-  bottom: 15px;
-  padding: 0 40px;
-  height: 100px;
-}
-
 .layout-xbox .center-cluster {
   position: absolute;
   top: 80px;
@@ -218,7 +226,7 @@ button:active, button.active {
 
 .layout-xbox .analog-sticks-container {
   bottom: 25px;
-  padding: 0 150px;
+  padding: 0 clamp(60px, 18%, 145px);
   height: 120px;
 }
 
@@ -280,8 +288,8 @@ button:active, button.active {
 }
 .layout-xbox .btn-y::after {
   content: "Y";
-  font-size: 24px
-  position: static
+  font-size: 24px;
+  position: static;
   transform: none;
 }
 
