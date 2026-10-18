@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AirInput — Mando Táctil</title>
 
-  <link rel="stylesheet" href="global.css?v=3">
+  <link rel="stylesheet" href="global.css?v=5">
   <link id="skin-style" rel="stylesheet" href="">
 
   <script src="/socket.io/socket.io.js"></script>
@@ -48,7 +48,19 @@
           <span class="shell-dot n64-dot"></span>64-Bit
         </button>
         <button type="button" onclick="selectInitialSkin('xbox')" data-skin="xbox" class="sel-btn">
-          <span class="shell-dot xbox-dot"></span>Moderno
+          <span class="shell-dot xbox-dot"></span>Simétrico
+        </button>
+        <button type="button" onclick="selectInitialSkin('asymmetric')" data-skin="asymmetric" class="sel-btn">
+          <span class="shell-dot asym-dot"></span>Asimétrico
+        </button>
+        <button type="button" onclick="selectInitialSkin('brawler')" data-skin="brawler" class="sel-btn">
+          <span class="shell-dot brawler-dot"></span>Brawler
+        </button>
+        <button type="button" onclick="selectInitialSkin('kart')" data-skin="kart" class="sel-btn">
+          <span class="shell-dot kart-dot"></span>Kart
+        </button>
+        <button type="button" onclick="selectInitialSkin('arcade')" data-skin="arcade" class="sel-btn span-full">
+          <span class="shell-dot arcade-dot"></span>Arcade 6-Botones
         </button>
       </div>
     </div>
@@ -90,16 +102,28 @@
     </div>
 
     <div class="settings-section">
-      <label class="well-label">Diseño activo</label>
+      <label class="well-label">Diseño activo (Clásicos &amp; Touch-First)</label>
       <div class="layout-selector">
         <button type="button" onclick="loadSkin('snes')" data-skin="snes" class="sel-btn">
-          <span class="shell-dot snes-dot"></span>Clásico 16-Bit
+          <span class="shell-dot snes-dot"></span>16-Bit
         </button>
         <button type="button" onclick="loadSkin('n64')" data-skin="n64" class="sel-btn">
-          <span class="shell-dot n64-dot"></span>Clásico 64-Bit
+          <span class="shell-dot n64-dot"></span>64-Bit
         </button>
         <button type="button" onclick="loadSkin('xbox')" data-skin="xbox" class="sel-btn">
-          <span class="shell-dot xbox-dot"></span>Moderno Pro
+          <span class="shell-dot xbox-dot"></span>Simétrico
+        </button>
+        <button type="button" onclick="loadSkin('asymmetric')" data-skin="asymmetric" class="sel-btn">
+          <span class="shell-dot asym-dot"></span>Asimétrico
+        </button>
+        <button type="button" onclick="loadSkin('brawler')" data-skin="brawler" class="sel-btn">
+          <span class="shell-dot brawler-dot"></span>Brawler
+        </button>
+        <button type="button" onclick="loadSkin('kart')" data-skin="kart" class="sel-btn">
+          <span class="shell-dot kart-dot"></span>Kart
+        </button>
+        <button type="button" onclick="loadSkin('arcade')" data-skin="arcade" class="sel-btn span-full">
+          <span class="shell-dot arcade-dot"></span>Arcade 6-Botones
         </button>
       </div>
     </div>
@@ -150,7 +174,7 @@
     <button id="close-settings" type="button">Volver al juego</button>
   </div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 
 </html>

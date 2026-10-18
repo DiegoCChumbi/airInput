@@ -1,0 +1,398 @@
+/* ==========================================================================
+   ARENA BRAWLER (TOUCH-FIRST SMASH / PLATFORM FIGHTER) HARDWARE SKIN
+   ========================================================================== */
+
+#gamepad.layout-brawler {
+  width: 96%;
+  max-width: 790px;
+  height: calc(100% - 10px);
+  max-height: 398px;
+  background:
+    radial-gradient(circle at 50% 18%, #4C428C 0%, #372F6B 58%, #251F4A 100%);
+  border-radius: 90px 90px 58px 58px;
+  border: 2px solid #685CB8;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 20px 12px 20px;
+  box-shadow:
+    0 8px 0 #191536,
+    0 22px 44px rgba(0, 0, 0, 0.8),
+    inset 0 2px 2px rgba(255, 255, 255, 0.32),
+    inset 0 -8px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* --- TOP BUMPERS (SHIELD & Z-GRAB) --- */
+.layout-brawler .shoulders {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 18px;
+  z-index: 10;
+}
+
+.layout-brawler .shoulder-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.layout-brawler .btn-shoulder,
+.layout-brawler .btn-trigger {
+  height: 42px;
+  padding: 0 14px;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  border-radius: 18px 18px 8px 8px;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-brawler .btn-trigger {
+  min-width: 96px;
+  background: linear-gradient(180deg, #B8B5C8 0%, #8E8AA3 100%);
+  color: #231F38;
+  border: 2px solid #5B5770;
+  box-shadow:
+    0 4px 0 #433F54,
+    inset 0 2px 1px rgba(255, 255, 255, 0.65);
+}
+
+.layout-brawler .btn-shoulder {
+  min-width: 96px;
+  background: linear-gradient(180deg, #5E50AD 0%, #443887 100%);
+  color: #EAE6FF;
+  border: 2px solid #2A2259;
+  box-shadow:
+    0 4px 0 #1D1740,
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.layout-brawler .z-bumper {
+  background: linear-gradient(180deg, #6C5CE7 0%, #4B3BC2 100%);
+  color: #FFFFFF;
+}
+
+.layout-brawler .btn-shoulder:active,
+.layout-brawler .btn-shoulder.active,
+.layout-brawler .btn-trigger:active,
+.layout-brawler .btn-trigger.active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  filter: brightness(0.9);
+}
+
+/* --- FACE LAYOUT --- */
+.layout-brawler .face {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 0 8px;
+}
+
+/* --- LEFT WING: OCTAGONAL CONTROL STICK + TAUNT D-PAD --- */
+.layout-brawler .brawler-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 220px;
+  padding: 4px 0;
+}
+
+.layout-brawler .octagon-well {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2B2454 0%, #453B80 100%);
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-brawler #stick-left-zone {
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1A1633 0%, #2D2654 70%, #433978 100%);
+  border: 3px solid #8A84A8;
+  box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.85);
+  position: relative;
+}
+
+.layout-brawler #stick-left-zone .nipple .front {
+  background: radial-gradient(circle at 35% 30%, #E2E0EC 0%, #ABA7BF 68%, #79758C 100%) !important;
+  border: 2px solid #4A4759 !important;
+}
+
+.layout-brawler .taunt-dpad {
+  --cell-size: 38px;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+  margin-left: 44px;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.4));
+}
+
+.layout-brawler .taunt-dpad button,
+.layout-brawler .taunt-dpad .center {
+  background: linear-gradient(180deg, #ABA7BF 0%, #868299 100%);
+  border: 1px solid #4E4B5E;
+  color: #2D2847;
+  font-size: 12px;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.layout-brawler .taunt-dpad .up    { border-radius: 7px 7px 0 0; border-bottom: none; }
+.layout-brawler .taunt-dpad .down  { border-radius: 0 0 7px 7px; border-top: none; }
+.layout-brawler .taunt-dpad .left  { border-radius: 7px 0 0 7px; border-right: none; }
+.layout-brawler .taunt-dpad .right { border-radius: 0 7px 7px 0; border-left: none; }
+.layout-brawler .taunt-dpad .diagonal {
+  background: transparent !important;
+  border: none !important;
+}
+
+.layout-brawler .taunt-dpad button:active:not(.diagonal),
+.layout-brawler .taunt-dpad button.active:not(.diagonal) {
+  background: #6E6A80;
+  transform: scale(0.94);
+}
+
+/* --- CENTER DECK --- */
+.layout-brawler .brawler-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 3;
+}
+
+.layout-brawler .brawler-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 10px;
+  background: rgba(16, 13, 34, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.layout-brawler .crest-main {
+  font-size: 13px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: #EAE6FF;
+}
+
+.layout-brawler .crest-sub {
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #B4ACE3;
+}
+
+.layout-brawler .center-pills {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.layout-brawler .pill-btn {
+  width: 60px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #9E9AB5 0%, #77738C 100%);
+  border: 2px solid #433F54;
+  color: #1F1B33;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #2E2B3B;
+}
+
+.layout-brawler .pill-btn:active,
+.layout-brawler .pill-btn.active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* --- RIGHT WING: TOUCH-FIRST "A-ISLAND" & YELLOW C-STICK --- */
+.layout-brawler .brawler-right {
+  position: relative;
+  width: 280px;
+  height: 100%;
+}
+
+.layout-brawler .a-island {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  width: 220px;
+  height: 190px;
+}
+
+.layout-brawler .brawler-btn {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-brawler .btn-glyph {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.layout-brawler .btn-role {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  opacity: 0.88;
+  margin-top: 2px;
+}
+
+/* Giant Central Turquoise A Button (Normal Attack) */
+.layout-brawler .btn-attack-a {
+  width: 82px;
+  height: 82px;
+  top: 52px;
+  left: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #2EE6B8 0%, #0FA37E 68%, #086E54 100%);
+  color: #04291F;
+  border: 3px solid #064D3B;
+  box-shadow:
+    0 6px 0 #043629,
+    0 10px 18px rgba(0, 0, 0, 0.55),
+    inset 0 2px 4px rgba(255, 255, 255, 0.65);
+  z-index: 5;
+}
+
+.layout-brawler .btn-attack-a .btn-glyph {
+  font-size: 30px;
+}
+
+/* Top Kidney Jump Button (Y) */
+.layout-brawler .btn-jump-y {
+  width: 106px;
+  height: 42px;
+  top: 2px;
+  left: 56px;
+  border-radius: 28px 28px 14px 14px;
+  background: linear-gradient(180deg, #C7C4D6 0%, #9692AA 100%);
+  color: #231F38;
+  border: 2px solid #5B5770;
+  flex-direction: row;
+  gap: 6px;
+  box-shadow:
+    0 4px 0 #433F54,
+    0 6px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 2px rgba(255, 255, 255, 0.7);
+}
+
+/* Right Kidney Jump Button (X) */
+.layout-brawler .btn-jump-x {
+  width: 50px;
+  height: 84px;
+  top: 50px;
+  right: 6px;
+  border-radius: 14px 28px 28px 14px;
+  background: linear-gradient(180deg, #C7C4D6 0%, #9692AA 100%);
+  color: #231F38;
+  border: 2px solid #5B5770;
+  box-shadow:
+    0 4px 0 #433F54,
+    0 6px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 2px rgba(255, 255, 255, 0.7);
+}
+
+/* Bottom-Left Crimson Special Button (B) */
+.layout-brawler .btn-special-b {
+  width: 62px;
+  height: 62px;
+  top: 96px;
+  left: 0px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #FF5964 0%, #D91E2E 68%, #990F1B 100%);
+  color: #FFFFFF;
+  border: 2px solid #6E0811;
+  box-shadow:
+    0 5px 0 #4D040B,
+    0 8px 14px rgba(0, 0, 0, 0.55),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55);
+}
+
+.layout-brawler .brawler-btn:active,
+.layout-brawler .brawler-btn.active {
+  transform: translateY(4px) scale(0.95);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), inset 0 3px 6px rgba(0, 0, 0, 0.6) !important;
+  filter: brightness(0.92);
+}
+
+/* Yellow C-Stick (Smash Attack Stick) */
+.layout-brawler .c-stick-housing {
+  position: absolute;
+  bottom: 2px;
+  left: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layout-brawler .c-stick-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #FFD43B;
+  margin-bottom: 2px;
+}
+
+.layout-brawler #stick-right-zone.c-stick-zone {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1E1A38 0%, #322B5C 72%, #4A4085 100%);
+  border: 2px solid #EAB01E;
+  box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.85);
+  position: relative;
+}
+
+.layout-brawler #stick-right-zone .nipple .back {
+  width: 90px !important;
+  height: 90px !important;
+  margin-left: -45px !important;
+  margin-top: -45px !important;
+  border-color: rgba(255, 212, 59, 0.35) !important;
+}
+
+.layout-brawler #stick-right-zone .nipple .front {
+  width: 50px !important;
+  height: 50px !important;
+  margin-left: -25px !important;
+  margin-top: -25px !important;
+  background: radial-gradient(circle at 32% 28%, #FFE359 0%, #F0B400 68%, #B88600 100%) !important;
+  border: 2px solid #755400 !important;
+}

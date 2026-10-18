@@ -130,17 +130,24 @@ async function loadSkin(skinName) {
 // ==========================================
 // 3. GAMEPAD LOGIC (Buttons & Rotation-Aware Joysticks)
 // ==========================================
+function syncComboButtonsVisuals() {
+  document.querySelectorAll('button[data-btns]').forEach(btn => {
+    const parts = (btn.dataset.btns || '').split(',').map(s => s.trim()).filter(Boolean);
+    const allActive = parts.length > 0 && parts.every(p => activeButtons.has(p));
+    btn.classList.toggle('active', allActive);
+  });
+}
+
 function updateButton(btnName, state) {
   const cleanName = btnName.trim();
   if (!cleanName) return;
 
   socket.emit("input", { button: cleanName, state: state });
 
-  const el = document.querySelector(`button[data-btn="${cleanName}"]`);
-  if (el) {
+  document.querySelectorAll(`button[data-btn="${cleanName}"]`).forEach(el => {
     if (state === 1) el.classList.add("active");
     else el.classList.remove("active");
-  }
+  });
 
   if (state === 1 && userSettings.haptics && navigator.vibrate) {
     navigator.vibrate(25);
@@ -150,6 +157,7 @@ function updateButton(btnName, state) {
 function releaseAllInputs() {
   activeButtons.forEach(btnName => updateButton(btnName, 0));
   activeButtons.clear();
+  syncComboButtonsVisuals();
   activeJoysticks.forEach(j => j.reset());
 }
 
@@ -159,11 +167,28 @@ function scanGamePad(e) {
     return;
   }
 
-  if (e.cancelable && e.type !== 'click') {
+  if (e.cancelable && e.type !== 'click' && !e.type.startsWith('mouse')) {
     e.preventDefault();
   }
 
   const buttonsBeingTouched = new Set();
+
+  const collectFromPoint = (clientX, clientY) => {
+    const element = document.elementFromPoint(clientX, clientY);
+    if (!element || element.closest('.stick-zone')) {
+      return;
+    }
+    const btn = element.closest('button');
+    if (btn && btn.id !== 'btn-settings') {
+      const rawData = btn.dataset.btns || btn.dataset.btn;
+      if (rawData) {
+        rawData.split(',').forEach(t => {
+          const clean = t.trim();
+          if (clean) buttonsBeingTouched.add(clean);
+        });
+      }
+    }
+  };
 
   if (e.touches) {
     for (let i = 0; i < e.touches.length; i++) {
@@ -172,23 +197,10 @@ function scanGamePad(e) {
       if (activeJoystickTouchIds.has(touch.identifier)) {
         continue;
       }
-
-      const element = document.elementFromPoint(touch.clientX, touch.clientY);
-      if (!element || element.closest('.stick-zone')) {
-        continue;
-      }
-
-      const btn = element.closest('button');
-      if (btn && btn.id !== 'btn-settings') {
-        const rawData = btn.dataset.btns || btn.dataset.btn;
-        if (rawData) {
-          rawData.split(',').forEach(t => {
-            const clean = t.trim();
-            if (clean) buttonsBeingTouched.add(clean);
-          });
-        }
-      }
+      collectFromPoint(touch.clientX, touch.clientY);
     }
+  } else if (e.type.startsWith('mouse') && e.buttons === 1) {
+    collectFromPoint(e.clientX, e.clientY);
   }
 
   activeButtons.forEach(btnName => {
@@ -204,6 +216,7 @@ function scanGamePad(e) {
   });
 
   activeButtons = buttonsBeingTouched;
+  syncComboButtonsVisuals();
 }
 
 /**
@@ -496,6 +509,9 @@ function initializeGamepad() {
     document.addEventListener("touchmove", scanGamePad, { passive: false });
     document.addEventListener("touchend", scanGamePad, { passive: false });
     document.addEventListener("touchcancel", scanGamePad, { passive: false });
+    document.addEventListener("mousedown", scanGamePad);
+    document.addEventListener("mousemove", scanGamePad);
+    document.addEventListener("mouseup", scanGamePad);
     document.addEventListener("contextmenu", e => e.preventDefault());
     window.addEventListener("blur", releaseAllInputs);
 

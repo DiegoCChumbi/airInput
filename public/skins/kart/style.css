@@ -1,0 +1,581 @@
+/* ==========================================================================
+   AIRINPUT — TOUCH-FIRST KART / ARCADE RACER RIG (AI-KART)
+   Ergonomic Steering + Dedicated Item Trigger + 1-Thumb Gas & Drift Pedalboard
+   ========================================================================== */
+
+:root {
+    --kart-body-top: #1c1f26;
+    --kart-body-bot: #101217;
+    --kart-carbon: #16181f;
+    --kart-border: #343946;
+    --kart-gas-green: #16a34a;
+    --kart-drift-orange: #ea580c;
+    --kart-brake-red: #dc2626;
+    --kart-item-amber: #eab308;
+    --kart-mirror-cyan: #0284c7;
+}
+
+#gamepad.kart-skin {
+    width: 96vw;
+    max-width: 860px;
+    height: calc(100% - 10px);
+    max-height: 395px;
+    margin-top: 4px;
+    background:
+        radial-gradient(circle at 18% 58%, rgba(255, 255, 255, 0.04) 0%, transparent 45%),
+        radial-gradient(circle at 82% 52%, rgba(234, 88, 12, 0.05) 0%, transparent 45%),
+        linear-gradient(165deg, var(--kart-body-top) 0%, var(--kart-body-bot) 100%);
+    border-radius: 44px 44px 56px 56px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 26px;
+    box-sizing: border-box;
+    box-shadow:
+        inset 0 3px 5px rgba(255, 255, 255, 0.14),
+        inset 0 -8px 18px rgba(0, 0, 0, 0.8),
+        0 20px 42px rgba(0, 0, 0, 0.85),
+        0 0 0 2px var(--kart-border);
+}
+
+/* Racing Dashboard Inner Recess */
+#gamepad.kart-skin::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 20px;
+    right: 20px;
+    border-radius: 34px 34px 46px 46px;
+    border: 1.5px solid rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   TOP SHOULDER TRIGGERS
+   ========================================================================== */
+.triggers-group {
+    position: absolute;
+    top: -12px;
+    display: flex;
+    gap: 10px;
+    z-index: 1;
+}
+
+#triggers-left {
+    left: 44px;
+}
+
+#triggers-right {
+    right: 44px;
+}
+
+.shoulder-btn {
+    width: 128px;
+    height: 32px;
+    background: linear-gradient(180deg, #323846 0%, #1d212a 100%);
+    border: 1.5px solid #0d0f14;
+    border-bottom: none;
+    color: #cbd5e1;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow:
+        inset 0 2px 2px rgba(255, 255, 255, 0.2),
+        0 -3px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5px;
+    transition: transform 0.05s ease, background 0.05s ease;
+}
+
+#triggers-left .shoulder-btn {
+    border-radius: 22px 10px 0 0;
+}
+
+#triggers-right .shoulder-btn {
+    border-radius: 10px 22px 0 0;
+}
+
+.shoulder-btn.active {
+    transform: translateY(5px);
+    background: linear-gradient(180deg, #ea580c 0%, #9a3412 100%);
+    color: #fff;
+}
+
+/* ==========================================================================
+   LEFT CONTROLS: QUICK ITEM LAUNCHER + STEERING STICK + MINI DPAD
+   ========================================================================== */
+#left-controls {
+    width: 260px;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+#item-hub {
+    position: absolute;
+    top: 26px;
+    left: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.item-launch-btn {
+    width: 148px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #facc15 0%, #ca8a04 100%);
+    border: 2px solid #422006;
+    color: #1c1917;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        0 5px 0 #713f12,
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.6);
+    transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.item-main-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+}
+
+.item-sub-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+}
+
+.item-launch-btn.active {
+    transform: translateY(4px);
+    box-shadow:
+        0 1px 0 #713f12,
+        0 2px 5px rgba(0, 0, 0, 0.6),
+        inset 0 2px 5px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.08);
+}
+
+.rearview-btn {
+    width: 82px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #0ea5e9 0%, #0369a1 100%);
+    border: 2px solid #082f49;
+    color: #f0f9ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+        0 5px 0 #0c4a6e,
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.45);
+    transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.rear-main-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+}
+
+.rear-sub-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+}
+
+.rearview-btn.active {
+    transform: translateY(4px);
+    box-shadow:
+        0 1px 0 #0c4a6e,
+        inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Steering Stick Housing */
+#steering-housing {
+    position: absolute;
+    bottom: 24px;
+    left: 10px;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wheel-ring {
+    position: absolute;
+    width: 146px;
+    height: 146px;
+    border-radius: 50%;
+    border: 3px dashed rgba(250, 204, 21, 0.22);
+    box-shadow: inset 0 6px 16px rgba(0, 0, 0, 0.75);
+    background: radial-gradient(circle, #0b0d11 0%, #151820 100%);
+    pointer-events: none;
+}
+
+/* Top center red steering wheel stripe */
+.wheel-ring::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 6px;
+    border-radius: 3px;
+    background: #ef4444;
+}
+
+.steering-tag {
+    position: absolute;
+    bottom: -14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+}
+
+.stick-zone {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 3;
+}
+
+.stick-zone .nipple .back {
+    background: radial-gradient(circle, #090a0d 0%, #181b22 75%, #262b36 100%) !important;
+    border: 2px solid #060709 !important;
+    box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.9) !important;
+    opacity: 1 !important;
+}
+
+.stick-zone .nipple .front {
+    background: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 65%, #0f172a 100%) !important;
+    border: 2px solid #facc15 !important;
+    box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3) !important;
+    opacity: 1 !important;
+}
+
+/* Mini D-Pad for Menu & Stunts */
+#dpad-mini-container {
+    position: absolute;
+    bottom: 28px;
+    right: -6px;
+    width: 94px;
+    height: 94px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#dpad {
+    position: relative;
+    width: 82px;
+    height: 82px;
+}
+
+#dpad button, #dpad-center {
+    background: #272c37;
+    position: absolute;
+    border: none;
+}
+
+#dpad button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 0 #0c0e12;
+}
+
+#dpad button.active {
+    background: #3b4252;
+    transform: translateY(1px);
+}
+
+#btn-up { top: 0; left: 28px; width: 26px; height: 28px; border-radius: 4px 4px 0 0; }
+#btn-down { bottom: 0; left: 28px; width: 26px; height: 28px; border-radius: 0 0 4px 4px; }
+#btn-left { top: 28px; left: 0; width: 28px; height: 26px; border-radius: 4px 0 0 4px; }
+#btn-right { top: 28px; right: 0; width: 28px; height: 26px; border-radius: 0 4px 4px 0; }
+#dpad-center { top: 28px; left: 28px; width: 26px; height: 26px; z-index: 2; }
+
+.arrow { width: 0; height: 0; border-style: solid; }
+.arrow.up { border-width: 0 5px 7px 5px; border-color: transparent transparent #94a3b8 transparent; }
+.arrow.down { border-width: 7px 5px 0 5px; border-color: #94a3b8 transparent transparent transparent; }
+.arrow.left { border-width: 5px 7px 5px 0; border-color: transparent #94a3b8 transparent transparent; }
+.arrow.right { border-width: 5px 0 5px 7px; border-color: transparent transparent transparent #94a3b8; }
+
+/* ==========================================================================
+   CENTER DASHBOARD TELEMETRY
+   ========================================================================== */
+#center-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 68%;
+    z-index: 2;
+    padding: 8px 0;
+}
+
+.brand-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.brand-main {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    color: #f8fafc;
+}
+
+.brand-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: #facc15;
+}
+
+.gauge-decor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rpm-leds {
+    display: flex;
+    gap: 6px;
+}
+
+.rpm-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.rpm-dot.g { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.rpm-dot.y { background: #eab308; box-shadow: 0 0 6px #eab308; }
+.rpm-dot.r { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+.rpm-caption {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: #94a3b8;
+}
+
+.meta-buttons {
+    display: flex;
+    gap: 14px;
+}
+
+.pill-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+#btn-select, #btn-start {
+    width: 32px;
+    height: 12px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+    border: 1px solid #0f172a;
+    box-shadow: 0 2px 0 #090d16;
+}
+
+#btn-select.active, #btn-start.active {
+    transform: translateY(2px);
+    box-shadow: none;
+    background: #facc15;
+}
+
+.pill-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+}
+
+/* ==========================================================================
+   RIGHT PEDALBOARD: BRAKE (B) + TALL GAS PEDAL (A) + 1-THUMB DRIFT COMBO (A+R)
+   ========================================================================== */
+#right-controls {
+    width: 300px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+#pedalboard {
+    width: 100%;
+    height: 245px;
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 76px 98px 104px;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.pedal-btn {
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 6px;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.04s ease, box-shadow 0.04s ease, filter 0.04s ease;
+}
+
+.pedal-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    z-index: 2;
+}
+
+.pedal-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    opacity: 0.9;
+    z-index: 2;
+}
+
+/* Metallic Pedal Tread Grooves */
+.pedal-treads {
+    width: 75%;
+    height: 56px;
+    border-radius: 8px;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.38) 0px,
+        rgba(0, 0, 0, 0.38) 5px,
+        rgba(255, 255, 255, 0.12) 5px,
+        rgba(255, 255, 255, 0.12) 9px
+    );
+    z-index: 2;
+}
+
+/* Brake Pedal (B) — Shorter lower pedal */
+.pedal-brake {
+    height: 175px;
+    align-self: end;
+    background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+    border: 2px solid #450a0a;
+    color: #fff;
+    box-shadow:
+        0 6px 0 #7f1d1d,
+        0 10px 18px rgba(0, 0, 0, 0.6),
+        inset 0 2px 3px rgba(255, 255, 255, 0.45);
+}
+
+/* Tall Gas Pedal (A) */
+.pedal-gas {
+    height: 240px;
+    background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+    border: 2px solid #052e16;
+    color: #fff;
+    box-shadow:
+        0 6px 0 #14532d,
+        0 10px 20px rgba(0, 0, 0, 0.65),
+        inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Rightmost Column: 1-Thumb Combo Drift (A+R) + Aux Nitro (Y) */
+.drift-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 240px;
+}
+
+.pedal-drift-combo {
+    flex: 1;
+    background: linear-gradient(180deg, #fb923c 0%, #ea580c 55%, #c2410c 100%);
+    border: 2px solid #431407;
+    color: #fff;
+    box-shadow:
+        0 6px 0 #7c2d12,
+        0 10px 20px rgba(0, 0, 0, 0.65),
+        inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.drift-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fde047;
+    letter-spacing: 0.06em;
+}
+
+.aux-boost-btn {
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #a855f7 0%, #6b21a8 100%);
+    border: 2px solid #3b0764;
+    color: #fff;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    box-shadow:
+        0 4px 0 #4c1d95,
+        0 6px 12px rgba(0, 0, 0, 0.5),
+        inset 0 2px 2px rgba(255, 255, 255, 0.4);
+    transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.pedal-btn.active,
+.aux-boost-btn.active {
+    transform: translateY(5px);
+    box-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.8),
+        inset 0 3px 8px rgba(0, 0, 0, 0.45);
+    filter: brightness(1.12);
+}

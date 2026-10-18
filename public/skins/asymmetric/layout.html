@@ -1,0 +1,56 @@
+<div id="gamepad" class="layout-asymmetric">
+  <div class="shoulders">
+    <div class="shoulder-group left-group">
+      <button class="btn-trigger" data-btn="L2">L2</button>
+      <button class="btn-shoulder" data-btn="L">L1</button>
+    </div>
+    <div class="shoulder-group right-group">
+      <button class="btn-shoulder" data-btn="R">R1</button>
+      <button class="btn-trigger" data-btn="R2">R2</button>
+    </div>
+  </div>
+
+  <div class="face">
+    <!-- Top-Left: Primary Left Analog Stick -->
+    <div id="stick-left-zone" class="stick-zone stick-top-left"></div>
+
+    <!-- Bottom-Left: Faceted D-Pad -->
+    <div class="dpad dpad-bottom-left">
+      <button class="diagonal" data-btns="UP,LEFT" aria-label="Arriba Izquierda"></button>
+      <button class="up" data-btn="UP" aria-label="Arriba"></button>
+      <button class="diagonal" data-btns="UP,RIGHT" aria-label="Arriba Derecha"></button>
+      <button class="left" data-btn="LEFT" aria-label="Izquierda"></button>
+      <button class="center" aria-hidden="true"></button>
+      <button class="right" data-btn="RIGHT" aria-label="Derecha"></button>
+      <button class="diagonal" data-btns="DOWN,LEFT" aria-label="Abajo Izquierda"></button>
+      <button class="down" data-btn="DOWN" aria-label="Abajo"></button>
+      <button class="diagonal" data-btns="DOWN,RIGHT" aria-label="Abajo Derecha"></button>
+    </div>
+
+    <!-- Center Deck: Guide Jewel, SELECT/START, L3/R3 -->
+    <div class="center-cluster">
+      <div class="guide-jewel" aria-hidden="true">
+        <span class="guide-ring"></span>
+      </div>
+      <div class="center-row">
+        <button class="pill-btn" data-btn="SELECT">SELECT</button>
+        <button class="pill-btn" data-btn="START">START</button>
+      </div>
+      <div class="center-row thumb-btns">
+        <button class="pill-btn thumb-btn" data-btn="L3">L3</button>
+        <button class="pill-btn thumb-btn" data-btn="R3">R3</button>
+      </div>
+    </div>
+
+    <!-- Top-Right: ABXY Jewel Cluster -->
+    <div class="actions actions-top-right">
+      <button class="round-btn btn-y" data-btn="Y" aria-label="Y"></button>
+      <button class="round-btn btn-x" data-btn="X" aria-label="X"></button>
+      <button class="round-btn btn-b" data-btn="B" aria-label="B"></button>
+      <button class="round-btn btn-a" data-btn="A" aria-label="A"></button>
+    </div>
+
+    <!-- Bottom-Right: Secondary Right Analog Stick -->
+    <div id="stick-right-zone" class="stick-zone stick-bottom-right"></div>
+  </div>
+</div>

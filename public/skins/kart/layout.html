@@ -1,0 +1,102 @@
+<div id="gamepad" class="kart-skin">
+    <!-- Top Shoulder Triggers (Item / Hop-Drift) -->
+    <div id="triggers-left" class="triggers-group">
+        <button id="btn-L" data-btn="L" class="shoulder-btn">ITEM · L</button>
+    </div>
+    <div id="triggers-right" class="triggers-group">
+        <button id="btn-R" data-btn="R" class="shoulder-btn">HOP / DRIFT · R</button>
+    </div>
+
+    <!-- Left Steering Wheel & Quick Item Hub -->
+    <div id="left-controls">
+        <!-- Oversized Touch-First Item Trigger above left thumb -->
+        <div id="item-hub">
+            <button id="btn-item-main" data-btn="L" class="item-launch-btn">
+                <span class="item-main-label">OBJETO</span>
+                <span class="item-sub-label">USAR / ARRASTRAR</span>
+            </button>
+            <button id="btn-look-back" data-btn="X" class="rearview-btn">
+                <span class="rear-main-label">ESPEJO</span>
+                <span class="rear-sub-label">ATRÁS</span>
+            </button>
+        </div>
+
+        <!-- Precision Steering Analog Stick -->
+        <div id="steering-housing">
+            <div class="wheel-ring"></div>
+            <div id="stick-left-zone" class="stick-zone"></div>
+            <span class="steering-tag">DIRECCIÓN</span>
+        </div>
+
+        <!-- Compact Auxiliary D-Pad (Menu / Tricks) -->
+        <div id="dpad-mini-container">
+            <div id="dpad">
+                <button id="btn-up" data-btn="UP" aria-label="Up"><span class="arrow up"></span></button>
+                <button id="btn-down" data-btn="DOWN" aria-label="Down"><span class="arrow down"></span></button>
+                <button id="btn-left" data-btn="LEFT" aria-label="Left"><span class="arrow left"></span></button>
+                <button id="btn-right" data-btn="RIGHT" aria-label="Right"><span class="arrow right"></span></button>
+                <div id="dpad-center"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Center Dashboard Telemetry & Start/Select -->
+    <div id="center-controls">
+        <div class="brand-badge">
+            <span class="brand-main">AIRINPUT</span>
+            <span class="brand-sub">AI-KART · RACING RIG</span>
+        </div>
+        <div class="gauge-decor">
+            <div class="rpm-leds">
+                <span class="rpm-dot g"></span>
+                <span class="rpm-dot g"></span>
+                <span class="rpm-dot y"></span>
+                <span class="rpm-dot y"></span>
+                <span class="rpm-dot r"></span>
+            </div>
+            <span class="rpm-caption">TELEMETRY READY</span>
+        </div>
+        <div class="meta-buttons">
+            <div class="pill-wrapper">
+                <button id="btn-select" data-btn="SELECT"></button>
+                <span class="pill-label">CAM / SEL</span>
+            </div>
+            <div class="pill-wrapper">
+                <button id="btn-start" data-btn="START"></button>
+                <span class="pill-label">PAUSE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Touch-First Pedalboard (Gas + Drift Combo + Brake) -->
+    <div id="right-controls">
+        <div id="pedalboard">
+            <!-- Brake / Reverse Pedal -->
+            <button id="btn-B" data-btn="B" class="pedal-btn pedal-brake">
+                <span class="pedal-title">FRENO</span>
+                <span class="pedal-sub">MARCHA ATRÁS · B</span>
+                <span class="pedal-treads"></span>
+            </button>
+
+            <!-- Tall Accelerator Pedal -->
+            <button id="btn-A" data-btn="A" class="pedal-btn pedal-gas">
+                <span class="pedal-title">ACELERAR</span>
+                <span class="pedal-sub">GAS CONTINUO · A</span>
+                <span class="pedal-treads"></span>
+            </button>
+
+            <!-- Touch-First Combo Bar: Holds A (Gas) + R (Drift) simultaneously with 1 thumb! -->
+            <div class="drift-column">
+                <button id="btn-drift-combo" data-btns="A,R" class="pedal-btn pedal-drift-combo">
+                    <span class="drift-badge">1-THUMB COMBO</span>
+                    <span class="pedal-title">DERRAPE</span>
+                    <span class="pedal-sub">GAS + DRIFT (A+R)</span>
+                    <span class="pedal-treads"></span>
+                </button>
+                <button id="btn-Y" data-btn="Y" class="aux-boost-btn">
+                    <span>NITRO / Y</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

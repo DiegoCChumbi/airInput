@@ -260,27 +260,32 @@ body {
 .layout-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .sel-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 9px 10px;
+  gap: 5px;
+  padding: 8px 6px;
   background: linear-gradient(180deg, #4B4950 0%, #37353B 100%);
   color: #ECE8DF;
   border: 1px solid #252328;
   border-radius: 8px;
   font-family: var(--font-hardware);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   box-shadow:
     0 3px 0 #201E23,
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: transform 0.06s ease, box-shadow 0.06s ease;
+  white-space: nowrap;
+}
+
+.sel-btn.span-full {
+  grid-column: 1 / -1;
 }
 
 .sel-btn:active,
@@ -301,9 +306,13 @@ body {
   flex-shrink: 0;
 }
 
-.snes-dot { background: var(--snes-red); box-shadow: 0 0 4px var(--snes-red); }
-.n64-dot  { background: var(--snes-yellow); box-shadow: 0 0 4px var(--snes-yellow); }
-.xbox-dot { background: var(--snes-green); box-shadow: 0 0 4px var(--snes-green); }
+.snes-dot    { background: var(--snes-red); box-shadow: 0 0 4px var(--snes-red); }
+.n64-dot     { background: var(--snes-yellow); box-shadow: 0 0 4px var(--snes-yellow); }
+.xbox-dot    { background: var(--snes-blue); box-shadow: 0 0 4px var(--snes-blue); }
+.asym-dot    { background: var(--snes-green); box-shadow: 0 0 4px var(--snes-green); }
+.brawler-dot { background: #10B981; box-shadow: 0 0 5px #10B981; }
+.kart-dot    { background: #F97316; box-shadow: 0 0 5px #F97316; }
+.arcade-dot  { background: #EC4899; box-shadow: 0 0 5px #EC4899; }
 
 #join-btn {
   width: 100%;
@@ -431,11 +440,13 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 390px;
+  width: 400px;
   max-width: 94vw;
+  max-height: 92vh;
+  overflow-y: auto;
   background: linear-gradient(180deg, #2D2B33 0%, #211F26 100%);
   color: var(--ink-primary);
-  padding: 18px 18px 16px 18px;
+  padding: 16px 18px 16px 18px;
   border-radius: 16px;
   border: 2px solid #494652;
   box-shadow:
