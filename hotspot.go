@@ -207,7 +207,7 @@ func startHotspotLinux(iface string) error {
 		"band", "bg",
 	).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("%w: %s %s", err, strings.TrimSpace(string(out)), getWifiDiagLinux(iface))
+		return fmt.Errorf("%s %w: %s", getWifiDiagLinux(iface), err, strings.TrimSpace(string(out)))
 	}
 
 	// 4. Ensure explicit static IPv4 (10.42.0.1/24), shared DHCP method, and trusted firewall zone
