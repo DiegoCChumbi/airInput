@@ -1,7 +1,85 @@
 // ==========================================
 // 1. SETUP, STATE & DOM ELEMENTS
 // ==========================================
-const socket = io({ autoConnect: false, reconnection: true, reconnectionDelay: 500 });
+function createAirSocket() {
+  const listeners = {};
+  let ws = null;
+  let shouldReconnect = false;
+  let reconnectTimer = null;
+  let pendingPongCb = null;
+
+  const client = {
+    connected: false,
+    on(event, fn) {
+      if (!listeners[event]) listeners[event] = [];
+      listeners[event].push(fn);
+    },
+    _trigger(event, data) {
+      (listeners[event] || []).forEach(fn => fn(data));
+    },
+    connect() {
+      shouldReconnect = true;
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        return;
+      }
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${proto}//${window.location.host}/ws`);
+
+      ws.onopen = () => {
+        client.connected = true;
+        client._trigger('connect');
+      };
+
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.event === 'pong_check') {
+            if (typeof pendingPongCb === 'function') {
+              const cb = pendingPongCb;
+              pendingPongCb = null;
+              cb();
+            }
+          } else if (msg.event === 'registration_success') {
+            client._trigger('registration_success');
+          } else if (msg.event === 'registration_failed') {
+            client._trigger('registration_failed', msg.message);
+          }
+        } catch (_) {}
+      };
+
+      ws.onclose = () => {
+        const wasConnected = client.connected;
+        client.connected = false;
+        pendingPongCb = null;
+        if (wasConnected) {
+          client._trigger('disconnect');
+        }
+        if (shouldReconnect) {
+          clearTimeout(reconnectTimer);
+          reconnectTimer = setTimeout(() => client.connect(), 500);
+        }
+      };
+
+      ws.onerror = () => {
+        try { ws.close(); } catch (_) {}
+      };
+    },
+    emit(event, payloadOrCb) {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      if (event === 'ping_check' && typeof payloadOrCb === 'function') {
+        pendingPongCb = payloadOrCb;
+        ws.send(JSON.stringify({ event: 'ping_check' }));
+        return;
+      }
+      const data = (payloadOrCb && typeof payloadOrCb === 'object') ? payloadOrCb : {};
+      ws.send(JSON.stringify({ event, ...data }));
+    }
+  };
+
+  return client;
+}
+
+const socket = createAirSocket();
 
 const joinScreen = document.getElementById('join-screen');
 const usernameInput = document.getElementById('username-input');
