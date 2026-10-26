@@ -154,15 +154,19 @@
   transform: scale(0.94);
 }
 
-/* Auxiliary Sanwa Ball-Top Lever */
+/* Auxiliary Sanwa Ball-Top Lever (Dynamic Zone) */
 .layout-arcade .arcade-lever-housing {
   position: absolute;
   bottom: 2px;
-  right: 0px;
-  width: 112px;
-  height: 112px;
+  right: -6px;
+  width: 124px;
+  height: 118px;
   border-radius: 22px;
-  background: #0A0B0E;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    #0A0B0E;
+  background-size: 18px 18px, 18px 18px, 100% 100%;
   border: 2px solid #27272A;
   box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.9);
   display: flex;
@@ -182,9 +186,9 @@
 }
 
 .layout-arcade #stick-left-zone {
-  width: 102px;
-  height: 102px;
-  border-radius: 50%;
+  width: 118px;
+  height: 112px;
+  border-radius: 20px;
   position: relative;
   z-index: 3;
 }

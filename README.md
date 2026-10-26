@@ -11,7 +11,8 @@ Turn any smartphone into a low-latency wireless controller for your PC. AirInput
 ## Key Features
 
 - **Zero Mobile Installation**: Runs entirely in the phone's web browser over a local network or direct Wi-Fi hotspot.
-- **7 Controller Layouts (Classic & Touch-First)**: Switch on the fly between classic console layouts, modern dual-stick pads, and genre-adapted touch-first controllers designed specifically for mobile ergonomics.
+- **8 Controller Layouts (Classic & Touch-First)**: Switch on the fly between classic console layouts, modern dual-stick pads, and genre-adapted touch-first controllers designed specifically for mobile ergonomics.
+- **Dynamic Analog Stick Zones**: Every analog stick pad features a dynamic touch well where the stick origin automatically centers at your thumb's initial touch point (can be toggled on or off at any time from the in-game menu), plus a dedicated **Dual Dynamic Stick (`twin-stick`)** layout with oversized left and right touchpads.
 - **Offline Wi-Fi Hotspot Mode**: Create a standalone local Wi-Fi network (`AirInput-Net`) directly from the PC when no router or internet connection is available. *(Tested on Linux via NetworkManager; Windows implementation included as experimental/untested).*
 - **Controller Slot Hot-Swapping**: Reassign which phone controls Player 1, Player 2, etc. directly from the terminal TUI without restarting the game or disconnecting players.
 
@@ -49,6 +50,7 @@ Designed from the ground up for glass touchscreens so you never have to perform 
 | **Brawler (`brawler`)** | ![Brawler Layout](docs/screenshots/skin-brawler.png) |
 | **Kart / Racing (`kart`)** | ![Kart Layout](docs/screenshots/skin-kart.png) |
 | **Arcade 6-Button (`arcade`)** | ![Arcade Layout](docs/screenshots/skin-arcade.png) |
+| **Dual Dynamic Stick (`twin-stick`)** | ![Dual Dynamic Stick Layout](docs/screenshots/skin-twin-stick.png) |
 
 ---
 
@@ -87,14 +89,14 @@ sudo ./airInput -port 3000    # Custom HTTP/WebSocket port (default: 3000)
 
 **Linux:**
 ```bash
-git clone https://github.com/DiegoCChumbi/airInput.git
+git clone <repository-url>
 cd airInput
 go build -o airInput .
 ```
 
 **Windows:**
 ```powershell
-git clone https://github.com/DiegoCChumbi/airInput.git
+git clone <repository-url>
 cd airInput
 go build -o airInput.exe .
 ```
@@ -168,7 +170,8 @@ airInput/
         ├── asymmetric/      # Asymmetric offset dual-stick pad
         ├── brawler/         # Touch-first platform fighter pad
         ├── kart/            # Touch-first racing wheel + pedalboard
-        └── arcade/          # Touch-first 6-button fightpad
+        ├── arcade/          # Touch-first 6-button fightpad
+        └── twin-stick/      # Dual dynamic floating-origin stick pad
 ```
 
 ---
@@ -190,7 +193,8 @@ airInput/
 - [x] Allow phone user to input a name to identify each controller
 - [x] Allow linking and hot-swapping phones with controller numbers from the terminal
 - [x] Create a standalone Wi-Fi hotspot network to work without existing Wi-Fi or internet
-- [x] Add touch-first genre-adapted controller layouts (`Brawler`, `Kart`, `Arcade 6-Button`, `Asymmetric`)
+- [x] Add touch-first genre-adapted controller layouts (`Brawler`, `Kart`, `Arcade 6-Button`, `Asymmetric`, `Dual Dynamic Stick`)
+- [x] Support dynamic touch-origin positioning across all analog stick zones
 
 ---
 

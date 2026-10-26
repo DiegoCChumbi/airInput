@@ -445,13 +445,13 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 490px;
+  width: 530px;
   max-width: 94vw;
-  max-height: 92vh;
+  max-height: 95vh;
   overflow-y: auto;
   background: linear-gradient(180deg, #2D2B33 0%, #211F26 100%);
   color: var(--ink-primary);
-  padding: 12px 16px 14px 16px;
+  padding: 10px 14px 11px 14px;
   border-radius: 16px;
   border: 2px solid #494652;
   box-shadow:
@@ -466,8 +466,8 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -524,15 +524,19 @@ body {
 }
 
 .settings-section {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: left;
+}
+
+#settings-modal .sel-btn {
+  padding: 6px 6px;
 }
 
 .settings-toggles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 7px;
 }
 
 .toggle-row {
@@ -541,12 +545,16 @@ body {
   align-items: center;
   gap: 8px;
   background: var(--chassis-well);
-  padding: 7px 10px;
+  padding: 5px 9px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55);
   cursor: pointer;
   text-align: left;
+}
+
+.toggle-row.span-full {
+  grid-column: 1 / -1;
 }
 
 .toggle-copy {
@@ -648,7 +656,7 @@ body {
 
 #close-settings {
   width: 100%;
-  padding: 11px;
+  padding: 8px;
   background: linear-gradient(180deg, #D92B3A 0%, #AD1B28 100%);
   color: #FFFFFF;
   border: 1px solid #781019;
@@ -693,6 +701,7 @@ body {
 .stick-zone {
   touch-action: none;
   user-select: none;
+  cursor: pointer;
 }
 
 .stick-zone .nipple {
@@ -703,6 +712,13 @@ body {
   height: 0;
   z-index: 500;
   pointer-events: none;
+}
+
+.stick-zone.stick-active .nipple .back {
+  border-color: rgba(44, 230, 122, 0.52);
+  box-shadow:
+    0 0 14px rgba(44, 230, 122, 0.24),
+    inset 0 6px 12px rgba(0, 0, 0, 0.85);
 }
 
 .stick-zone .nipple .back {

@@ -321,29 +321,41 @@
   filter: brightness(0.92);
 }
 
-/* --- TWIN KNURLED ANALOG THUMBSTICKS --- */
+/* --- TWIN KNURLED ANALOG THUMBSTICKS (DYNAMIC ZONES) --- */
 .layout-xbox .analog-sticks-container {
   display: flex;
   justify-content: space-between;
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   width: 100%;
-  padding: 0 clamp(145px, 24%, 195px);
-  height: 116px;
+  padding: 0 clamp(128px, 21%, 175px);
+  height: 132px;
   pointer-events: none;
 }
 
 .layout-xbox .stick-zone {
-  width: 116px;
-  height: 116px;
+  width: 146px;
+  height: 132px;
   pointer-events: auto;
   position: relative;
-  border-radius: 50%;
-  background: radial-gradient(circle, #101114 0%, #1C1E24 72%, #2B2E37 100%);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(44, 230, 122, 0.08) 0%, transparent 68%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle, #101114 0%, #1C1E24 74%, #262932 100%);
+  background-size: 100% 100%, 22px 22px, 22px 22px, 100% 100%;
   border: 2px solid #383B46;
   box-shadow:
     inset 0 6px 14px rgba(0, 0, 0, 0.9),
     0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.layout-xbox .stick-zone.stick-active {
+  border-color: rgba(44, 230, 122, 0.55);
+  box-shadow:
+    inset 0 0 18px rgba(44, 230, 122, 0.16),
+    inset 0 6px 14px rgba(0, 0, 0, 0.9);
 }
 
 .layout-xbox .nipple .back {

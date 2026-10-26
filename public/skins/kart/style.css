@@ -196,8 +196,8 @@
 
 .layout-kart .steering-housing {
   position: relative;
-  width: 138px;
-  height: 138px;
+  width: 146px;
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -206,9 +206,13 @@
 .layout-kart .wheel-ring {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: 26px;
   border: 3px dashed rgba(250, 204, 21, 0.28);
-  background: radial-gradient(circle, #0B0D11 0%, #161922 100%);
+  background:
+    linear-gradient(rgba(250, 204, 21, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 204, 21, 0.04) 1px, transparent 1px),
+    radial-gradient(circle, #0B0D11 0%, #161922 100%);
+  background-size: 20px 20px, 20px 20px, 100% 100%;
   box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.85);
   pointer-events: none;
 }
@@ -237,9 +241,9 @@
 }
 
 .layout-kart #stick-left-zone {
-  width: 122px;
-  height: 122px;
-  border-radius: 50%;
+  width: 138px;
+  height: 132px;
+  border-radius: 24px;
   position: relative;
   z-index: 3;
 }
