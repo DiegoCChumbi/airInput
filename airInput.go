@@ -1,16 +1,10 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"net"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
-	"syscall"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -27,9 +21,9 @@ var (
 	cursorStyle          = lipgloss.NewStyle().Foreground(lipgloss.Color("#00FF00")) // Bright green for cursor
 	selectedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFF00")) // Yellow for selected
 
-	hotspotActiveStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00FF88"))
+	hotspotActiveStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00FF88"))
 	hotspotInactiveStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#A9A9A9"))
-	warningStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FF8C00"))
+	warningStyle         = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FF8C00"))
 
 	logBoxStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("#555555")).Padding(0, 1).MarginTop(1)
 	logTitleStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00E5FF"))
@@ -43,30 +37,32 @@ type Player struct {
 }
 
 type model struct {
+	port        int
+	devMode     bool
 	qrCode      string
 	url         string
 	originalURL string // URL before hotspot was activated
 	players     []Player
 	cursor      int
 	selected    int // -1 means nothing is selected
-	nodeCmd     *exec.Cmd
-	pythonCmd   *exec.Cmd
-	udpConn     *net.UDPConn
 	err         error
-	nodeScanner *bufio.Scanner
-	nodeStdin   *bufio.Writer
+
+	gm        *GamepadManager
+	webServer *WebServer
+	eventChan chan tea.Msg
+
 	// Hotspot state
 	wifi            wifiInfo
 	hotspotActive   bool
 	hotspotStarting bool
 	hotspotWarning  bool // waiting for user confirmation
 	hotspotErr      string
+
 	// Logs state
-	showLogs      bool
-	logs          []string
-	maxLogs       int
-	logFile       *os.File
-	pythonScanner *bufio.Scanner
+	showLogs bool
+	logs     []string
+	maxLogs  int
+	logFile  *os.File
 }
 
 type qrCodeMsg struct{ qr, url string }
@@ -77,23 +73,43 @@ type wifiStatusMsg wifiInfo
 type hotspotStartedMsg struct{ ip string }
 type hotspotStoppedMsg struct{}
 type hotspotErrMsg struct{ err error }
-type pythonLogMsg string
+type gamepadLogMsg string
 
-func initialModel(showLogs bool) model {
+func initialModel(showLogs, devMode bool, port int) model {
 	f, _ := os.OpenFile("airinput.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	return model{
-		players:  []Player{},
-		selected: -1,
-		showLogs: showLogs,
-		logs:     []string{},
-		maxLogs:  8,
-		logFile:  f,
+		port:      port,
+		devMode:   devMode,
+		players:   []Player{},
+		selected:  -1,
+		showLogs:  showLogs,
+		logs:      []string{},
+		maxLogs:   8,
+		logFile:   f,
+		eventChan: make(chan tea.Msg, 256),
 	}
 }
 
 // --- Commands & Logic ---
 func (m *model) Init() tea.Cmd {
-	return tea.Batch(m.startSubprocesses(), m.waitForNodeActivity(), m.waitForPythonLogs(), m.detectWifi())
+	return tea.Batch(m.startServices(), m.waitForEvents(), m.detectWifi())
+}
+
+func (m *model) pushEvent(msg tea.Msg) {
+	select {
+	case m.eventChan <- msg:
+	default:
+	}
+}
+
+func (m *model) waitForEvents() tea.Cmd {
+	return func() tea.Msg {
+		msg, ok := <-m.eventChan
+		if !ok {
+			return nil
+		}
+		return msg
+	}
 }
 
 func (m *model) detectWifi() tea.Cmd {
@@ -123,136 +139,38 @@ func (m *model) doStopHotspot() tea.Cmd {
 	}
 }
 
-// sendNodeCmd sends a JSON command to server.js via its stdin.
-func (m *model) sendNodeCmd(v interface{}) {
-	if m.nodeStdin == nil {
-		return
-	}
-	b, _ := json.Marshal(v)
-	m.nodeStdin.Write(b)
-	m.nodeStdin.WriteByte('\n')
-	m.nodeStdin.Flush()
-}
+func (m *model) startServices() tea.Cmd {
+	m.gm = NewGamepadManager(func(line string) {
+		m.pushEvent(gamepadLogMsg(line))
+	})
 
-func (m *model) startSubprocesses() tea.Cmd {
-	if _, err := os.Stat("node_modules"); os.IsNotExist(err) {
+	m.webServer = NewWebServer(
+		m.port,
+		m.devMode,
+		m.gm,
+		func(username string, controllerID int) {
+			m.pushEvent(playerConnectMsg{Username: username, ControllerID: controllerID})
+		},
+		func(username string) {
+			m.pushEvent(playerDisconnectMsg(username))
+		},
+	)
+
+	if err := m.webServer.Start(); err != nil {
 		return func() tea.Msg {
-			return errorMsg{fmt.Errorf("dependencias de Node.js no encontradas (falta 'node_modules'). Ejecuta 'npm install' primero")}
+			return errorMsg{fmt.Errorf("no se pudo iniciar el servidor web en el puerto %d: %w", m.port, err)}
 		}
 	}
-
-	// Start Python
-	osType := runtime.GOOS
-	var pythonCmdName, pythonScript string
-	if osType == "windows" {
-		pythonCmdName, pythonScript = "python", "controller-win.py"
-	} else {
-		pythonCmdName, pythonScript = "python3", "controller-linux.py"
-	}
-	m.pythonCmd = exec.Command(pythonCmdName, "-u", pythonScript)
-	m.pythonCmd.Env = append(os.Environ(), "PYTHONUNBUFFERED=1")
-	pythonPipe, err := m.pythonCmd.StdoutPipe()
-	if err != nil {
-		return func() tea.Msg { return errorMsg{err} }
-	}
-	m.pythonScanner = bufio.NewScanner(pythonPipe)
-	if m.logFile != nil {
-		m.pythonCmd.Stderr = m.logFile
-	} else {
-		m.pythonCmd.Stderr = os.Stderr
-	}
-	m.pythonCmd.Stdin = nil // Disconnect stdin
-	if err := m.pythonCmd.Start(); err != nil {
-		return func() tea.Msg { return errorMsg{err} }
-	}
-
-	// Start Node.js
-	m.nodeCmd = exec.Command("node", "server.js")
-	nodePipe, _ := m.nodeCmd.StdoutPipe()
-	nodeInPipe, err := m.nodeCmd.StdinPipe()
-	if err != nil {
-		return func() tea.Msg { return errorMsg{err} }
-	}
-	m.nodeStdin = bufio.NewWriter(nodeInPipe)
-	if m.logFile != nil {
-		m.nodeCmd.Stderr = m.logFile
-	} else {
-		m.nodeCmd.Stderr = os.Stderr
-	}
-	m.nodeScanner = bufio.NewScanner(nodePipe)
-	if err := m.nodeCmd.Start(); err != nil {
-		return func() tea.Msg { return errorMsg{err} }
-	}
-
-	// Set up UDP connection to send commands to Python
-	addr, _ := net.ResolveUDPAddr("udp", "127.0.0.1:9999")
-	conn, err := net.DialUDP("udp", nil, addr)
-	if err != nil {
-		return func() tea.Msg { return errorMsg{err} }
-	}
-	m.udpConn = conn
 
 	// Ensure port 3000 is open in UFW/firewalld/iptables for LAN WiFi connections
 	go openFirewallPort("")
 
-	return nil
-}
+	ip := GetLocalIP()
+	url := fmt.Sprintf("http://%s:%d", ip, m.port)
+	qr := GenerateTerminalQR(url)
 
-func (m *model) waitForPythonLogs() tea.Cmd {
 	return func() tea.Msg {
-		if m.pythonScanner == nil {
-			return nil
-		}
-		if m.pythonScanner.Scan() {
-			return pythonLogMsg(m.pythonScanner.Text())
-		}
-		return nil
-	}
-}
-
-// waitForNodeActivity listens for JSON messages from server.js
-func (m *model) waitForNodeActivity() tea.Cmd {
-	return func() tea.Msg {
-		if m.nodeScanner == nil {
-			return errorMsg{fmt.Errorf("node process scanner not available")}
-		}
-		if !m.nodeScanner.Scan() {
-			if err := m.nodeScanner.Err(); err != nil {
-				return errorMsg{fmt.Errorf("error reading from node process: %w", err)}
-			}
-			logBytes, _ := os.ReadFile("airinput.log")
-			logDetail := strings.TrimSpace(string(logBytes))
-			if logDetail != "" {
-				return errorMsg{fmt.Errorf("node process exited unexpectedly:\n%s", logDetail)}
-			}
-			return errorMsg{fmt.Errorf("node process exited unexpectedly")}
-		}
-		line := m.nodeScanner.Text()
-		var msgData map[string]interface{}
-		if err := json.Unmarshal([]byte(line), &msgData); err != nil {
-			// Ignore lines that are not valid JSON and keep listening
-			return m.waitForNodeActivity()()
-		}
-
-		switch msgData["event"] {
-		case "server_ready":
-			return qrCodeMsg{
-				qr:  msgData["qr"].(string),
-				url: msgData["url"].(string),
-			}
-		case "player_connect":
-			return playerConnectMsg{Username: msgData["username"].(string), ControllerID: int(msgData["controllerId"].(float64))}
-		case "player_disconnect":
-			return playerDisconnectMsg(msgData["username"].(string))
-		}
-		return m.waitForNodeActivity()()
-	}
-}
-
-func (m *model) sendSwapCommand(userA, userB string) {
-	if m.udpConn != nil {
-		cmd := fmt.Sprintf("system:swap:%s:%s", userA, userB)
-		m.udpConn.Write([]byte(cmd))
+		return qrCodeMsg{qr: qr, url: url}
 	}
 }
 
@@ -318,19 +236,21 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					playerA := m.players[m.selected]
 					playerB := m.players[m.cursor]
-					m.sendSwapCommand(playerA.Username, playerB.Username)
+					if m.gm != nil {
+						m.gm.SwapPlayers(playerA.Username, playerB.Username)
+					}
 					m.players[m.selected].ControllerID, m.players[m.cursor].ControllerID = m.players[m.cursor].ControllerID, m.players[m.selected].ControllerID
 					m.selected = -1
 				}
 			}
 		}
+
 	case qrCodeMsg:
 		m.qrCode = msg.qr
 		m.url = msg.url
 		if m.originalURL == "" {
 			m.originalURL = msg.url
 		}
-		return m, m.waitForNodeActivity()
 
 	case wifiStatusMsg:
 		m.wifi = wifiInfo(msg)
@@ -338,21 +258,24 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case hotspotStartedMsg:
 		m.hotspotStarting = false
 		m.hotspotActive = true
-		newURL := fmt.Sprintf("http://%s:3000", msg.ip)
-		m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": newURL})
+		newURL := fmt.Sprintf("http://%s:%d", msg.ip, m.port)
+		m.url = newURL
+		m.qrCode = GenerateTerminalQR(newURL)
 
 	case hotspotStoppedMsg:
 		m.hotspotActive = false
 		m.hotspotStarting = false
 		// Restore original QR/URL
 		if m.originalURL != "" {
-			m.sendNodeCmd(map[string]string{"cmd": "generate_qr", "url": m.originalURL})
+			m.url = m.originalURL
+			m.qrCode = GenerateTerminalQR(m.originalURL)
 		}
 
 	case hotspotErrMsg:
 		m.hotspotStarting = false
 		m.hotspotActive = false
 		m.hotspotErr = msg.err.Error()
+
 	case playerConnectMsg:
 		found := false
 		for i, p := range m.players {
@@ -365,7 +288,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if !found {
 			m.players = append(m.players, Player(msg))
 		}
-		return m, m.waitForNodeActivity()
+		return m, m.waitForEvents()
+
 	case playerDisconnectMsg:
 		var updatedPlayers []Player
 		usernameToDisconnect := string(msg)
@@ -381,19 +305,21 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.cursor = 0
 		}
 		m.selected = -1
-		return m, m.waitForNodeActivity()
-	case pythonLogMsg:
+		return m, m.waitForEvents()
+
+	case gamepadLogMsg:
 		line := string(msg)
 		if line != "" {
 			if m.logFile != nil {
-				m.logFile.WriteString(line + "\n")
+				_, _ = m.logFile.WriteString(line + "\n")
 			}
 			m.logs = append(m.logs, line)
 			if len(m.logs) > m.maxLogs {
 				m.logs = m.logs[len(m.logs)-m.maxLogs:]
 			}
 		}
-		return m, m.waitForPythonLogs()
+		return m, m.waitForEvents()
+
 	case errorMsg:
 		m.err = msg.err
 		return m, tea.Quit
@@ -498,38 +424,28 @@ func (m *model) cleanup() {
 		stopHotspot()
 		m.hotspotActive = false
 	}
-	if m.udpConn != nil {
-		m.udpConn.Close()
-		m.udpConn = nil
+	if m.webServer != nil {
+		m.webServer.Stop()
+		m.webServer = nil
+	}
+	if m.gm != nil {
+		m.gm.CloseAll()
+		m.gm = nil
 	}
 	if m.logFile != nil {
-		m.logFile.Close()
+		_ = m.logFile.Close()
 		m.logFile = nil
-	}
-	if m.nodeCmd != nil && m.nodeCmd.Process != nil {
-		if runtime.GOOS == "windows" {
-			_ = m.nodeCmd.Process.Kill()
-		} else {
-			_ = m.nodeCmd.Process.Signal(syscall.SIGTERM)
-		}
-		m.nodeCmd = nil
-	}
-	if m.pythonCmd != nil && m.pythonCmd.Process != nil {
-		if runtime.GOOS == "windows" {
-			_ = m.pythonCmd.Process.Kill()
-		} else {
-			_ = m.pythonCmd.Process.Signal(syscall.SIGTERM)
-		}
-		m.pythonCmd = nil
 	}
 }
 
 func main() {
 	logsFlag := flag.Bool("logs", false, "Habilitar visualización de logs de entrada")
 	flag.BoolVar(logsFlag, "l", false, "Habilitar visualización de logs de entrada (shorthand)")
+	devFlag := flag.Bool("dev", false, "Servir archivos de public/ desde disco en lugar de los embebidos")
+	portFlag := flag.Int("port", 3000, "Puerto HTTP/WebSocket del servidor")
 	flag.Parse()
 
-	m := initialModel(*logsFlag)
+	m := initialModel(*logsFlag, *devFlag, *portFlag)
 	defer m.cleanup()
 
 	p := tea.NewProgram(&m)
@@ -537,10 +453,12 @@ func main() {
 	finalModel, err := p.Run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error running program: %v\n", err)
+		m.cleanup()
 		os.Exit(1)
 	}
 
 	if fm, ok := finalModel.(*model); ok && fm.err != nil {
+		m.cleanup()
 		os.Exit(1)
 	}
 

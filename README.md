@@ -2,7 +2,7 @@
 
 # AirInput
 
-Turn any smartphone into a low-latency wireless controller for your PC. AirInput streams touch and analog inputs from your mobile browser directly to virtual gamepads on Linux (`uinput`) and Windows (`vgamepad` / `ViGEmBus`), requiring no mobile app installation.
+Turn any smartphone into a low-latency wireless controller for your PC. AirInput compiles into a **single self-contained Go binary** (with the web frontend and all controller skins embedded via `//go:embed`) and streams touch and analog inputs from your mobile browser directly to virtual gamepads on Linux (`uinput`) and Windows (`ViGEmBus`), requiring no mobile app installation and no external Node.js or Python runtimes.
 
 ![AirInput Terminal TUI](docs/screenshots/terminal-tui.png)
 
@@ -65,10 +65,12 @@ When `airInput` is running, you can manage the server and connected controllers 
 | `l` | Show or hide the **Live Input Logs** panel in the terminal. |
 | `q` / `Ctrl+C` | Gracefully stop the hotspot (if active), destroy virtual gamepads, and exit. |
 
-You can also start AirInput with the live log panel enabled by default using the `-l` or `--logs` flag:
+You can also pass command-line flags when starting AirInput:
 
 ```bash
-sudo ./airInput -l
+sudo ./airInput -l            # Start with live input logs enabled
+sudo ./airInput -dev          # Serve ./public from disk instead of embedded assets (for UI development)
+sudo ./airInput -port 3000    # Custom HTTP/WebSocket port (default: 3000)
 ```
 
 ---
@@ -77,55 +79,27 @@ sudo ./airInput -l
 
 ### Prerequisites
 
-- **Node.js** (v14 or higher)
-- **Python** (3.7 or higher)
-- **Go** (1.19 or higher)
+- **Go** (1.20 or higher) to build from source.
+- **Linux**: Kernel `uinput` module (included in all standard distributions; load with `sudo modprobe uinput` if needed).
+- **Windows *(Experimental / Untested)***: [ViGEmBus Driver](https://github.com/nefarius/ViGEmBus/releases) installed and `ViGEmClient.dll` placed alongside `airInput.exe` (or in your system `PATH`).
 
-### 1. Clone the repository & install Node.js dependencies
+### 1. Clone the repository & build the single binary
 
+**Linux:**
 ```bash
 git clone https://github.com/DiegoCChumbi/airInput.git
 cd airInput
-npm install
-```
-
-### 2. Install Python dependencies
-
-**Linux:**
-AirInput includes a built-in native `/dev/uinput` driver in `controller-linux.py`, so it works out of the box with standard Python 3. Optionally, you can install `python-uinput`:
-
-- **Debian, Ubuntu, Linux Mint, Pop!_OS (`apt`):**
-  ```bash
-  sudo apt update
-  sudo apt install python3-dev libudev-dev
-  ```
-- **Fedora, RHEL, CentOS (`dnf`):**
-  ```bash
-  sudo dnf install python3-devel libudev-devel
-  ```
-- **Arch Linux, Manjaro (`pacman`):**
-  ```bash
-  sudo pacman -S base-devel
-  ```
-
-**Windows:**
-```powershell
-pip install vgamepad
-```
-
-### 3. Build the Go executable
-
-**Linux:**
-```bash
 go build -o airInput .
 ```
 
 **Windows:**
 ```powershell
+git clone https://github.com/DiegoCChumbi/airInput.git
+cd airInput
 go build -o airInput.exe .
 ```
 
-### 4. Run AirInput
+### 2. Run AirInput
 
 **Linux:**
 ```bash
@@ -133,7 +107,7 @@ sudo ./airInput
 ```
 *(Root privileges are required on Linux to access `/dev/uinput` and manage NetworkManager hotspots).*
 
-**Windows:**
+**Windows *(Experimental / Untested)*:**
 ```powershell
 airInput.exe
 ```
@@ -143,28 +117,31 @@ airInput.exe
 ## How It Works
 
 ```text
-┌─────────────────┐        WebSocket (TCP 3000)       ┌──────────────────┐
-│  Mobile Browser │ ◄───────────────────────────────► │  Node.js Server  │
-│  (Touch Client) │     Buttons, Axes & Ping RTT      │   (server.js)    │
-└─────────────────┘                                   └────────┬─────────┘
-                                                               │
-                                                JSON (stdio)   │   UDP (127.0.0.1:9999)
-                                              ◄────────────────┼────────────────►
-                                              │                                 │
-                                     ┌────────▼─────────┐              ┌────────▼─────────┐
-                                     │   Go TUI Host    │  UDP System  │  Python Driver   │
-                                     │  (airInput.go)   │ ───────────► │ (uinput/vgamepad)│
-                                     └──────────────────┘  Hot-Swap    └────────┬─────────┘
-                                                                                │
-                                                                       ┌────────▼─────────┐
-                                                                       │ OS Virtual Pads  │
-                                                                       │ (Controller 1..N)│
-                                                                       └──────────────────┘
+┌─────────────────┐       WebSocket (/ws :3000)       ┌────────────────────────────────────┐
+│  Mobile Browser │ ◄───────────────────────────────► │      AirInput Single Binary (Go)   │
+│  (Touch Client) │     Buttons, Axes & Ping RTT      │                                    │
+└─────────────────┘                                   │  ┌──────────────┐  ┌────────────┐  │
+                                                      │  │  WebServer   │  │ Bubble Tea │  │
+                                                      │  │ (go:embed +  │◄─┤  TUI Host  │  │
+                                                      │  │  WebSocket)  │  │ & Hotspot  │  │
+                                                      │  └──────┬───────┘  └─────┬──────┘  │
+                                                      │         │   In-Memory    │         │
+                                                      │         ▼    Direct      ▼         │
+                                                      │  ┌──────────────────────────────┐  │
+                                                      │  │        GamepadManager        │  │
+                                                      │  │  (Linux uinput / Win ViGEm)  │  │
+                                                      │  └──────────────┬───────────────┘  │
+                                                      └─────────────────┼──────────────────┘
+                                                                        │
+                                                               ┌────────▼─────────┐
+                                                               │ OS Virtual Pads  │
+                                                               │ (Controller 1..N)│
+                                                               └──────────────────┘
 ```
 
-1. **Go Process & TUI Manager (`airInput.go`, `hotspot.go`)**: Launches and supervises the Node.js and Python subprocesses, renders the terminal interface (Bubble Tea), manages offline Wi-Fi hotspot creation and firewall rules, and dispatches hot-swap commands.
-2. **WebSocket Server (`server.js`)**: Serves the mobile web interface on port `3000` (with cache-control headers disabled for instant updates), handles player registration, measures RTT ping, and forwards button/axis packets over UDP port `9999`.
-3. **Virtual Gamepad Driver (`controller-linux.py`, `controller-win.py`)**: Listens on UDP port `9999`, dynamically spawns an independent virtual gamepad for each registered player, and translates incoming button/axis events into kernel `uinput` (Linux) or `XInput` (`vgamepad` on Windows) events.
+1. **TUI & Hotspot Host (`airInput.go`, `hotspot.go`)**: Renders the interactive terminal UI (Bubble Tea), generates the terminal QR code in pure Go, manages offline Wi-Fi hotspot creation and firewall rules, and triggers instant controller slot swaps.
+2. **Embedded HTTP & WebSocket Server (`web_server.go`)**: Serves the mobile web client directly from memory (`//go:embed public`, or from disk with `-dev`), handles player registration, measures RTT ping, and routes button/axis frames directly in-memory with zero IPC overhead.
+3. **Native Virtual Gamepad Driver (`gamepad.go`, `gamepad_linux.go`, `gamepad_windows.go`)**: Dynamically spawns an independent virtual gamepad for each registered player using native Linux `/dev/uinput` `ioctl` syscalls or Windows `ViGEmClient.dll` calls.
 
 ---
 
@@ -172,17 +149,18 @@ airInput.exe
 
 ```text
 airInput/
-├── airInput.go              # Go TUI & subprocess orchestrator
+├── airInput.go              # Go TUI (Bubble Tea) & application entrypoint
+├── web_server.go            # Embedded HTTP server (//go:embed public), WebSocket handler & QR generator
+├── gamepad.go               # Cross-platform GamepadManager & VirtualDevice interface
+├── gamepad_linux.go         # Native Linux /dev/uinput driver via syscall/ioctl
+├── gamepad_windows.go       # Windows ViGEmBus driver via ViGEmClient.dll (experimental)
 ├── hotspot.go               # Offline Wi-Fi hotspot & firewall management (Linux/Windows)
-├── server.js                # Node.js Express + Socket.IO server & UDP bridge
-├── controller-linux.py      # Linux virtual gamepad driver (uinput + native ioctl fallback)
-├── controller-win.py        # Windows virtual gamepad driver (vgamepad / ViGEmBus)
 ├── docs/
 │   └── screenshots/         # UI & controller layout screenshots
-└── public/                  # Mobile web client
+└── public/                  # Mobile web client (embedded into the Go binary at build time)
     ├── index.html           # Connection deck, HUD bar & calibration modal
     ├── global.css           # Hardware design system & responsive orientation styles
-    ├── script.js            # Multi-touch scanner, rotation-aware joysticks & haptics
+    ├── script.js            # Multi-touch scanner, rotation-aware joysticks, WebSocket & haptics
     └── skins/               # Modular controller layouts
         ├── snes/            # 16-Bit classic pad
         ├── n64/             # 64-Bit 3-prong analog pad

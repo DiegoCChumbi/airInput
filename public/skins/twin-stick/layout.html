@@ -1,0 +1,48 @@
+<div id="gamepad" class="layout-twin-stick">
+  <!-- Top Shoulder & Trigger Bumpers -->
+  <div class="shoulders">
+    <div class="shoulder-group left">
+      <button class="btn-shoulder l" data-btn="L">L</button>
+      <button class="btn-trigger l2" data-btn="L2">L2</button>
+    </div>
+    <div class="shoulder-group right">
+      <button class="btn-trigger r2" data-btn="R2">R2</button>
+      <button class="btn-shoulder r" data-btn="R">R</button>
+    </div>
+  </div>
+
+  <!-- Main Face: Left Dynamic Stick + Center Action Bridge + Right Dynamic Stick -->
+  <div class="face">
+    <!-- Left Floating Stick Touchpad -->
+    <div class="pad-well left-well">
+      <div id="stick-left-zone" class="stick-zone floating-stick-zone" data-floating="true"></div>
+      <span class="pad-caption" aria-hidden="true">L-STICK · DINÁMICO</span>
+    </div>
+
+    <!-- Center Control & Action Bridge -->
+    <div class="center-bridge">
+      <div class="center-row sys-row">
+        <button class="pill-btn select" data-btn="SELECT">SELECT</button>
+        <button class="pill-btn start" data-btn="START">START</button>
+      </div>
+
+      <div class="actions-diamond">
+        <button class="round-btn btn-y" data-btn="Y" aria-label="Y"></button>
+        <button class="round-btn btn-x" data-btn="X" aria-label="X"></button>
+        <button class="round-btn btn-b" data-btn="B" aria-label="B"></button>
+        <button class="round-btn btn-a" data-btn="A" aria-label="A"></button>
+      </div>
+
+      <div class="center-row thumb-row">
+        <button class="pill-btn thumb-btn l3" data-btn="L3">L3</button>
+        <button class="pill-btn thumb-btn r3" data-btn="R3">R3</button>
+      </div>
+    </div>
+
+    <!-- Right Floating Stick Touchpad -->
+    <div class="pad-well right-well">
+      <div id="stick-right-zone" class="stick-zone floating-stick-zone" data-floating="true"></div>
+      <span class="pad-caption" aria-hidden="true">R-STICK · DINÁMICO</span>
+    </div>
+  </div>
+</div>

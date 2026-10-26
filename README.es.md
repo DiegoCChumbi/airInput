@@ -2,7 +2,7 @@
 
 # AirInput
 
-Transforma tu smartphone en un mando inalámbrico de baja latencia para tu PC. AirInput transmite entradas táctiles y analógicas desde el navegador de tu teléfono directamente hacia mandos virtuales en Linux (`uinput`) y Windows (`vgamepad` / `ViGEmBus`), sin necesidad de instalar aplicaciones en el móvil.
+Transforma tu smartphone en un mando inalámbrico de baja latencia para tu PC. AirInput se compila en un **único binario autocontenido en Go** (con la interfaz web y todos los diseños de mando embebidos mediante `//go:embed`) y transmite entradas táctiles y analógicas desde el navegador de tu teléfono directamente hacia mandos virtuales en Linux (`uinput`) y Windows (`ViGEmBus`), sin instalar aplicaciones en el móvil ni requerir Node.js o Python.
 
 ![AirInput Terminal TUI](docs/screenshots/terminal-tui.png)
 
@@ -65,10 +65,12 @@ Mientras `airInput` está en ejecución, puedes gestionar la red y los mandos di
 | `l` | Mostrar u ocultar el panel de **Logs en Vivo** en la terminal. |
 | `q` / `Ctrl+C` | Apagar el hotspot (si estaba activo), eliminar los mandos virtuales y cerrar el programa limpiamente. |
 
-También puedes iniciar AirInput con el panel de logs activado desde el arranque usando el parámetro `-l` o `--logs`:
+También puedes pasar opciones por línea de comandos al iniciar AirInput:
 
 ```bash
-sudo ./airInput -l
+sudo ./airInput -l            # Iniciar con el panel de logs en vivo activado
+sudo ./airInput -dev          # Servir ./public desde disco en vez del binario embebido (para desarrollo UI)
+sudo ./airInput -port 3000    # Puerto HTTP/WebSocket personalizado (por defecto: 3000)
 ```
 
 ---
@@ -77,55 +79,27 @@ sudo ./airInput -l
 
 ### Requisitos Previos
 
-- **Node.js** (v14 o superior)
-- **Python** (3.7 o superior)
-- **Go** (1.19 o superior)
+- **Go** (1.20 o superior) para compilar desde el código fuente.
+- **Linux**: Módulo `uinput` del kernel (incluido de serie en las distribuciones actuales; puedes cargarlo con `sudo modprobe uinput` si fuera necesario).
+- **Windows *(Experimental / No testeado)***: Driver [ViGEmBus](https://github.com/nefarius/ViGEmBus/releases) instalado y `ViGEmClient.dll` ubicado en la misma carpeta que `airInput.exe` (o en el `PATH` del sistema).
 
-### 1. Clonar el repositorio e instalar dependencias de Node.js
+### 1. Clonar el repositorio y compilar el binario único
 
+**Linux:**
 ```bash
 git clone https://github.com/DiegoCChumbi/airInput.git
 cd airInput
-npm install
-```
-
-### 2. Instalar dependencias de Python
-
-**Linux:**
-AirInput incluye un controlador nativo `/dev/uinput` en `controller-linux.py`, por lo que funciona directamente con Python 3 estándar. Opcionalmente puedes instalar los paquetes de desarrollo para `python-uinput`:
-
-- **Debian, Ubuntu, Linux Mint, Pop!_OS (`apt`):**
-  ```bash
-  sudo apt update
-  sudo apt install python3-dev libudev-dev
-  ```
-- **Fedora, RHEL, CentOS (`dnf`):**
-  ```bash
-  sudo dnf install python3-devel libudev-devel
-  ```
-- **Arch Linux, Manjaro (`pacman`):**
-  ```bash
-  sudo pacman -S base-devel
-  ```
-
-**Windows:**
-```powershell
-pip install vgamepad
-```
-
-### 3. Compilar el ejecutable de Go
-
-**Linux:**
-```bash
 go build -o airInput .
 ```
 
 **Windows:**
 ```powershell
+git clone https://github.com/DiegoCChumbi/airInput.git
+cd airInput
 go build -o airInput.exe .
 ```
 
-### 4. Ejecutar AirInput
+### 2. Ejecutar AirInput
 
 **Linux:**
 ```bash
@@ -133,7 +107,7 @@ sudo ./airInput
 ```
 *(Se requiere `sudo` en Linux para crear dispositivos en `/dev/uinput` y gestionar el punto de acceso Wi-Fi con NetworkManager).*
 
-**Windows:**
+**Windows *(Experimental / No testeado)*:**
 ```powershell
 airInput.exe
 ```
@@ -143,28 +117,31 @@ airInput.exe
 ## Cómo Funciona
 
 ```text
-┌─────────────────┐        WebSocket (TCP 3000)       ┌──────────────────┐
-│ Navegador Móvil │ ◄───────────────────────────────► │ Servidor Node.js │
-│ (Cliente Táctil)│     Botones, Ejes y Ping RTT      │   (server.js)    │
-└─────────────────┘                                   └────────┬─────────┘
-                                                               │
-                                                JSON (stdio)   │   UDP (127.0.0.1:9999)
-                                              ◄────────────────┼────────────────►
-                                              │                                 │
-                                     ┌────────▼─────────┐              ┌────────▼─────────┐
-                                     │   Host TUI Go    │  Comando UDP │  Driver Python   │
-                                     │  (airInput.go)   │ ───────────► │ (uinput/vgamepad)│
-                                     └──────────────────┘   Hot-Swap   └────────┬─────────┘
-                                                                                │
-                                                                       ┌────────▼─────────┐
-                                                                       │ Mandos Virtuales │
-                                                                       │ (Controller 1..N)│
-                                                                       └──────────────────┘
+┌─────────────────┐       WebSocket (/ws :3000)       ┌────────────────────────────────────┐
+│ Navegador Móvil │ ◄───────────────────────────────► │      Binario Único AirInput (Go)   │
+│ (Cliente Táctil)│     Botones, Ejes y Ping RTT      │                                    │
+└─────────────────┘                                   │  ┌──────────────┐  ┌────────────┐  │
+                                                      │  │  WebServer   │  │ Bubble Tea │  │
+                                                      │  │ (go:embed +  │◄─┤  Host TUI  │  │
+                                                      │  │  WebSocket)  │  │ y Hotspot  │  │
+                                                      │  └──────┬───────┘  └─────┬──────┘  │
+                                                      │         │   En Memoria   │         │
+                                                      │         ▼    Directo     ▼         │
+                                                      │  ┌──────────────────────────────┐  │
+                                                      │  │        GamepadManager        │  │
+                                                      │  │  (Linux uinput / Win ViGEm)  │  │
+                                                      │  └──────────────┬───────────────┘  │
+                                                      └─────────────────┼──────────────────┘
+                                                                        │
+                                                               ┌────────▼─────────┐
+                                                               │ Mandos Virtuales │
+                                                               │ (Controller 1..N)│
+                                                               └──────────────────┘
 ```
 
-1. **Orquestador y TUI en Go (`airInput.go`, `hotspot.go`)**: Inicia y supervisa los subprocesos de Node.js y Python, dibuja la interfaz en terminal (Bubble Tea), gestiona la creación del Hotspot Wi-Fi offline y las reglas del firewall, y envía comandos de intercambio de mandos (*hot-swap*).
-2. **Servidor WebSocket (`server.js`)**: Sirve la interfaz web móvil en el puerto `3000` (con cabeceras *no-cache* para actualizaciones instantáneas), gestiona el registro de jugadores, mide el ping RTT y reenvía los eventos de botones y ejes por UDP al puerto `9999`.
-3. **Controlador de Mandos Virtuales (`controller-linux.py`, `controller-win.py`)**: Escucha en el puerto UDP `9999`, crea un mando virtual independiente por cada jugador registrado y traduce las entradas a eventos de kernel `uinput` (Linux) o `XInput` (`vgamepad` en Windows).
+1. **Host TUI y Hotspot (`airInput.go`, `hotspot.go`)**: Dibuja la interfaz interactiva en terminal (Bubble Tea), genera el código QR en terminal directamente en Go, gestiona la creación del Hotspot Wi-Fi offline y las reglas del firewall, y ejecuta el intercambio de mandos (*hot-swap*).
+2. **Servidor HTTP Embebido y WebSocket (`web_server.go`)**: Sirve el cliente web móvil directamente desde la memoria del ejecutable (`//go:embed public`, o desde disco con `-dev`), gestiona el registro de jugadores, mide el ping RTT y encamina los eventos de botones y ejes directamente en memoria sin saltos por red local ni subprocesos.
+3. **Driver Nativo de Mandos Virtuales (`gamepad.go`, `gamepad_linux.go`, `gamepad_windows.go`)**: Crea un mando virtual independiente por cada jugador registrado mediante llamadas `ioctl` nativas sobre `/dev/uinput` en Linux o a través de `ViGEmClient.dll` en Windows.
 
 ---
 
@@ -172,17 +149,18 @@ airInput.exe
 
 ```text
 airInput/
-├── airInput.go              # TUI en Go y gestor de subprocesos
+├── airInput.go              # TUI en Go (Bubble Tea) y punto de entrada principal
+├── web_server.go            # Servidor HTTP embebido (//go:embed public), WebSocket y generador QR
+├── gamepad.go               # GamepadManager multiplataforma e interfaz VirtualDevice
+├── gamepad_linux.go         # Driver nativo Linux /dev/uinput mediante syscall/ioctl
+├── gamepad_windows.go       # Driver Windows ViGEmBus mediante ViGEmClient.dll (experimental)
 ├── hotspot.go               # Gestión de Hotspot Wi-Fi offline y firewall (Linux/Windows)
-├── server.js                # Servidor Node.js Express + Socket.IO y puente UDP
-├── controller-linux.py      # Driver de mando virtual en Linux (uinput + fallback nativo ioctl)
-├── controller-win.py        # Driver de mando virtual en Windows (vgamepad / ViGEmBus)
 ├── docs/
 │   └── screenshots/         # Capturas de pantalla de la TUI y de los 7 mandos
-└── public/                  # Cliente web móvil
+└── public/                  # Cliente web móvil (embebido en el binario Go al compilar)
     ├── index.html           # Pantalla de conexión, barra HUD y menú de calibración
     ├── global.css           # Sistema de diseño de hardware y rotación responsiva
-    ├── script.js            # Escáner multitáctil, joysticks con rotación y motor háptico
+    ├── script.js            # Escáner multitáctil, joysticks con rotación, WebSocket y motor háptico
     └── skins/               # Diseños modulares de controles
         ├── snes/            # Mando clásico de 16-Bit
         ├── n64/             # Mando analógico de 64-Bit

@@ -1,0 +1,301 @@
+/* ==========================================================================
+   TWIN DYNAMIC STICK (FLOATING DUAL-STICK) TACTILE HARDWARE SKIN
+   ========================================================================== */
+
+#gamepad.layout-twin-stick {
+  width: 98%;
+  max-width: 820px;
+  height: calc(100% - 8px);
+  max-height: 405px;
+  background:
+    radial-gradient(circle at 50% 18%, #2B2836 0%, #1B1924 64%, #121118 100%);
+  border-radius: 68px 68px 48px 48px;
+  border: 2px solid #3E3A4F;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 14px 12px 14px;
+  box-shadow:
+    0 8px 0 #0B0A0F,
+    0 22px 44px rgba(0, 0, 0, 0.82),
+    inset 0 2px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -10px 24px rgba(0, 0, 0, 0.75);
+}
+
+/* --- TOP SHOULDER & TRIGGER BUMPERS --- */
+.layout-twin-stick .shoulders {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2px 20px 0 20px;
+  flex-shrink: 0;
+}
+
+.layout-twin-stick .shoulder-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.layout-twin-stick .btn-shoulder {
+  width: 108px;
+  height: 40px;
+  background: linear-gradient(180deg, #56516B 0%, #393549 100%);
+  border: 2px solid #221F2D;
+  border-radius: 18px 18px 8px 8px;
+  color: #F4F2FA;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 4px 0 #16141E,
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-twin-stick .btn-shoulder:active,
+.layout-twin-stick .btn-shoulder.active {
+  transform: translateY(3px);
+  background: #2C2938;
+  box-shadow: 0 1px 0 #16141E, inset 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+.layout-twin-stick .btn-trigger {
+  width: 84px;
+  height: 40px;
+  background: linear-gradient(180deg, #353244 0%, #1E1C28 100%);
+  color: #38BDF8;
+  border: 2px solid #2A2738;
+  border-radius: 14px 14px 8px 8px;
+  font-family: var(--font-hardware, sans-serif);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 4px 0 #111017,
+    inset 0 2px 2px rgba(255, 255, 255, 0.14);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-twin-stick .btn-trigger:active,
+.layout-twin-stick .btn-trigger.active {
+  background: #14131B;
+  transform: translateY(3px);
+  color: #FFFFFF;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* --- MAIN FACE: 3-COLUMN ERGONOMIC DECK --- */
+.layout-twin-stick .face {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 164px 1fr;
+  gap: 10px;
+  align-items: stretch;
+  min-height: 0;
+  padding-top: 4px;
+}
+
+/* --- FLOATING STICK TOUCHPADS (LEFT & RIGHT) --- */
+.layout-twin-stick .pad-well {
+  position: relative;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.06) 0%, rgba(12, 11, 18, 0.94) 75%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 22px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 22px);
+  border: 2px solid #353247;
+  box-shadow:
+    inset 0 6px 18px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layout-twin-stick .right-well {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.07) 0%, rgba(12, 11, 18, 0.94) 75%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 22px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 22px);
+}
+
+.layout-twin-stick .floating-stick-zone {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* Subtle idle state vs active touch-spawned state */
+.layout-twin-stick .floating-stick-zone .nipple {
+  opacity: 0.42;
+  transition: opacity 0.12s ease;
+}
+
+.layout-twin-stick .floating-stick-zone.stick-active .nipple {
+  opacity: 1;
+}
+
+.layout-twin-stick .left-well .floating-stick-zone.stick-active {
+  box-shadow: inset 0 0 24px rgba(56, 189, 248, 0.16);
+}
+
+.layout-twin-stick .right-well .floating-stick-zone.stick-active {
+  box-shadow: inset 0 0 24px rgba(168, 85, 247, 0.18);
+}
+
+.layout-twin-stick .left-well .nipple .back {
+  background: radial-gradient(circle, rgba(14, 18, 28, 0.84) 0%, rgba(22, 28, 42, 0.94) 100%) !important;
+  border: 2px solid rgba(56, 189, 248, 0.48) !important;
+  box-shadow:
+    0 0 14px rgba(56, 189, 248, 0.22),
+    inset 0 4px 10px rgba(0, 0, 0, 0.85) !important;
+}
+
+.layout-twin-stick .right-well .nipple .back {
+  background: radial-gradient(circle, rgba(20, 14, 28, 0.84) 0%, rgba(32, 22, 44, 0.94) 100%) !important;
+  border: 2px solid rgba(168, 85, 247, 0.5) !important;
+  box-shadow:
+    0 0 14px rgba(168, 85, 247, 0.22),
+    inset 0 4px 10px rgba(0, 0, 0, 0.85) !important;
+}
+
+.layout-twin-stick .nipple .front {
+  background: radial-gradient(circle at 32% 30%, #58546E 0%, #282634 68%, #15141C 100%) !important;
+  border: 2px solid #0E0D13 !important;
+}
+
+.layout-twin-stick .pad-caption {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(226, 232, 240, 0.34);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* --- CENTER CONTROL & ABXY BRIDGE --- */
+.layout-twin-stick .center-bridge {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.layout-twin-stick .center-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}
+
+.layout-twin-stick .pill-btn {
+  flex: 1;
+  height: 26px;
+  background: linear-gradient(180deg, #434054 0%, #2B2938 100%);
+  border-radius: 999px;
+  border: 1px solid #181620;
+  color: #DDD9EC;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 3px 0 #13111A,
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.layout-twin-stick .pill-btn.thumb-btn {
+  background: linear-gradient(180deg, #322F40 0%, #211F2B 100%);
+  border: 1px solid #474359;
+  color: #38BDF8;
+}
+
+.layout-twin-stick .pill-btn:active,
+.layout-twin-stick .pill-btn.active {
+  transform: translateY(2px);
+  background: #191822;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* --- COMPACT ABXY DIAMOND IN CENTER BRIDGE --- */
+.layout-twin-stick .actions-diamond {
+  --btn-size: 48px;
+  position: relative;
+  width: calc(var(--btn-size) * 3 - 8px);
+  height: calc(var(--btn-size) * 3 - 8px);
+  flex-shrink: 0;
+}
+
+.layout-twin-stick .round-btn {
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 50%;
+  position: absolute;
+  font-family: var(--font-hardware, sans-serif);
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.layout-twin-stick .btn-y {
+  top: 0;
+  left: calc(50% - var(--btn-size) / 2);
+  background: radial-gradient(circle at 32% 26%, #FFDA47 0%, #E0A200 68%, #9E7000 100%);
+  color: #261B00;
+  border: 2px solid #6E4E00;
+  box-shadow: 0 4px 0 #473200, 0 6px 10px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.65);
+}
+.layout-twin-stick .btn-y::after { content: "Y"; font-size: 19px; }
+
+.layout-twin-stick .btn-x {
+  top: calc(50% - var(--btn-size) / 2);
+  left: 0;
+  background: radial-gradient(circle at 32% 26%, #4DA3FF 0%, #1B6EC9 68%, #104887 100%);
+  color: #FFFFFF;
+  border: 2px solid #0B3361;
+  box-shadow: 0 4px 0 #072242, 0 6px 10px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.55);
+}
+.layout-twin-stick .btn-x::after { content: "X"; font-size: 19px; }
+
+.layout-twin-stick .btn-b {
+  top: calc(50% - var(--btn-size) / 2);
+  right: 0;
+  background: radial-gradient(circle at 32% 26%, #FF5C5C 0%, #D42222 68%, #911111 100%);
+  color: #FFFFFF;
+  border: 2px solid #660A0A;
+  box-shadow: 0 4px 0 #450606, 0 6px 10px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.55);
+}
+.layout-twin-stick .btn-b::after { content: "B"; font-size: 19px; }
+
+.layout-twin-stick .btn-a {
+  bottom: 0;
+  left: calc(50% - var(--btn-size) / 2);
+  background: radial-gradient(circle at 32% 26%, #45E083 0%, #19A350 68%, #0E6B33 100%);
+  color: #FFFFFF;
+  border: 2px solid #094D23;
+  box-shadow: 0 4px 0 #063317, 0 6px 10px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.55);
+}
+.layout-twin-stick .btn-a::after { content: "A"; font-size: 19px; }
+
+.layout-twin-stick .round-btn:active,
+.layout-twin-stick .round-btn.active {
+  transform: translateY(3px) scale(0.94);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.8), inset 0 3px 6px rgba(0, 0, 0, 0.65) !important;
+  filter: brightness(0.92);
+}
