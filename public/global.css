@@ -288,6 +288,10 @@ body {
   grid-column: 1 / -1;
 }
 
+.sel-btn.span-two {
+  grid-column: span 2;
+}
+
 .sel-btn:active,
 .sel-btn.active {
   background: linear-gradient(180deg, #2B2A2F 0%, #1F1E22 100%);
@@ -313,6 +317,7 @@ body {
 .brawler-dot { background: #10B981; box-shadow: 0 0 5px #10B981; }
 .kart-dot    { background: #F97316; box-shadow: 0 0 5px #F97316; }
 .arcade-dot  { background: #EC4899; box-shadow: 0 0 5px #EC4899; }
+.twin-dot    { background: #38BDF8; box-shadow: 0 0 5px #38BDF8; }
 
 #join-btn {
   width: 100%;

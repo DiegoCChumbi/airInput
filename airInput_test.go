@@ -54,7 +54,7 @@ func TestEmbeddedWebServerAndWebSocket(t *testing.T) {
 	defer ws.Stop()
 
 	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
-	skins := []string{"snes", "n64", "xbox", "asymmetric", "brawler", "kart", "arcade"}
+	skins := []string{"snes", "n64", "xbox", "asymmetric", "brawler", "kart", "arcade", "twin-stick"}
 	paths := []string{"/", "/global.css", "/script.js"}
 	for _, s := range skins {
 		paths = append(paths, fmt.Sprintf("/skins/%s/layout.html", s), fmt.Sprintf("/skins/%s/style.css", s))

@@ -17,51 +17,71 @@ const (
 
 	synReport = 0x00
 
-	uiSetEvBit  = 0x40045564
-	uiSetKeyBit = 0x40045565
-	uiSetAbsBit = 0x40045567
-	uiDevCreate = 0x5501
+	uiSetEvBit   = 0x40045564
+	uiSetKeyBit  = 0x40045565
+	uiSetAbsBit  = 0x40045567
+	uiDevCreate  = 0x5501
 	uiDevDestroy = 0x5502
 
 	busUSB = 0x03
 
-	absX  = 0x00
-	absY  = 0x01
-	absRX = 0x03
-	absRY = 0x04
+	absX     = 0x00
+	absY     = 0x01
+	absZ     = 0x02
+	absRX    = 0x03
+	absRY    = 0x04
+	absRZ    = 0x05
+	absHat0X = 0x10
+	absHat0Y = 0x11
 )
 
-// Note: In the Linux kernel (input-event-codes.h), 0x133 is BTN_NORTH (aliased as BTN_X)
-// and 0x134 is BTN_WEST (aliased as BTN_Y). Modern browsers (W3C Gamepad API) and SDL2 map
-// BTN_WEST (0x134) to X (Left, buttons[2]) and BTN_NORTH (0x133) to Y (Top, buttons[3]).
+// Standard Linux xpad (Microsoft X-Box 360 pad, 045e:028e v0110) button mapping.
+// In xpad/SDL2/Chromium standard mappings for 045e:028e:
+// b0=0x130(A), b1=0x131(B), b2=0x133(X), b3=0x134(Y), b4=0x136(L), b5=0x137(R),
+// b6=0x13a(SELECT), b7=0x13b(START), b8=0x13c(MODE), b9=0x13d(L3), b10=0x13e(R3).
+// L2/R2 are emitted on ABS_Z (a2) and ABS_RZ (a5), and D-Pad on ABS_HAT0X/Y.
 var linuxBtnMap = map[string]uint16{
-	"A":      0x130, // BTN_SOUTH / BTN_A
-	"B":      0x131, // BTN_EAST  / BTN_B
-	"X":      0x134, // BTN_WEST  (mapped to X)
-	"Y":      0x133, // BTN_NORTH (mapped to Y)
-	"L":      0x136, // BTN_TL
-	"R":      0x137, // BTN_TR
-	"L2":     0x138, // BTN_TL2
-	"R2":     0x139, // BTN_TR2
-	"SELECT": 0x13a, // BTN_SELECT
-	"START":  0x13b, // BTN_START
-	"L3":     0x13d, // BTN_THUMBL
-	"R3":     0x13e, // BTN_THUMBR
-	"UP":     0x220, // BTN_DPAD_UP
-	"DOWN":   0x221, // BTN_DPAD_DOWN
-	"LEFT":   0x222, // BTN_DPAD_LEFT
-	"RIGHT":  0x223, // BTN_DPAD_RIGHT
+	"A":      0x130, // BTN_A (b0)
+	"B":      0x131, // BTN_B (b1)
+	"X":      0x133, // BTN_X (b2)
+	"Y":      0x134, // BTN_Y (b3)
+	"L":      0x136, // BTN_TL (b4)
+	"R":      0x137, // BTN_TR (b5)
+	"SELECT": 0x13a, // BTN_SELECT (b6)
+	"START":  0x13b, // BTN_START (b7)
+	"L3":     0x13d, // BTN_THUMBL (b9)
+	"R3":     0x13e, // BTN_THUMBR (b10)
 }
 
 var linuxAllKeyCodes = []uint16{
-	0x130, 0x131, 0x133, 0x134,
-	0x136, 0x137, 0x138, 0x139,
-	0x13a, 0x13b, 0x13d, 0x13e,
-	0x220, 0x221, 0x222, 0x223,
+	0x130, // BTN_A
+	0x131, // BTN_B
+	0x133, // BTN_X
+	0x134, // BTN_Y
+	0x136, // BTN_TL
+	0x137, // BTN_TR
+	0x13a, // BTN_SELECT
+	0x13b, // BTN_START
+	0x13c, // BTN_MODE (Guide)
+	0x13d, // BTN_THUMBL
+	0x13e, // BTN_THUMBR
 }
 
-var linuxAllAbsCodes = []uint16{
-	absX, absY, absRX, absRY,
+type absRange struct {
+	code uint16
+	min  int32
+	max  int32
+}
+
+var linuxAllAbsRanges = []absRange{
+	{absX, minAbsVal, maxAbsVal},
+	{absY, minAbsVal, maxAbsVal},
+	{absZ, 0, 255},
+	{absRX, minAbsVal, maxAbsVal},
+	{absRY, minAbsVal, maxAbsVal},
+	{absRZ, 0, 255},
+	{absHat0X, -1, 1},
+	{absHat0Y, -1, 1},
 }
 
 // uinputUserDev matches the C struct uinput_user_dev in <linux/uinput.h> (1116 bytes).
@@ -89,10 +109,14 @@ type inputEvent struct {
 type linuxUInputDevice struct {
 	file     *os.File
 	lastAxes map[uint16]int32
+	dpadUp   bool
+	dpadDown bool
+	dpadLeft bool
+	dpadRight bool
 }
 
 func platformInitMessage() string {
-	return "Virtual Gamepad Server started (Linux native uinput in Go)."
+	return "Virtual Gamepad Server started (Linux native uinput Xbox 360 in Go)."
 }
 
 func ioctl(fd uintptr, req uintptr, arg uintptr) error {
@@ -140,20 +164,20 @@ func newPlatformDevice(controllerNum int) (VirtualDevice, error) {
 	}
 
 	var dev uinputUserDev
-	name := fmt.Sprintf("airInput-Controller%d", controllerNum)
+	name := fmt.Sprintf("Microsoft X-Box 360 pad %d", controllerNum)
 	copy(dev.Name[:79], []byte(name))
 	dev.IDBusType = busUSB
-	dev.IDVendor = 0x0000
-	dev.IDProduct = 0x0000
-	dev.IDVersion = 0x0001
+	dev.IDVendor = 0x045e  // Microsoft Corp.
+	dev.IDProduct = 0x028e // Xbox 360 Controller
+	dev.IDVersion = 0x0110 // Standard xpad version
 
-	for _, absCode := range linuxAllAbsCodes {
-		if err := ioctl(fd, uiSetAbsBit, uintptr(absCode)); err != nil {
+	for _, ar := range linuxAllAbsRanges {
+		if err := ioctl(fd, uiSetAbsBit, uintptr(ar.code)); err != nil {
 			_ = f.Close()
 			return nil, fmt.Errorf("UI_SET_ABSBIT failed: %w", err)
 		}
-		dev.Absmin[absCode] = minAbsVal
-		dev.Absmax[absCode] = maxAbsVal
+		dev.Absmin[ar.code] = ar.min
+		dev.Absmax[ar.code] = ar.max
 	}
 
 	var buf bytes.Buffer
@@ -176,9 +200,9 @@ func newPlatformDevice(controllerNum int) (VirtualDevice, error) {
 		lastAxes: make(map[uint16]int32),
 	}
 
-	// Center all 4 axes immediately so OS/browsers never read uninitialized values
-	for _, absCode := range linuxAllAbsCodes {
-		_ = d.writeEvent(evAbs, absCode, 0, false)
+	// Center all sticks, triggers, and hat axes immediately on creation
+	for _, ar := range linuxAllAbsRanges {
+		_ = d.writeEvent(evAbs, ar.code, 0, false)
 	}
 	_ = d.writeEvent(evSyn, synReport, 0, false)
 
@@ -216,6 +240,50 @@ func (d *linuxUInputDevice) writeEvent(evType, evCode uint16, value int32, syn b
 }
 
 func (d *linuxUInputDevice) EmitButton(btn string, pressed bool) error {
+	switch btn {
+	case "L2":
+		val := int32(0)
+		if pressed {
+			val = 255
+		}
+		return d.writeEvent(evAbs, absZ, val, true)
+
+	case "R2":
+		val := int32(0)
+		if pressed {
+			val = 255
+		}
+		return d.writeEvent(evAbs, absRZ, val, true)
+
+	case "UP", "DOWN":
+		if btn == "UP" {
+			d.dpadUp = pressed
+		} else {
+			d.dpadDown = pressed
+		}
+		hatY := int32(0)
+		if d.dpadUp && !d.dpadDown {
+			hatY = -1
+		} else if d.dpadDown && !d.dpadUp {
+			hatY = 1
+		}
+		return d.writeEvent(evAbs, absHat0Y, hatY, true)
+
+	case "LEFT", "RIGHT":
+		if btn == "LEFT" {
+			d.dpadLeft = pressed
+		} else {
+			d.dpadRight = pressed
+		}
+		hatX := int32(0)
+		if d.dpadLeft && !d.dpadRight {
+			hatX = -1
+		} else if d.dpadRight && !d.dpadLeft {
+			hatX = 1
+		}
+		return d.writeEvent(evAbs, absHat0X, hatX, true)
+	}
+
 	code, ok := linuxBtnMap[btn]
 	if !ok {
 		return fmt.Errorf("unknown button: %s", btn)

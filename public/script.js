@@ -480,6 +480,7 @@ class VirtualJoystick {
   constructor(zone, onChange) {
     this.zone = zone;
     this.onChange = onChange;
+    this.isFloating = zone.dataset.floating === 'true' || zone.classList.contains('floating-stick-zone');
     this.maxRadius = 50;
     this.touchId = null;
     this.mouseActive = false;
@@ -611,6 +612,52 @@ class VirtualJoystick {
     this.onChange({ x, y });
   }
 
+  spawnAtClientPoint(clientX, clientY) {
+    if (!this.isFloating) return;
+
+    this.nippleEl.style.left = '50%';
+    this.nippleEl.style.top = '50%';
+
+    const originRect = this.nippleEl.getBoundingClientRect();
+    const xRect = this.probeXEl.getBoundingClientRect();
+    const yRect = this.probeYEl.getBoundingClientRect();
+
+    const centerX = originRect.left;
+    const centerY = originRect.top;
+
+    const dx10 = xRect.left - centerX;
+    const dy10 = xRect.top - centerY;
+    const vx10 = yRect.left - centerX;
+    const vy10 = yRect.top - centerY;
+
+    const lenX = Math.hypot(dx10, dy10) || 10;
+    const lenY = Math.hypot(vx10, vy10) || 10;
+
+    const ux = dx10 / lenX;
+    const uy = dy10 / lenX;
+    const vx = vx10 / lenY;
+    const vy = vy10 / lenY;
+
+    const scaleX = lenX / 10;
+    const scaleY = lenY / 10;
+
+    const screenDx = clientX - centerX;
+    const screenDy = clientY - centerY;
+
+    let offsetX = (screenDx * ux + screenDy * uy) / scaleX;
+    let offsetY = (screenDx * vx + screenDy * vy) / scaleY;
+
+    const padMargin = 48;
+    const halfW = Math.max(0, this.zone.clientWidth / 2 - padMargin);
+    const halfH = Math.max(0, this.zone.clientHeight / 2 - padMargin);
+    offsetX = Math.max(-halfW, Math.min(halfW, offsetX));
+    offsetY = Math.max(-halfH, Math.min(halfH, offsetY));
+
+    this.nippleEl.style.left = `calc(50% + ${offsetX.toFixed(1)}px)`;
+    this.nippleEl.style.top = `calc(50% + ${offsetY.toFixed(1)}px)`;
+    this.zone.classList.add('stick-active');
+  }
+
   onTouchStart(e) {
     if (isSettingsModalOpen()) return;
     if (this.touchId !== null) return;
@@ -622,6 +669,9 @@ class VirtualJoystick {
 
     this.touchId = touch.identifier;
     activeJoystickTouchIds.add(this.touchId);
+    if (this.isFloating) {
+      this.spawnAtClientPoint(touch.clientX, touch.clientY);
+    }
     this.updateFromClientPoint(touch.clientX, touch.clientY);
     if (e.cancelable) e.preventDefault();
   }
@@ -653,6 +703,9 @@ class VirtualJoystick {
     if (isSettingsModalOpen()) return;
     e.preventDefault();
     this.mouseActive = true;
+    if (this.isFloating) {
+      this.spawnAtClientPoint(e.clientX, e.clientY);
+    }
     this.updateFromClientPoint(e.clientX, e.clientY);
   }
 
@@ -672,6 +725,11 @@ class VirtualJoystick {
       this.touchId = null;
     }
     this.mouseActive = false;
+    if (this.isFloating) {
+      this.zone.classList.remove('stick-active');
+      this.nippleEl.style.left = '50%';
+      this.nippleEl.style.top = '50%';
+    }
     this.frontEl.style.transition = 'transform 0.12s ease-out';
     this.frontEl.style.transform = 'translate(0px, 0px)';
     this.emitIfNeeded(0, 0, true);
