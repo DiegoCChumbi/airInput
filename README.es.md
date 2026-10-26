@@ -89,14 +89,14 @@ sudo ./airInput -port 3000    # Puerto HTTP/WebSocket personalizado (por defecto
 
 **Linux:**
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/DiegoCChumbi/airInput.git
 cd airInput
 go build -o airInput .
 ```
 
 **Windows:**
 ```powershell
-git clone <url-del-repositorio>
+git clone https://github.com/DiegoCChumbi/airInput.git
 cd airInput
 go build -o airInput.exe .
 ```
