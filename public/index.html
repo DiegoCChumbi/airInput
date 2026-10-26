@@ -32,7 +32,7 @@
 
     <div class="cartridge-well">
       <label class="well-label" for="username-input">Identificador de jugador</label>
-      <input type="text" id="username-input" placeholder="Ej. P1-CHUMBI" maxlength="24" autocomplete="off" spellcheck="false" />
+      <input type="text" id="username-input" placeholder="Ej. PLAYER-1" maxlength="24" autocomplete="off" spellcheck="false" />
       <div id="join-feedback" class="join-feedback" aria-live="polite"></div>
     </div>
 
@@ -136,6 +136,17 @@
     </div>
 
     <div class="settings-toggles">
+      <label class="toggle-row span-full" for="toggle-dynamic-sticks">
+        <span class="toggle-copy">
+          <strong>Stick con posición dinámica</strong>
+          <small>Centra el stick en el punto del primer toque dentro de su área</small>
+        </span>
+        <span class="dip-switch">
+          <input type="checkbox" id="toggle-dynamic-sticks" checked />
+          <span class="dip-track"><span class="dip-thumb"></span></span>
+        </span>
+      </label>
+
       <label class="toggle-row" for="toggle-portrait-flip">
         <span class="toggle-copy">
           <strong>Invertir giro</strong>

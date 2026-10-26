@@ -97,6 +97,7 @@ const settingsModal = document.getElementById('settings-modal');
 const btnCloseSettings = document.getElementById('close-settings');
 const btnCloseModalTop = document.getElementById('btn-close-modal-top');
 
+const toggleDynamicSticks = document.getElementById('toggle-dynamic-sticks');
 const togglePortraitFlip = document.getElementById('toggle-portrait-flip');
 const toggleInvertY = document.getElementById('toggle-invert-y');
 const toggleHaptics = document.getElementById('toggle-haptics');
@@ -118,6 +119,7 @@ let lastHapticTime = 0;
 
 // User Preferences (persisted in localStorage)
 const userSettings = {
+  dynamicSticks: localStorage.getItem('airinput_dynamic_sticks') !== 'false',
   portraitFlip: localStorage.getItem('airinput_portrait_flip') === 'true',
   invertY: localStorage.getItem('airinput_invert_y') === 'true',
   haptics: localStorage.getItem('airinput_haptics') !== 'false',
@@ -263,6 +265,8 @@ function showJoinFeedback(msg) {
 
 function applyUserSettingsUI() {
   document.body.classList.toggle('portrait-ccw', userSettings.portraitFlip);
+  document.body.classList.toggle('fixed-sticks', !userSettings.dynamicSticks);
+  if (toggleDynamicSticks) toggleDynamicSticks.checked = userSettings.dynamicSticks;
   if (togglePortraitFlip) togglePortraitFlip.checked = userSettings.portraitFlip;
   if (toggleInvertY) toggleInvertY.checked = userSettings.invertY;
   if (toggleHaptics) toggleHaptics.checked = userSettings.haptics;
@@ -480,7 +484,7 @@ class VirtualJoystick {
   constructor(zone, onChange) {
     this.zone = zone;
     this.onChange = onChange;
-    this.isFloating = zone.dataset.floating === 'true' || zone.classList.contains('floating-stick-zone');
+    this.supportsFloating = zone.dataset.floating !== 'false';
     this.maxRadius = 50;
     this.touchId = null;
     this.mouseActive = false;
@@ -612,9 +616,14 @@ class VirtualJoystick {
     this.onChange({ x, y });
   }
 
-  spawnAtClientPoint(clientX, clientY) {
-    if (!this.isFloating) return;
+  isDynamicEnabled() {
+    return this.supportsFloating && userSettings.dynamicSticks;
+  }
 
+  spawnAtClientPoint(clientX, clientY) {
+    if (!this.isDynamicEnabled()) return;
+
+    this.nippleEl.style.transition = 'none';
     this.nippleEl.style.left = '50%';
     this.nippleEl.style.top = '50%';
 
@@ -647,7 +656,7 @@ class VirtualJoystick {
     let offsetX = (screenDx * ux + screenDy * uy) / scaleX;
     let offsetY = (screenDx * vx + screenDy * vy) / scaleY;
 
-    const padMargin = 48;
+    const padMargin = Math.min(38, Math.floor(Math.min(this.zone.clientWidth, this.zone.clientHeight) * 0.22));
     const halfW = Math.max(0, this.zone.clientWidth / 2 - padMargin);
     const halfH = Math.max(0, this.zone.clientHeight / 2 - padMargin);
     offsetX = Math.max(-halfW, Math.min(halfW, offsetX));
@@ -669,8 +678,10 @@ class VirtualJoystick {
 
     this.touchId = touch.identifier;
     activeJoystickTouchIds.add(this.touchId);
-    if (this.isFloating) {
+    if (this.isDynamicEnabled()) {
       this.spawnAtClientPoint(touch.clientX, touch.clientY);
+    } else {
+      this.zone.classList.add('stick-active');
     }
     this.updateFromClientPoint(touch.clientX, touch.clientY);
     if (e.cancelable) e.preventDefault();
@@ -703,8 +714,10 @@ class VirtualJoystick {
     if (isSettingsModalOpen()) return;
     e.preventDefault();
     this.mouseActive = true;
-    if (this.isFloating) {
+    if (this.isDynamicEnabled()) {
       this.spawnAtClientPoint(e.clientX, e.clientY);
+    } else {
+      this.zone.classList.add('stick-active');
     }
     this.updateFromClientPoint(e.clientX, e.clientY);
   }
@@ -725,8 +738,9 @@ class VirtualJoystick {
       this.touchId = null;
     }
     this.mouseActive = false;
-    if (this.isFloating) {
-      this.zone.classList.remove('stick-active');
+    this.zone.classList.remove('stick-active');
+    if (this.supportsFloating) {
+      this.nippleEl.style.transition = 'left 0.14s ease-out, top 0.14s ease-out';
       this.nippleEl.style.left = '50%';
       this.nippleEl.style.top = '50%';
     }
@@ -837,6 +851,16 @@ function initializeGamepad() {
         closeSettingsModal();
       }
     });
+
+    if (toggleDynamicSticks) {
+      toggleDynamicSticks.addEventListener('change', (e) => {
+        userSettings.dynamicSticks = e.target.checked;
+        localStorage.setItem('airinput_dynamic_sticks', String(userSettings.dynamicSticks));
+        applyUserSettingsUI();
+        activeJoysticks.forEach(j => j.reset());
+        triggerHaptic('light');
+      });
+    }
 
     if (togglePortraitFlip) {
       togglePortraitFlip.addEventListener('change', (e) => {

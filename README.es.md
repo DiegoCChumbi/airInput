@@ -11,7 +11,8 @@ Transforma tu smartphone en un mando inalámbrico de baja latencia para tu PC. A
 ## Características Principales
 
 - **Sin Instalación en el Móvil**: Funciona íntegramente desde el navegador web del teléfono a través de tu red local o mediante punto de acceso directo.
-- **7 Diseños de Mando (Clásicos y Touch-First)**: Cambia en tiempo real entre mandos clásicos, controles modernos de doble stick (simétrico y asimétrico) y controles *Touch-First* diseñados específicamente para la ergonomía de pantallas táctiles según el género del juego.
+- **8 Diseños de Mando (Clásicos y Touch-First)**: Cambia en tiempo real entre mandos clásicos, controles modernos de doble stick (simétrico, asimétrico y doble stick dinámico) y controles *Touch-First* diseñados específicamente para la ergonomía de pantallas táctiles según el género del juego.
+- **Zonas de Stick con Posición Dinámica**: Todas las carcasas con sticks analógicos cuentan con áreas táctiles dinámicas donde el centro del stick aparece automáticamente en el punto exacto del primer toque del pulgar (activable o desactivable en cualquier momento desde el menú del mando), incluyendo además el diseño **Doble Stick Dinámico (`twin-stick`)** con paneles táctiles extendidos a izquierda y derecha.
 - **Modo Hotspot Wi-Fi Sin Internet**: Crea una red Wi-Fi propia (`AirInput-Net`) desde cero directamente desde el PC cuando no hay router ni conexión a internet disponible. *(Probado en Linux con NetworkManager; soporte en Windows incluido como experimental/no testeado).*
 - **Intercambio de Mandos en Caliente (Hot-Swap)**: Reasigna qué teléfono controla al Jugador 1, Jugador 2, etc. directamente desde la interfaz de terminal (TUI) sin reiniciar el juego ni desconectar a los jugadores.
 
@@ -49,6 +50,7 @@ Diseñados desde cero para pantallas táctiles móviles evitando posturas incóm
 | **Brawler (`brawler`)** | ![Mando Brawler](docs/screenshots/skin-brawler.png) |
 | **Kart / Racing (`kart`)** | ![Mando Kart](docs/screenshots/skin-kart.png) |
 | **Arcade 6-Botones (`arcade`)** | ![Mando Arcade](docs/screenshots/skin-arcade.png) |
+| **Doble Stick Dinámico (`twin-stick`)** | ![Mando Doble Stick Dinámico](docs/screenshots/skin-twin-stick.png) |
 
 ---
 
@@ -156,7 +158,7 @@ airInput/
 ├── gamepad_windows.go       # Driver Windows ViGEmBus mediante ViGEmClient.dll (experimental)
 ├── hotspot.go               # Gestión de Hotspot Wi-Fi offline y firewall (Linux/Windows)
 ├── docs/
-│   └── screenshots/         # Capturas de pantalla de la TUI y de los 7 mandos
+│   └── screenshots/         # Capturas de pantalla de la TUI y de los 8 mandos
 └── public/                  # Cliente web móvil (embebido en el binario Go al compilar)
     ├── index.html           # Pantalla de conexión, barra HUD y menú de calibración
     ├── global.css           # Sistema de diseño de hardware y rotación responsiva
@@ -168,7 +170,8 @@ airInput/
         ├── asymmetric/      # Mando moderno asimétrico
         ├── brawler/         # Mando Touch-First para plataformas de pelea
         ├── kart/            # Mando Touch-First con volante y pedalera de carreras
-        └── arcade/          # Tablero Arcade Fightpad de 6 botones
+        ├── arcade/          # Tablero Arcade Fightpad de 6 botones
+        └── twin-stick/      # Mando de doble stick con posición dinámica
 ```
 
 ---
@@ -190,7 +193,8 @@ airInput/
 - [x] Permitir que cada jugador ingrese un identificador para su mando
 - [x] Vincular teléfonos con números de mando e intercambiarlos en caliente desde la terminal
 - [x] Crear una red Wi-Fi propia (Hotspot) para funcionar sin router ni internet previo
-- [x] Añadir diseños de mandos *Touch-First* adaptados por género (`Brawler`, `Kart`, `Arcade 6-Botones`, `Asimétrico`)
+- [x] Añadir diseños de mandos *Touch-First* adaptados por género (`Brawler`, `Kart`, `Arcade 6-Botones`, `Asimétrico`, `Doble Stick Dinámico`)
+- [x] Soportar posicionamiento dinámico en todas las áreas de sticks analógicos
 
 ---
 

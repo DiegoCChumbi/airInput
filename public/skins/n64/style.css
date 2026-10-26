@@ -150,11 +150,11 @@
 .n64-skin .d-down { grid-column: 2; grid-row: 3; border-radius: 0 0 8px 8px; border-top: none; }
 .n64-skin .d-se { grid-column: 3; grid-row: 3; }
 
-/* Octagonal Gate Housing for N64 Control Stick */
+/* Dynamic Gate Housing for N64 Control Stick */
 .n64-skin .octagon-bezel {
-  width: 136px;
-  height: 136px;
-  border-radius: 50%;
+  width: 156px;
+  height: 146px;
+  border-radius: 30px;
   background: linear-gradient(145deg, #9FA3AC 0%, #CDD0D6 100%);
   box-shadow:
     inset 0 4px 8px rgba(0, 0, 0, 0.35),
@@ -165,10 +165,14 @@
 }
 
 .n64-skin .stick-zone {
-  width: 118px;
-  height: 118px;
-  background: radial-gradient(circle, #2B2D33 0%, #43464F 65%, #686C75 100%);
-  border-radius: 50%;
+  width: 140px;
+  height: 130px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(circle, #2B2D33 0%, #43464F 65%, #686C75 100%);
+  background-size: 22px 22px, 22px 22px, 100% 100%;
+  border-radius: 24px;
   border: 3px solid #5A5D66;
   box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.85);
   position: relative;
